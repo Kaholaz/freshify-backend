@@ -581,9 +581,9 @@ paths:
     put:
       tags:
         - inventory
-      summary: Mark an item as used
-      description: Mark an item as used, item is removed from inventory
-      operationId: markItemAsUsed
+      summary: Alters an item in inventory
+      description: Alters an item in inventory. Either the state or the remaining amount can be changed.
+      operationId: updateInventoryItem
       parameters:
         - name: id
           in: path
@@ -602,11 +602,14 @@ paths:
                 itemId:
                   type: integer
                   format: int64
-                wasted:
+                remaining:
                   description: The proportion of the item that was wasted
                   type: number
                   format: double
                   example: 0.5
+                state:
+                  description: The state of the item
+                  $ref: "#/components/schemas/ItemState"
       responses:
         '200':
           description: Successful operation
