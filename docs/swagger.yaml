@@ -229,13 +229,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                userId:
-                  type: integer
-                  format: int64
-                userType:
-                  $ref: '#/components/schemas/HouseholdUserType'
+              $ref: "#/components/schemas/UpdateHouseholdUserType"
       responses:
         '200':
           description: successful operation
@@ -258,7 +252,7 @@ paths:
             type: integer
             format: int64
       requestBody:
-        description: Added user to household
+        description: User to add to the household
         content:
           application/json:
             schema:
@@ -398,17 +392,7 @@ paths:
       operationId: addItem
       requestBody:
         description: Item to be added to shopping list
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                itemTypeId:
-                  type: integer
-                  format: int64
-                itemCount:
-                  type: integer
-                  format: int64
+        $ref: '#/components/schemas/CreateShoppingListEntry'
       responses:
         '201':
           description: Successful operation
@@ -423,9 +407,9 @@ paths:
     put:
       tags:
         - shopping list
-      summary: Change the number of items in a shopping list entry
-      description: Change the number of items in a shopping list entry. Both ItemType and count of the item should be passed.
-      operationId: changeItemCount
+      summary: Update shopping list entry
+      description: Updates an entry in the shopping list of a household
+      operationId: updateShoppingListEntry
       parameters:
         - name: id
           in: path
@@ -439,14 +423,7 @@ paths:
         content:
           application/json:
            schema:
-            type: object
-            properties:
-              listEntryId:
-                type: integer
-                format: int64
-              itemCount:
-                type: integer
-                format: int64
+            $ref: '#/components/schemas/UpdateShoppingListEntry'
       responses:
         '200':
           description: Successful operation
@@ -587,29 +564,17 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of household's inventory to delete items from 
+          description: ID of household's inventory to update the item in
           required: true
           schema:
             type: integer
             format: int64
       requestBody:
-        description: Item to be marked as used
+        description: The item to be updated
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                itemId:
-                  type: integer
-                  format: int64
-                remaining:
-                  description: The proportion of the item that was wasted
-                  type: number
-                  format: double
-                  example: 0.5
-                state:
-                  description: The state of the item
-                  $ref: "#/components/schemas/ItemState"
+              $ref: "#/components/schemas/UpdateItem"
       responses:
         '200':
           description: Successful operation
@@ -738,6 +703,32 @@ components:
         name:
           type: string
           example: "Milk"
+    CreateShoppingListEntry:
+      type: object
+      properties:
+        itemTypeId:
+          type: integer
+          example: 123
+        count:
+          type: integer
+          format: int32
+          example: 1
+        suggested:
+          type: boolean
+    UpdateShoppingListEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 123
+        count:
+          type: integer
+          format: int32
+          example: 1
+        suggested:
+          type: boolean
+        checked:
+          type: boolean
     ShoppingListEntry:
       type: object
       properties:
@@ -761,6 +752,20 @@ components:
       enum:
         - INVENTORY
         - USED
+    UpdateItem:
+      type: object
+      properties:
+        itemId:
+          type: integer
+          format: int64
+        remaining:
+          description: The proportion of the item that was wasted
+          type: number
+          format: double
+          example: 0.5
+        state:
+          description: The state of the item
+          $ref: "#/components/schemas/ItemState"
     Item:
       type: object
       properties:
@@ -788,6 +793,14 @@ components:
       enum:
         - SUPERUSER
         - USER
+    UpdateHouseholdUserType:
+      type: object
+      properties:
+        userId:
+          type: integer
+          example: 123
+        type:
+          $ref: '#/components/schemas/HouseholdUserType'
     Household:
       type: object
       properties:
