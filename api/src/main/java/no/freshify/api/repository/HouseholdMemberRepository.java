@@ -12,4 +12,6 @@ public interface HouseholdMemberRepository extends JpaRepository<HouseholdMember
     public List<HouseholdMember> findHouseholdMembersByHouseholdId(Long householdId);
     public HouseholdMember save(HouseholdMember householdMember);
     boolean existsById(HouseholdMemberKey householdMemberKey);
+
+    Household findHouseholdById(long householdId);
 }

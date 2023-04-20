@@ -1,6 +1,7 @@
 package no.freshify.api.service;
 
 import lombok.RequiredArgsConstructor;
+import no.freshify.api.exception.HouseholdNotFoundException;
 import no.freshify.api.model.Household;
 import no.freshify.api.model.HouseholdMember;
 import no.freshify.api.model.User;
@@ -17,7 +18,11 @@ public class HouseholdService {
     private final HouseholdRepository householdRepository;
     private final HouseholdMemberRepository householdMemberRepository;
 
-    public List<User> getUsers(long householdId) {
+    public List<User> getUsers(long householdId) throws HouseholdNotFoundException {
+        if (!householdRepository.existsById(householdId)) {
+            throw new HouseholdNotFoundException();
+        }
+
         return householdMemberRepository.findHouseholdMembersByHouseholdId(householdId)
                 .stream()
                 .map(HouseholdMember::getUser).toList();
