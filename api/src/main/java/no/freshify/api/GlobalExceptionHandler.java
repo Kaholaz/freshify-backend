@@ -2,6 +2,7 @@ package no.freshify.api;
 
 import no.freshify.api.exception.HouseholdMemberAlreadyExistsException;
 import no.freshify.api.exception.HouseholdNotFoundException;
+import no.freshify.api.exception.ItemTypeNotFoundException;
 import no.freshify.api.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +25,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HouseholdMemberAlreadyExistsException.class)
     public ResponseEntity<Object> handleHouseholdMemberAlreadyExistsException(HouseholdMemberAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ItemTypeNotFoundException.class)
+    public ResponseEntity<Object> handleItemTypeNotFoundException(ItemTypeNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 }
