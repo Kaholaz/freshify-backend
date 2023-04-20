@@ -392,7 +392,10 @@ paths:
       operationId: addItem
       requestBody:
         description: Item to be added to shopping list
-        $ref: '#/components/schemas/CreateShoppingListEntry'
+        content:
+          applicatin/json:
+            schema:
+              $ref: '#/components/schemas/CreateShoppingListEntry'
       responses:
         '201':
           description: Successful operation
