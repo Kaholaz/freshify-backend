@@ -13,6 +13,8 @@ import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.ItemService;
 import no.freshify.api.service.ItemTypeService;
 import no.freshify.api.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,17 +31,24 @@ public class InventoryController {
     private final ItemTypeService itemTypeService;
     private final ItemService itemService;
 
+    Logger logger = LoggerFactory.getLogger(InventoryController.class);
+
     //TODO Remember to add authentication logic and also verify correct access privileges for resources before processing request
     //TODO Once authentication is in place, extract user from jwttoken and set addedBy field of the item to the given user
     @PostMapping("/{id}/inventory")
     public ResponseEntity<List<InventoryItem>> addInventoryItem(@PathVariable("id") long householdId, @RequestBody List<Map<String, Object>> requestBody) throws UserNotFoundException, HouseholdNotFoundException, ItemTypeNotFoundException {
         User user = userService.getUserById(1L);//TODO: Get user from token, using default id 1 for now
+
+        logger.info("Adding inventory items to household with id: " + householdId);
+
         if (user == null) {
+            logger.info("User not found");
             throw new UserNotFoundException();
         }
 
         Household household = householdService.findHouseholdByHouseholdId(householdId);
         if (household == null) {
+            logger.info("Household not found");
             throw new HouseholdNotFoundException();
         }
 
@@ -59,6 +68,8 @@ public class InventoryController {
                 inventoryItems.add(new InventoryItem(newItem));
             }
         }
+
+        logger.info("Added inventory items");
 
         return ResponseEntity.ok(inventoryItems);
     }
