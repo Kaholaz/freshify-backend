@@ -27,6 +27,9 @@ public class Item {
     private ItemStatus status;
 
     @ManyToOne
+    private ItemType type;
+
+    @ManyToOne
     private Household household;
 
     @ManyToOne
