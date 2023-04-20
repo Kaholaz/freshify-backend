@@ -30,7 +30,8 @@ import java.util.stream.Collectors;
 public class AuthenticationService {
     public static final TemporalAmount TOKEN_DURATION = ChronoUnit.MINUTES.getDuration().multipliedBy(10); // 10 minutes
     private final UserService userService;
-    private final Key signingKey = Keys.hmacShaKeyFor("VerySecretKey".getBytes());
+    private final Key signingKey =
+            Keys.hmacShaKeyFor("sdfghjgfghjawgyfvg wayvgbwvb agvwv wuyvwavhwaui vhwtvgwaiuv gwaiuvgwaoivg".getBytes());
 
     /**
      * Get the current user
@@ -39,19 +40,20 @@ public class AuthenticationService {
      * @return The current user
      */
     public String generateToken(Authentication authentication) {
-        Instant now = Instant.now();
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + TOKEN_DURATION.get(ChronoUnit.SECONDS) * 1000);
         String scope = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(TOKEN_DURATION))
                 .subject(authentication.getName())
                 .claim("scope", scope)
                 .build();
         return Jwts.builder()
                 .setClaims(claims.getClaims())
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
                 .signWith(signingKey, SignatureAlgorithm.HS256)
                 .compact();
     }

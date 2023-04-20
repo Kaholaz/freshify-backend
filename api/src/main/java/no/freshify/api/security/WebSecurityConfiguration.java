@@ -44,7 +44,6 @@ public class WebSecurityConfiguration {
                 .cors().and()
                 .csrf().disable()
                 .userDetailsService(jwtUserDetailsService)
-                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         // Filters
