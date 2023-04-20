@@ -5,9 +5,11 @@ import no.freshify.api.model.HouseholdMember;
 import no.freshify.api.model.HouseholdMemberKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface HouseholdMemberRepository extends JpaRepository<HouseholdMember, Long> {
-    public HouseholdMember findHouseholdMembersByUser(Long userId);
-    public HouseholdMember findHouseholdMembersByHousehold(Long householdId);
+    public List<HouseholdMember> findHouseholdMembersByUserId(Long userId);
+    public List<HouseholdMember> findHouseholdMembersByHouseholdId(Long householdId);
     public HouseholdMember save(HouseholdMember householdMember);
     boolean existsById(HouseholdMemberKey householdMemberKey);
 }
