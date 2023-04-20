@@ -25,5 +25,8 @@ public class ShoppingListEntry {
     private ItemType type;
 
     @ManyToOne
+    private Household household;
+
+    @ManyToOne
     private User addedBy;
 }
