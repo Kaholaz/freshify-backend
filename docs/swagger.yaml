@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: let API - OpenAPI 3.0
+  title: Freshify API Documentation
   description: |-
     An API for creating and managing a household inventory and shopping list.
     The API is written in Java using the Spring Boot framework. The API uses a
@@ -15,7 +15,7 @@ info:
     url: 'https://opensource.org/licenses/MIT'
   version: 1.0.0
 servers:
-  - url: https://localhost:8080/
+  - url: http://localhost:8080
 tags:
   - name: account
     description: Operations about account
