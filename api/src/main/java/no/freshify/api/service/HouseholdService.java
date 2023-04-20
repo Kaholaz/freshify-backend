@@ -6,11 +6,9 @@ import no.freshify.api.model.HouseholdMember;
 import no.freshify.api.model.User;
 import no.freshify.api.repository.HouseholdMemberRepository;
 import no.freshify.api.repository.HouseholdRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,5 +28,9 @@ public class HouseholdService {
                 .stream()
                 .map(HouseholdMember::getHousehold)
                 .toList();
+    }
+
+    public Household findHouseholdByHouseholdId(Long householdId) {
+        return householdRepository.findHouseholdById(householdId);
     }
 }

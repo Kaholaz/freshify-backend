@@ -6,6 +6,7 @@ import no.freshify.api.model.User;
 import no.freshify.api.model.dto.UserFull;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +25,9 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getUserById(@PathVariable long id) {
         User user = userService.getUserById(id);
-
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
         return ResponseEntity.ok(new UserFull(user));
     }
 
