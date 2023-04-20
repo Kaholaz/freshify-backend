@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface HouseholdMemberRepository extends JpaRepository<HouseholdMember, Long> {
-    public List<HouseholdMember> findHouseholdMembersByUser(Long userId);
-    public List<HouseholdMember> findHouseholdMembersByHousehold(Long householdId);
+    public List<HouseholdMember> findHouseholdMembersByUserId(Long userId);
+    public List<HouseholdMember> findHouseholdMembersByHouseholdId(Long householdId);
 }

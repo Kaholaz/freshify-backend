@@ -31,14 +31,4 @@ public class HouseholdController {
     public ResponseEntity<List<User>> getUsers(@PathVariable("id") long householdId) {
         return ResponseEntity.ok(householdService.getUsers(householdId));
     }
-
-    /**
-     * Gets the households that a given user is part of
-     * @param userId The user to find households from
-     * @return A list of found households
-     */
-    @GetMapping("/{id}/users")
-    public ResponseEntity<List<Household>> getHouseholds(@PathVariable("id") long userId) {
-        return ResponseEntity.ok(householdService.getHouseholds(userId));
-    }
 }

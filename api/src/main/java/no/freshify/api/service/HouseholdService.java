@@ -20,16 +20,15 @@ public class HouseholdService {
     private final HouseholdMemberRepository householdMemberRepository;
 
     public List<User> getUsers(long householdId) {
-        return householdMemberRepository.findHouseholdMembersByHousehold(householdId)
+        return householdMemberRepository.findHouseholdMembersByHouseholdId(householdId)
                 .stream()
-                .map(HouseholdMember::getUser)
-                .collect(Collectors.toList());
+                .map(HouseholdMember::getUser).toList();
     }
 
     public List<Household> getHouseholds(long userId) {
-        return householdMemberRepository.findHouseholdMembersByUser(userId)
+        return householdMemberRepository.findHouseholdMembersByUserId(userId)
                 .stream()
                 .map(HouseholdMember::getHousehold)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
