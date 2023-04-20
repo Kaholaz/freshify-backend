@@ -24,7 +24,7 @@ import java.util.List;
 public class HouseholdController {
     private final HouseholdService householdService;
 
-    private final Logger logger = LoggerFactory.getLogger(HouseholdMemberController.class);
+    private final Logger logger = LoggerFactory.getLogger(HouseholdController.class);
 
 
     /**
