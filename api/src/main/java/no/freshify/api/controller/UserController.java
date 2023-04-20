@@ -2,6 +2,7 @@ package no.freshify.api.controller;
 
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.model.Household;
+import no.freshify.api.exception.UserNotFoundException;
 import no.freshify.api.model.User;
 import no.freshify.api.model.dto.UserFull;
 import no.freshify.api.service.HouseholdService;
@@ -23,12 +24,12 @@ public class UserController {
     private final HouseholdService householdService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getUserById(@PathVariable long id) {
+    public UserFull getUserById(@PathVariable long id) throws UserNotFoundException {
         User user = userService.getUserById(id);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            throw new UserNotFoundException();
         }
-        return ResponseEntity.ok(new UserFull(user));
+        return new UserFull(user);
     }
 
     /**
