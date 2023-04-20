@@ -34,4 +34,13 @@ public class Item {
 
     @ManyToOne
     private User addedBy;
+
+    /**
+     * Updates the lastChanged field automatically both when created or updated.
+     */
+    @PrePersist
+    @PreUpdate
+    public void updateLastChanged() {
+        this.lastChanged = new Date();
+    }
 }
