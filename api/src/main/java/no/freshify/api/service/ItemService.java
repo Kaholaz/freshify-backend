@@ -1,6 +1,7 @@
 package no.freshify.api.service;
 
 import lombok.RequiredArgsConstructor;
+import no.freshify.api.exception.ItemDoesNotBelongToHouseholdException;
 import no.freshify.api.exception.ItemNotFoundException;
 import no.freshify.api.model.Household;
 import no.freshify.api.model.Item;
@@ -19,10 +20,20 @@ public class ItemService {
         return itemRepository.findItemsByHousehold(household);
     }
 
-    public Item getItemByIdAndHousehold(long id, Household household) throws ItemNotFoundException {
-        Item item = itemRepository.findByIdAndHousehold(id, household);
+    public Item getItemById(long id) throws ItemNotFoundException {
+        Item item = itemRepository.findById(id).orElse(null);
         if (item == null) {
             throw new ItemNotFoundException();
+        }
+        return item;
+    }
+
+    public Item getItemByIdAndHousehold(long id, Household household) throws ItemDoesNotBelongToHouseholdException, ItemNotFoundException {
+        this.getItemById(id);
+
+        Item item = itemRepository.findByIdAndHousehold(id, household);
+        if (item == null) {
+            throw new ItemDoesNotBelongToHouseholdException();
         }
 
         return item;
