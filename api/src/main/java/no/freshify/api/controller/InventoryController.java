@@ -1,10 +1,7 @@
 package no.freshify.api.controller;
 
 import lombok.RequiredArgsConstructor;
-import no.freshify.api.exception.HouseholdNotFoundException;
-import no.freshify.api.exception.ItemNotFoundException;
-import no.freshify.api.exception.ItemTypeNotFoundException;
-import no.freshify.api.exception.UserNotFoundException;
+import no.freshify.api.exception.*;
 import no.freshify.api.model.Household;
 import no.freshify.api.model.Item;
 import no.freshify.api.model.ItemStatus;
@@ -107,7 +104,7 @@ public class InventoryController {
      * @throws ItemNotFoundException If the item is not found
      */
     @DeleteMapping("/{id}/inventory/{itemId}")
-    public ResponseEntity<String> deleteInventoryItem(@PathVariable("id") long householdId, @PathVariable("itemId") long itemId) throws HouseholdNotFoundException, ItemNotFoundException {
+    public ResponseEntity<String> deleteInventoryItem(@PathVariable("id") long householdId, @PathVariable("itemId") long itemId) throws HouseholdNotFoundException, ItemNotFoundException, ItemDoesNotBelongToHouseholdException {
         logger.info("Deleting inventory item with id: " + itemId);
         Household household = householdService.findHouseholdByHouseholdId(householdId);
         Item item = itemService.getItemByIdAndHousehold(itemId, household);
@@ -116,5 +113,40 @@ public class InventoryController {
         logger.info("Deleted inventory item with id: " + itemId);
 
         return ResponseEntity.ok("Deleted inventory item with id: " + itemId);
+    }
+
+    //TODO Extract user from token and verify that the user is allowed to modify the item, ie. is a superuser and member of household.
+    /**
+     * Updates an inventory item, checks as well that the resources exist and that the item belongs to the household
+     * @param householdId The id of the household to update the item in
+     * @param requestBody An object containing the id of the item to update, the new remaining amount and the new state
+     * @return A message indicating that the item was updated
+     * @throws HouseholdNotFoundException If the household is not found
+     * @throws ItemNotFoundException If the item is not found
+     * @throws ItemDoesNotBelongToHouseholdException If the item does not belong to the household
+     * @throws IllegalItemStatusException If the item status is invalid
+     */
+    @PutMapping("/{id}/inventory")
+    public ResponseEntity<String> updateInventoryItem(@PathVariable("id") long householdId, @RequestBody Map<String, Object> requestBody) throws HouseholdNotFoundException, ItemNotFoundException, IllegalItemStatusException, ItemDoesNotBelongToHouseholdException {
+        logger.info("Updating inventory item with id: " + requestBody.get("id"));
+        long itemId = Long.parseLong(requestBody.get("itemId").toString());
+        double remaining = Float.parseFloat(requestBody.get("remaining").toString());
+        String state = requestBody.get("state").toString();
+
+        try {
+            ItemStatus.valueOf(state);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalItemStatusException();
+        }
+
+        Household household = householdService.findHouseholdByHouseholdId(householdId);
+        Item item = itemService.getItemByIdAndHousehold(itemId, household);
+
+        item.setRemaining(remaining);
+        item.setStatus(ItemStatus.valueOf(state));
+        itemService.updateItem(item);
+
+        logger.info("Updated inventory item with id: " + itemId);
+        return ResponseEntity.ok("Updated inventory item with id: " + itemId);
     }
 }
