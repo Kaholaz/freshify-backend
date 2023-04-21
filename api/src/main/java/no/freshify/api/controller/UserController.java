@@ -16,6 +16,7 @@ import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -62,6 +63,7 @@ public class UserController {
      * @return The found user
      * @throws UserNotFoundException If the user is not found
      */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public UserFull getUserById(@PathVariable long id) throws UserNotFoundException {
         User user = userService.getUserById(id);
