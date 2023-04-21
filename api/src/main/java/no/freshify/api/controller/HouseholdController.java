@@ -22,6 +22,7 @@ public class HouseholdController {
     private final HouseholdService householdService;
 
 
+    //TODO Remember to add authentication logic and verify/enforce access privileges before processing request
     /**
      * Gets the users in a given household
      * @param householdId The household to get usres from
