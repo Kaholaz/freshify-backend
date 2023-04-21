@@ -35,6 +35,15 @@ public class InventoryController {
 
     //TODO Remember to add authentication logic and also verify correct access privileges for resources before processing request
     //TODO Once authentication is in place, extract user from jwttoken and set addedBy field of the item to the given user
+    /**
+     * Adds inventory items to a household
+     * @param householdId The id of the household to add the items to
+     * @param requestBody A list of objects each containing the itemTypeId and count of the item to add
+     * @return A list of inventory items that were added
+     * @throws UserNotFoundException If the user is not found
+     * @throws HouseholdNotFoundException If the household is not found
+     * @throws ItemTypeNotFoundException If the item type is not found
+     */
     @PostMapping("/{id}/inventory")
     public ResponseEntity<List<InventoryItem>> addInventoryItem(@PathVariable("id") long householdId, @RequestBody List<Map<String, Object>> requestBody) throws UserNotFoundException, HouseholdNotFoundException, ItemTypeNotFoundException {
         User user = userService.getUserById(1L);//TODO: Get user from token, using default id 1 for now
