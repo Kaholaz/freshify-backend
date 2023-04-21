@@ -16,12 +16,12 @@ import no.freshify.api.service.HouseholdService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.relation.InvalidRoleValueException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @RequestMapping("/household")
@@ -36,6 +36,18 @@ public class HouseholdController {
     private final HouseholdMemberRepository householdMemberRepository;
     private final UserRepository userRepository;
 
+
+    /**
+     * Creates a new household.
+     * @param household The new household
+     * @return The new household
+     */
+    @PostMapping()
+    public ResponseEntity<Household> createHousehold(@RequestBody Household household) {
+        logger.info("Creating household");
+        Household savedHousehold = householdRepository.save(household);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedHousehold);
+    }
 
     /**
      * Gets a household by id
