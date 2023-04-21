@@ -586,10 +586,12 @@ paths:
       responses:
         '200':
           description: Successful operation
+        '400':
+          description: The given item status is not a valid status for item/item does not belong to household
         '401':
           description: Unauthorized response, user is not validated or does not have access
         '404':
-          description: Item not found in inventory
+          description: Item not found/household not found
   /household/{id}/inventory/{itemId}:
     delete:
       tags:
