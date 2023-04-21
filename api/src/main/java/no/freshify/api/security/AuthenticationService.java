@@ -5,7 +5,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import no.freshify.api.model.HouseholdMember;
 import no.freshify.api.model.User;
+import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +20,7 @@ import java.security.Key;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAmount;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -29,6 +32,7 @@ import java.util.stream.Collectors;
 public class AuthenticationService {
     public static final TemporalAmount TOKEN_DURATION = ChronoUnit.MINUTES.getDuration().multipliedBy(10); // 10 minutes
     private final UserService userService;
+    private final HouseholdMemberService householdMemberService;
     private final Key signingKey =
             Keys.hmacShaKeyFor("sdfghjgfghjawgyfvg wayvgbwvb agvwv wuyvwavhwaui vhwtvgwaiuv gwaiuvgwaoivg".getBytes());
 
@@ -65,7 +69,8 @@ public class AuthenticationService {
      */
     public String renewToken(String token) {
         User user = userService.getUserByEmail(getEmailFromToken(token));
-        UserDetails userDetails = new UserDetailsImpl(user);
+        List<HouseholdMember> householdRelations = householdMemberService.getHouseHoldMembersByUserId(user.getId());
+        UserDetails userDetails = new UserDetailsImpl(user, householdRelations);
         Authentication authentication = new UserAuthentication(userDetails);
         return this.generateToken(authentication);
     }
@@ -116,7 +121,8 @@ public class AuthenticationService {
     public Authentication getAuthentication(String token) {
         String email = getEmailFromToken(token);
         User user = this.userService.getUserByEmail(email);
-        UserDetails userDetails = new UserDetailsImpl(user);
+        List<HouseholdMember> householdRelations = householdMemberService.getHouseHoldMembersByUserId(user.getId());
+        UserDetails userDetails = new UserDetailsImpl(user, householdRelations);
 
         return new UserAuthentication(userDetails);
     }

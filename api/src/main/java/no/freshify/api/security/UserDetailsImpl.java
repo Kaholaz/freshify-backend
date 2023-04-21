@@ -2,6 +2,7 @@ package no.freshify.api.security;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import no.freshify.api.model.HouseholdMember;
 import no.freshify.api.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,19 +21,20 @@ public class UserDetailsImpl implements UserDetails {
     private final String email;
     private final String password;
     private final String firstName;
+    private final List<HouseholdMember> householdRelations;
 
     /**
      * Create user details from a user entity
      *
      * @param user The user entity
      */
-    public UserDetailsImpl(User user) {
+    public UserDetailsImpl(User user, List<HouseholdMember> householdRelations) {
         this.id = user.getId();
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.firstName = user.getFirstName();
+        this.householdRelations = householdRelations;
     }
-
 
     /**
      * Get the authorities of the user (admin or user)
@@ -41,7 +43,8 @@ public class UserDetailsImpl implements UserDetails {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("USER"));
+        return householdRelations.stream().map(m -> String.format("HOUSEHOLD:%d_%s", m.getHousehold().getId(),
+                m.getRole().name())).map(SimpleGrantedAuthority::new).toList();
     }
 
     /**

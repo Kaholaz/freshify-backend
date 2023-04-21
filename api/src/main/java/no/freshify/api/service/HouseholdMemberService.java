@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class HouseholdMemberService {
@@ -37,5 +39,9 @@ public class HouseholdMemberService {
         }
 
         throw new UserDoesNotBelongToHouseholdException();
+    }
+
+    public List<HouseholdMember> getHouseHoldMembersByUserId(Long userId) {
+        return householdMemberRepository.findHouseholdMembersByUserId(userId);
     }
 }
