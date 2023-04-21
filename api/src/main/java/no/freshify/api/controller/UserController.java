@@ -23,6 +23,12 @@ public class UserController {
     private final UserService userService;
     private final HouseholdService householdService;
 
+    /**
+     * Gets a user by id
+     * @param id The id of the user to find
+     * @return The found user
+     * @throws UserNotFoundException If the user is not found
+     */
     @GetMapping("/{id}")
     public UserFull getUserById(@PathVariable long id) throws UserNotFoundException {
         User user = userService.getUserById(id);
