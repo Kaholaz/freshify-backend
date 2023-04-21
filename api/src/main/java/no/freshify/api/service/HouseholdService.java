@@ -53,9 +53,19 @@ public class HouseholdService {
     public Household findHouseholdByHouseholdId(Long householdId) throws HouseholdNotFoundException {
         Household household = householdRepository.findHouseholdById(householdId);
         if (household == null) {
-            logger.info("Household not found");
+            logger.warn("Household not found");
             throw new HouseholdNotFoundException();
         }
         return household;
+    }
+
+    public Household getHousehold(long householdId) throws HouseholdNotFoundException {
+        Household household = householdRepository.findHouseholdById(householdId);
+        if (household == null) {
+            logger.warn("Household not found");
+            throw new HouseholdNotFoundException();
+        } else {
+            return household;
+        }
     }
 }

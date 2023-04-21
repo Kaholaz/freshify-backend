@@ -9,11 +9,9 @@ import no.freshify.api.service.HouseholdService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +24,17 @@ public class HouseholdController {
     private final Logger logger = LoggerFactory.getLogger(HouseholdController.class);
     private final HouseholdRepository householdRepository;
 
+
+    /**
+     * Gets a household by id
+     * @param householdId The id for the household to find
+     * @return A household with given id
+     * @throws HouseholdNotFoundException If household with given id is not found
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Household> getHouseholdById(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
+        return ResponseEntity.ok(householdService.getHousehold(householdId));
+    }
 
     /**
      * Gets the users in a given household
