@@ -1,10 +1,9 @@
 package no.freshify.api.controller;
 
 import lombok.RequiredArgsConstructor;
-import no.freshify.api.exception.HouseholdMemberAlreadyExistsException;
-import no.freshify.api.exception.HouseholdNotFoundException;
-import no.freshify.api.exception.UserNotFoundException;
+import no.freshify.api.exception.*;
 import no.freshify.api.model.*;
+import no.freshify.api.model.dto.UserTypeRequest;
 import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.UserService;
@@ -21,11 +20,9 @@ import java.util.Map;
 @RequestMapping("/household")
 @RequiredArgsConstructor
 public class HouseholdMemberController {
-    @Autowired
+
     private final HouseholdMemberService householdMemberService;
-    @Autowired
     private final HouseholdService householdService;
-    @Autowired
     private final UserService userService;
 
     private final Logger logger = LoggerFactory.getLogger(HouseholdMemberController.class);
@@ -59,5 +56,37 @@ public class HouseholdMemberController {
         householdMemberService.addHouseholdMember(householdMember);
         logger.info("Added household member");
         return ResponseEntity.ok("Operation successful");
+    }
+
+    /**
+     * Updates the type of a given user within a given household.
+     * @param householdId The household where the user type is updated
+     * @param userTypeRequest The new user type
+     * @return HouseholdMember representing the new
+     * @throws HouseholdNotFoundException If the household is not found
+     * @throws UserNotFoundException If the user is not found inside given household
+     */
+    @PutMapping("/{id}/users")
+    public ResponseEntity<HouseholdMember> updateUserType(@PathVariable("id") long householdId,
+                                                          @RequestBody UserTypeRequest userTypeRequest)
+            throws HouseholdNotFoundException, UserNotFoundException, UserDoesNotBelongToHouseholdException, InvalidHouseholdMemberRoleException {
+        logger.info("Updating user type");
+        Household household = householdService.findHouseholdByHouseholdId(householdId);
+        User user = userService.getUserById(userTypeRequest.getUserId());
+
+        HouseholdMemberKey householdMemberKey = new HouseholdMemberKey(user.getId(), household.getId());
+
+        HouseholdMember userInHousehold = householdMemberService.getHouseholdMemberByHouseholdMemberKey(householdMemberKey);
+
+        HouseholdMemberRole newRole;
+        try {
+            newRole = HouseholdMemberRole.valueOf(userTypeRequest.getUserType());
+        } catch (IllegalArgumentException e) {
+            logger.warn("Invalid role: " + userTypeRequest.getUserType());
+            throw new InvalidHouseholdMemberRoleException();
+        }
+
+        userInHousehold.setRole(newRole);
+        return ResponseEntity.ok(householdMemberRepository.save(userInHousehold));
     }
 }
