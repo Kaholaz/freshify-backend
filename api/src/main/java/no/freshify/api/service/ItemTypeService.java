@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ItemTypeService {
@@ -22,5 +24,9 @@ public class ItemTypeService {
             throw new ItemTypeNotFoundException();
         }
         return itemType;
+    }
+
+    public List<ItemType> getAllItemTypes() {
+        return itemTypeRepository.findAll();
     }
 }
