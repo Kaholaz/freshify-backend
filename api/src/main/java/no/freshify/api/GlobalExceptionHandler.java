@@ -44,4 +44,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleItemDoesNotBelongToHouseholdException(ItemDoesNotBelongToHouseholdException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+
+    @ExceptionHandler(IllegalItemParameterException.class)
+    public ResponseEntity<Object> handleIllegalItemParameterException(IllegalItemParameterException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }
