@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.*;
 import no.freshify.api.model.*;
 import no.freshify.api.model.dto.UserTypeRequest;
+import no.freshify.api.repository.HouseholdMemberRepository;
 import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.UserService;
@@ -24,6 +25,7 @@ public class HouseholdMemberController {
     private final HouseholdMemberService householdMemberService;
     private final HouseholdService householdService;
     private final UserService userService;
+    private final HouseholdMemberRepository householdMemberRepository;
 
     private final Logger logger = LoggerFactory.getLogger(HouseholdMemberController.class);
 
@@ -67,7 +69,7 @@ public class HouseholdMemberController {
      * @throws UserNotFoundException If the user is not found inside given household
      */
     @PutMapping("/{id}/users")
-    public ResponseEntity<HouseholdMember> updateUserType(@PathVariable("id") long householdId,
+    public ResponseEntity<HouseholdMember> updateHouseholdMemberRole(@PathVariable("id") long householdId,
                                                           @RequestBody UserTypeRequest userTypeRequest)
             throws HouseholdNotFoundException, UserNotFoundException, UserDoesNotBelongToHouseholdException, InvalidHouseholdMemberRoleException {
         logger.info("Updating user type");
