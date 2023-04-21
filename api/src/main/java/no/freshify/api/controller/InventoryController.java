@@ -75,6 +75,7 @@ public class InventoryController {
         return ResponseEntity.ok(inventoryItems);
     }
 
+    //TODO Extract user from token and verify that the user is allowed to fetch the items
     /**
      * Gets the inventory items for a household
      * @param householdId The id of the household to get the inventory items from
@@ -96,6 +97,7 @@ public class InventoryController {
         return ResponseEntity.ok(inventoryItems);
     }
 
+    //TODO Extract user from token and verify that the user is allowed to delete the item
     /**
      * Deletes an inventory item, checks as well that the resources exist and that the item belongs to the household
      * @param householdId The id of the household to delete the item from
