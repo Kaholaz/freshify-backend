@@ -36,6 +36,7 @@ public class HouseholdMemberService {
             return householdMemberRepository.findById(householdMemberKey);
         }
 
+        logger.warn("User does not belong to household");
         throw new UserDoesNotBelongToHouseholdException();
     }
 

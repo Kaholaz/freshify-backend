@@ -19,7 +19,7 @@ public class UserService {
         User user = userRepository.findById(id).orElse(null);
 
         if (user == null) {
-            logger.info("User not found");
+            logger.warn("User not found");
             throw new UserNotFoundException();
         }
 

@@ -7,6 +7,8 @@ import no.freshify.api.model.Household;
 import no.freshify.api.model.Item;
 import no.freshify.api.repository.ItemRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +18,8 @@ import java.util.List;
 public class ItemService {
     private final ItemRepository itemRepository;
 
+    Logger logger = LoggerFactory.getLogger(ItemService.class);
+
     public List<Item> getHouseholdItems(Household household) {
         return itemRepository.findItemsByHousehold(household);
     }
@@ -23,6 +27,7 @@ public class ItemService {
     public Item getItemById(long id) throws ItemNotFoundException {
         Item item = itemRepository.findById(id).orElse(null);
         if (item == null) {
+            logger.warn("Item not found");
             throw new ItemNotFoundException();
         }
         return item;
@@ -33,6 +38,7 @@ public class ItemService {
 
         Item item = itemRepository.findByIdAndHousehold(id, household);
         if (item == null) {
+            logger.warn("Item does not belong to household");
             throw new ItemDoesNotBelongToHouseholdException();
         }
 
