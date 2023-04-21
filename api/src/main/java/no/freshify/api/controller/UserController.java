@@ -44,7 +44,7 @@ public class UserController {
      * @return A list of found households
      */
     @GetMapping("/{id}/households")
-    public ResponseEntity<List<Household>> getHouseholds(@PathVariable("id") long userId) {
+    public ResponseEntity<List<Household>> getHouseholds(@PathVariable("id") long userId) throws UserNotFoundException {
         return ResponseEntity.ok(householdService.getHouseholds(userId));
     }
 }
