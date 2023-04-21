@@ -32,6 +32,10 @@ public class ItemService {
         itemRepository.deleteById(id);
     }
 
+    public void updateItem(Item item) {
+        itemRepository.save(item);
+    }
+
     public void addItem(Item item) {
         itemRepository.save(item);
     }
