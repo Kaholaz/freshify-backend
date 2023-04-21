@@ -4,19 +4,18 @@ import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.HouseholdNotFoundException;
 import no.freshify.api.model.Household;
 import no.freshify.api.model.User;
+import no.freshify.api.repository.HouseholdRepository;
 import no.freshify.api.service.HouseholdService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequestMapping("/household")
 @RequiredArgsConstructor
@@ -25,6 +24,7 @@ public class HouseholdController {
     private final HouseholdService householdService;
 
     private final Logger logger = LoggerFactory.getLogger(HouseholdController.class);
+    private final HouseholdRepository householdRepository;
 
 
     /**
@@ -35,5 +35,27 @@ public class HouseholdController {
     @GetMapping("/{id}/users")
     public ResponseEntity<List<User>> getUsers(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
         return ResponseEntity.ok(householdService.getUsers(householdId));
+    }
+
+
+    /**
+     * Updates the attributes of a given household.
+     * @param householdId The id of the household to update
+     * @param household The new household
+     * @return Household representing updated version
+     * @throws HouseholdNotFoundException If household was not found
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Household> updateHousehold(@PathVariable("id") long householdId, @RequestBody Household household) throws HouseholdNotFoundException {
+        Optional<Household> householdData = householdRepository.findById(householdId);
+
+        if (householdData.isPresent()) {
+            Household _household = householdData.get();
+            _household.setName(household.getName());
+            return ResponseEntity.ok(householdRepository.save(_household));
+        } else {
+            logger.warn("Household not found");
+            throw new HouseholdNotFoundException();
+        }
     }
 }
