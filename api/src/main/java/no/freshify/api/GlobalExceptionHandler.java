@@ -1,6 +1,7 @@
 package no.freshify.api;
 
 import no.freshify.api.exception.*;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,6 +37,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalItemStatusException.class)
     public ResponseEntity<Object> handleItemNotFoundException(IllegalItemStatusException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ItemDoesNotBelongToHouseholdException.class)
+    public ResponseEntity<Object> handleItemDoesNotBelongToHouseholdException(ItemDoesNotBelongToHouseholdException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }
