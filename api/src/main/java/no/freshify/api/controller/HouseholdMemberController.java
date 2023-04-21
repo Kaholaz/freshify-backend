@@ -67,6 +67,8 @@ public class HouseholdMemberController {
      * @return HouseholdMember representing the new
      * @throws HouseholdNotFoundException If the household is not found
      * @throws UserNotFoundException If the user is not found inside given household
+     * @throws UserDoesNotBelongToHouseholdException If the user is not a member of the household
+     * @throws InvalidHouseholdMemberRoleException If the new user type is invalid
      */
     @PutMapping("/{id}/users")
     public ResponseEntity<HouseholdMember> updateHouseholdMemberRole(@PathVariable("id") long householdId,
