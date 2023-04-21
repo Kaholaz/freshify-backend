@@ -177,6 +177,28 @@ paths:
           description: successful operation
         '401':
           description: User could not be logged out
+  /household:
+    post:
+      tags:
+        - household
+      summary: Create a household
+      description: Creates a household
+      operationId: createHousehold
+      requestBody:
+        description: The household to be created
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Household'
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Household'
+        '409':
+          description: Household already exists
   /household/{id}/users:
     get:
       tags:
@@ -300,6 +322,27 @@ paths:
         '401':
           description: Access denied
   /household/{id}:
+    delete:
+      tags:
+        - household
+      summary: Delete a household
+      description: Deletes a household. Can only be done by superusers.
+      operationId: deleteHousehold
+      parameters:
+        - name: id
+          in: path
+          description: ID of household to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: successful operation
+        '404':
+          description: Household not found
+        '401':
+          description: Access denied
     get:
       tags:
         - household
