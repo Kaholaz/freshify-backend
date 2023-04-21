@@ -538,6 +538,8 @@ paths:
                 $ref: '#/components/schemas/InventoryItems'
         '401':
           description: Unauthorized response, user is not validated or does not have access
+        '404':
+          description: Household not found/User not found/Item type not found
     get:
       tags:
        - inventory
@@ -563,6 +565,8 @@ paths:
                   $ref: '#/components/schemas/Item'
         '401':
           description: Unauthorized
+        '404':
+          description: Household not found
     put:
       tags:
         - inventory
