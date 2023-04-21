@@ -2,6 +2,7 @@ package no.freshify.api.controller;
 
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.HouseholdNotFoundException;
+import no.freshify.api.exception.ItemNotFoundException;
 import no.freshify.api.exception.ItemTypeNotFoundException;
 import no.freshify.api.exception.UserNotFoundException;
 import no.freshify.api.model.Household;
@@ -93,5 +94,17 @@ public class InventoryController {
         }
         logger.info("Returning household inventory items");
         return ResponseEntity.ok(inventoryItems);
+    }
+
+    @DeleteMapping("/{id}/inventory/{itemId}")
+    public ResponseEntity<String> deleteInventoryItem(@PathVariable("id") long householdId, @PathVariable("itemId") long itemId) throws HouseholdNotFoundException, ItemNotFoundException {
+        logger.info("Deleting inventory item with id: " + itemId);
+        Household household = householdService.findHouseholdByHouseholdId(householdId);
+        Item item = itemService.getItemByIdAndHousehold(itemId, household);
+
+        itemService.deleteItemById(item.getId());
+        logger.info("Deleted inventory item with id: " + itemId);
+
+        return ResponseEntity.ok("Deleted inventory item with id: " + itemId);
     }
 }
