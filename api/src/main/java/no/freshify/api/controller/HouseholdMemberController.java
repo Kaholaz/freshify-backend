@@ -3,11 +3,14 @@ package no.freshify.api.controller;
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.*;
 import no.freshify.api.model.*;
+import no.freshify.api.model.dto.HouseholdMemberDTO;
 import no.freshify.api.model.dto.UserTypeRequest;
+import no.freshify.api.model.mapper.HouseholdMemberMapper;
 import no.freshify.api.repository.HouseholdMemberRepository;
 import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.UserService;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +28,7 @@ public class HouseholdMemberController {
     private final HouseholdMemberService householdMemberService;
     private final HouseholdService householdService;
     private final UserService userService;
-    private final HouseholdMemberRepository householdMemberRepository;
+    private final HouseholdMemberMapper householdMemberMapper = Mappers.getMapper(HouseholdMemberMapper.class);
 
     private final Logger logger = LoggerFactory.getLogger(HouseholdMemberController.class);
 
@@ -71,8 +74,8 @@ public class HouseholdMemberController {
      * @throws InvalidHouseholdMemberRoleException If the new user role is invalid
      */
     @PutMapping("/{id}/users")
-    public ResponseEntity<HouseholdMember> updateHouseholdMemberRole(@PathVariable("id") long householdId,
-                                                          @RequestBody UserTypeRequest userTypeRequest)
+    public ResponseEntity<HouseholdMemberDTO> updateHouseholdMemberRole(@PathVariable("id") long householdId,
+                                                                        @RequestBody UserTypeRequest userTypeRequest)
             throws HouseholdNotFoundException, UserNotFoundException, UserDoesNotBelongToHouseholdException, InvalidHouseholdMemberRoleException {
         logger.info("Updating user type");
         Household household = householdService.findHouseholdByHouseholdId(householdId);
@@ -82,15 +85,15 @@ public class HouseholdMemberController {
 
         HouseholdMember userInHousehold = householdMemberService.getHouseholdMemberByHouseholdMemberKey(householdMemberKey);
 
-        HouseholdMemberRole newRole;
         try {
-            newRole = HouseholdMemberRole.valueOf(userTypeRequest.getUserType());
+            userInHousehold.setRole(HouseholdMemberRole.valueOf(userTypeRequest.getUserType()));
         } catch (IllegalArgumentException e) {
             logger.warn("Invalid role: " + userTypeRequest.getUserType());
             throw new InvalidHouseholdMemberRoleException();
         }
 
-        userInHousehold.setRole(newRole);
-        return ResponseEntity.ok(householdMemberRepository.save(userInHousehold));
+        householdMemberService.updateHouseholdMember(userInHousehold);
+
+        return ResponseEntity.ok(householdMemberMapper.toHouseholdMemberDTO(userInHousehold));
     }
 }
