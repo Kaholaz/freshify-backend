@@ -102,6 +102,7 @@ public class InventoryController {
      * @return A message indicating that the item was deleted
      * @throws HouseholdNotFoundException If the household is not found
      * @throws ItemNotFoundException If the item is not found
+     * @throws ItemDoesNotBelongToHouseholdException If the item does not belong to the household
      */
     @DeleteMapping("/{id}/inventory/{itemId}")
     public ResponseEntity<String> deleteInventoryItem(@PathVariable("id") long householdId, @PathVariable("itemId") long itemId) throws HouseholdNotFoundException, ItemNotFoundException, ItemDoesNotBelongToHouseholdException {
