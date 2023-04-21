@@ -16,6 +16,7 @@ import no.freshify.api.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class InventoryController {
      * @throws HouseholdNotFoundException If the household is not found
      * @throws ItemTypeNotFoundException If the item type is not found
      */
+    @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER')")
     @PostMapping("/{id}/inventory")
     public ResponseEntity<List<InventoryItem>> addInventoryItem(@PathVariable("id") long householdId, @RequestBody List<Map<String, Object>> requestBody) throws UserNotFoundException, HouseholdNotFoundException, ItemTypeNotFoundException {
         User user = userService.getUserById(1L);//TODO: Get user from token, using default id 1 for now
@@ -82,6 +84,7 @@ public class InventoryController {
      * @return A list of inventory items
      * @throws HouseholdNotFoundException If the household is not found
      */
+    @PreAuthorize("hasPermission(#id, 'Household', '')")
     @GetMapping("/{id}/inventory")
     public ResponseEntity<List<InventoryItem>> getInventoryItems(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
         logger.info("Getting inventory items for household with id: " + householdId);
@@ -107,6 +110,7 @@ public class InventoryController {
      * @throws ItemNotFoundException If the item is not found
      * @throws ItemDoesNotBelongToHouseholdException If the item does not belong to the household
      */
+    @PreAuthorize("hasPermission(#id, 'Household', 'SUPERUSER')")
     @DeleteMapping("/{id}/inventory/{itemId}")
     public ResponseEntity<String> deleteInventoryItem(@PathVariable("id") long householdId, @PathVariable("itemId") long itemId) throws HouseholdNotFoundException, ItemNotFoundException, ItemDoesNotBelongToHouseholdException {
         logger.info("Deleting inventory item with id: " + itemId);
@@ -131,6 +135,7 @@ public class InventoryController {
      * @throws IllegalItemStatusException If the item status is invalid
      * @throws IllegalItemParameterException If the item "remaining" field value is higher than 1 or lower than 0
      */
+    @PreAuthorize("hasPermission(#id, 'Household', 'SUPERUSER')")
     @PutMapping("/{id}/inventory")
     public ResponseEntity<String> updateInventoryItem(@PathVariable("id") long householdId, @RequestBody Map<String, Object> requestBody) throws HouseholdNotFoundException, IllegalItemStatusException, ItemDoesNotBelongToHouseholdException, IllegalItemParameterException, ItemNotFoundException {
         logger.info("Updating inventory item with id: " + requestBody.get("id"));
