@@ -12,6 +12,7 @@ import no.freshify.api.model.mapper.UserMapper;
 import no.freshify.api.model.mapper.UserMapperImpl;
 import no.freshify.api.security.AuthenticationService;
 import no.freshify.api.security.CookieFactory;
+import no.freshify.api.security.UserDetailsImpl;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,28 +58,33 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userMapper.toUserFull(userFromDb));
     }
 
-    //TODO Remember to add authentication logic and verify/enforce proper access privileges before processing request
     /**
      * Gets a user by id
-     * @param id The id of the user to find
+     * @param userId The id of the user to find
      * @return The found user
      * @throws UserNotFoundException If the user is not found
      */
+    //TODO Discuss the need for authentication logic for differentiating between admin and normal user
+    // normal users can only access their own data, admins should be able to access all data
+    // For now the userId parameter variable is redundant since we don't have admins
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public UserFull getUserById(@PathVariable long id) throws UserNotFoundException {
-        User user = userService.getUserById(id);
+    public UserFull getUserById(@PathVariable long userId, @AuthenticationPrincipal UserDetailsImpl userDetails) throws UserNotFoundException {
+        User user = userService.getUserById(userDetails.getId());
         return userMapper.toUserFull(user);
     }
 
-    //TODO Remember to add authentication logic and verify/enforce proper access privileges before processing request
     /**
      * Gets the households that a given user is part of
      * @param userId The user to find households from
      * @return A list of found households
      */
+    //TODO Discuss the need for authentication logic for differentiating between admin and normal user
+    // normal users can only access their own data, admins should be able to access all data
+    // For now the userId path variable parameter is redundant since we don't have admins
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}/households")
-    public ResponseEntity<List<Household>> getHouseholds(@PathVariable("id") long userId) throws UserNotFoundException {
-        return ResponseEntity.ok(householdService.getHouseholds(userId));
+    public ResponseEntity<List<Household>> getHouseholds(@PathVariable("id") long userId, @AuthenticationPrincipal UserDetailsImpl userDetails) throws UserNotFoundException {
+        return ResponseEntity.ok(householdService.getHouseholds(userDetails.getId()));
     }
 }
