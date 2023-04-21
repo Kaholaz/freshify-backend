@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: let API - OpenAPI 3.0
+  title: Freshify API Documentation
   description: |-
     An API for creating and managing a household inventory and shopping list.
     The API is written in Java using the Spring Boot framework. The API uses a
@@ -15,7 +15,7 @@ info:
     url: 'https://opensource.org/licenses/MIT'
   version: 1.0.0
 servers:
-  - url: https://localhost:8080/
+  - url: http://localhost:8080
 tags:
   - name: account
     description: Operations about account
@@ -504,33 +504,38 @@ paths:
       tags:
         - inventory
       summary: Add item to inventory
-      description: Adds a selected itemtype to inventory using the itemtype id
+      description: Takes a list of entries, each entry contains an item type id and count. This way multiple items can be added.
       operationId: addInventoryItem
       parameters:
         - name: id
           in: path
-          description: ID of household's inventory to add items to
+          description: ID of the household to add items to.
           required: true
           schema:
             type: integer
             format: int64
       requestBody:
-        description: Item to be added to inventory
+        description: List of items to be added to inventory
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                itemTypeId:
-                  type: integer
-                  format: int64
+              type: array
+              items:
+                type: object
+                properties:
+                  itemTypeId:
+                    type: integer
+                    format: int64
+                  count:
+                    type: integer
+                    format: int64
       responses:
         '201':
-          description: Successful operation
+          description: Returns a list of the newly added items.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Item'
+                $ref: '#/components/schemas/InventoryItems'
         '401':
           description: Unauthorized response, user is not validated or does not have access
     get:
@@ -791,6 +796,29 @@ components:
           $ref: '#/components/schemas/ItemType'
         addedBy:
           $ref: '#/components/schemas/UserFull'
+    InventoryItems:
+      type: array
+      items:
+          properties:
+            id:
+              type: integer
+              example: 123
+            state:
+              $ref: '#/components/schemas/ItemState' 
+            remaining:
+              type: number
+              format: double
+              example: 1
+            bought:
+              type: string
+              format: date
+              example: "2020-01-01"
+            suggested:
+              type: boolean
+            type:
+              $ref: '#/components/schemas/ItemType'
+            addedBy:
+              $ref: '#/components/schemas/UserFull'
     HouseholdUserType:
       type: string
       enum:

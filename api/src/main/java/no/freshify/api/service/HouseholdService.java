@@ -22,7 +22,8 @@ public class HouseholdService {
     private final HouseholdRepository householdRepository;
     private final HouseholdMemberRepository householdMemberRepository;
     private final UserRepository userRepository;
-    Logger logger = LoggerFactory.getLogger(HouseholdService.class);
+
+    private final Logger logger = LoggerFactory.getLogger(HouseholdService.class);
 
     public List<User> getUsers(long householdId) throws HouseholdNotFoundException {
         logger.info("Getting users in household with id: " + householdId);
@@ -49,7 +50,12 @@ public class HouseholdService {
                 .toList();
     }
 
-    public Household findHouseholdByHouseholdId(Long householdId) {
-        return householdRepository.findHouseholdById(householdId);
+    public Household findHouseholdByHouseholdId(Long householdId) throws HouseholdNotFoundException {
+        Household household = householdRepository.findHouseholdById(householdId);
+        if (household == null) {
+            logger.info("Household not found");
+            throw new HouseholdNotFoundException();
+        }
+        return household;
     }
 }
