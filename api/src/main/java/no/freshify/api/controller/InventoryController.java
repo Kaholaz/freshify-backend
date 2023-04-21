@@ -73,4 +73,25 @@ public class InventoryController {
 
         return ResponseEntity.ok(inventoryItems);
     }
+
+    /**
+     * Gets the inventory items for a household
+     * @param householdId The id of the household to get the inventory items from
+     * @return A list of inventory items
+     * @throws HouseholdNotFoundException If the household is not found
+     */
+    @GetMapping("/{id}/inventory")
+    public ResponseEntity<List<InventoryItem>> getInventoryItems(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
+        logger.info("Getting inventory items for household with id: " + householdId);
+        Household household = householdService.findHouseholdByHouseholdId(householdId);
+
+        List<Item> items = itemService.getHouseholdItems(household);
+
+        ArrayList<InventoryItem> inventoryItems = new ArrayList<>();
+        for (Item item : items) {
+            inventoryItems.add(new InventoryItem(item));
+        }
+        logger.info("Returning household inventory items");
+        return ResponseEntity.ok(inventoryItems);
+    }
 }
