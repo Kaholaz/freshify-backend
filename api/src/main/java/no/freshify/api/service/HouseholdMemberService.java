@@ -40,7 +40,7 @@ public class HouseholdMemberService {
     }
 
     public void updateHouseholdMember(HouseholdMember householdMember) {
-        householdMemberRepository.saveAndFlush(householdMember);
+        householdMemberRepository.save(householdMember);
     }
 
     public List<HouseholdMember> getHouseHoldMembersByUserId(Long userId) {
