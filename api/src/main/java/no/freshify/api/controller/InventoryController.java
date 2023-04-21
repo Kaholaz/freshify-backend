@@ -7,6 +7,8 @@ import no.freshify.api.model.Item;
 import no.freshify.api.model.ItemStatus;
 import no.freshify.api.model.User;
 import no.freshify.api.model.dto.InventoryItem;
+import no.freshify.api.model.mapper.ItemMapper;
+import no.freshify.api.model.mapper.ItemMapperImpl;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.ItemService;
 import no.freshify.api.service.ItemTypeService;
@@ -28,6 +30,7 @@ public class InventoryController {
     private final UserService userService;
     private final ItemTypeService itemTypeService;
     private final ItemService itemService;
+    private final ItemMapper itemMapper = new ItemMapperImpl();
 
     Logger logger = LoggerFactory.getLogger(InventoryController.class);
 
@@ -63,7 +66,7 @@ public class InventoryController {
                 newItem.setStatus(ItemStatus.INVENTORY);
 
                 itemService.addItem(newItem);
-                inventoryItems.add(new InventoryItem(newItem));
+                inventoryItems.add(itemMapper.toItemDto(newItem));
             }
         }
 
@@ -88,7 +91,7 @@ public class InventoryController {
 
         ArrayList<InventoryItem> inventoryItems = new ArrayList<>();
         for (Item item : items) {
-            inventoryItems.add(new InventoryItem(item));
+            inventoryItems.add(itemMapper.toItemDto(item));
         }
         logger.info("Returning household inventory items");
         return ResponseEntity.ok(inventoryItems);

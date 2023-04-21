@@ -25,4 +25,12 @@ public class UserService {
 
         return user;
     }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+    public User createUser(User user) {
+        return userRepository.saveAndFlush(user);
+    }
 }
