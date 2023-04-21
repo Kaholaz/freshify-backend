@@ -44,9 +44,7 @@ public class HouseholdController {
      */
     @PostMapping()
     public ResponseEntity<Household> createHousehold(@RequestBody Household household) {
-        logger.info("Creating household");
-        Household savedHousehold = householdRepository.save(household);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedHousehold);
+        return householdService.addHousehold(household);
     }
 
     /**
@@ -57,13 +55,8 @@ public class HouseholdController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteHousehold(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
-        logger.info("Deleting household");
-        if (!householdRepository.existsById(householdId)) {
-            logger.warn("Household not found");
-            throw new HouseholdNotFoundException();
-        }
-        householdRepository.deleteById(householdId);
-        return ResponseEntity.noContent().build();
+        long idToDelete = householdService.findHouseholdByHouseholdId(householdId).getId();
+        return householdService.removeHousehold(idToDelete);
     }
 
     /**
