@@ -2,7 +2,6 @@ package no.freshify.api.model.mapper;
 
 import no.freshify.api.model.User;
 import no.freshify.api.model.dto.CreateUser;
-import no.freshify.api.model.dto.LoginUser;
 import no.freshify.api.model.dto.UserFull;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
