@@ -96,6 +96,14 @@ public class InventoryController {
         return ResponseEntity.ok(inventoryItems);
     }
 
+    /**
+     * Deletes an inventory item, checks as well that the resources exist and that the item belongs to the household
+     * @param householdId The id of the household to delete the item from
+     * @param itemId The id of the item to delete
+     * @return A message indicating that the item was deleted
+     * @throws HouseholdNotFoundException If the household is not found
+     * @throws ItemNotFoundException If the item is not found
+     */
     @DeleteMapping("/{id}/inventory/{itemId}")
     public ResponseEntity<String> deleteInventoryItem(@PathVariable("id") long householdId, @PathVariable("itemId") long itemId) throws HouseholdNotFoundException, ItemNotFoundException {
         logger.info("Deleting inventory item with id: " + itemId);
