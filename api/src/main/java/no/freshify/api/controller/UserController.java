@@ -23,6 +23,7 @@ public class UserController {
     private final UserService userService;
     private final HouseholdService householdService;
 
+    //TODO Remember to add authentication logic and verify/enforce proper access privileges before processing request
     /**
      * Gets a user by id
      * @param id The id of the user to find
@@ -36,6 +37,7 @@ public class UserController {
         return new UserFull(user);
     }
 
+    //TODO Remember to add authentication logic and verify/enforce proper access privileges before processing request
     /**
      * Gets the households that a given user is part of
      * @param userId The user to find households from
