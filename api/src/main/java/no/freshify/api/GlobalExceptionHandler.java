@@ -54,4 +54,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleUserDoesNotBelongToHouseholdException(UserDoesNotBelongToHouseholdException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+
+    @ExceptionHandler(InvalidHouseholdMemberRoleException.class)
+    public ResponseEntity<Object> handleInvalidHouseholdMemberRoleException(InvalidHouseholdMemberRoleException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }
