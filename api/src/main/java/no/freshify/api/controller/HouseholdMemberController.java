@@ -31,7 +31,15 @@ public class HouseholdMemberController {
     private final Logger logger = LoggerFactory.getLogger(HouseholdMemberController.class);
 
     //TODO Remember to add authentication logic and verify access privileges before processing request
-
+    /**
+     * Adds a user to a household
+     * @param id The id of the household to add the user to
+     * @param requestBody The request body containing the id of the user to add
+     * @return A response entity containing the result of the operation
+     * @throws UserNotFoundException If the user is not found
+     * @throws HouseholdNotFoundException If the household is not found
+     * @throws HouseholdMemberAlreadyExistsException If the user is already a member of the household
+     */
     @PostMapping("{id}/add")
     public ResponseEntity<String> addUser(@PathVariable Long id, @RequestBody Map<String, Long> requestBody) throws UserNotFoundException, HouseholdNotFoundException, HouseholdMemberAlreadyExistsException {
         Long userId = requestBody.get("userId");
