@@ -41,16 +41,7 @@ public class InventoryController {
 
         logger.info("Adding inventory items to household with id: " + householdId);
 
-        if (user == null) {
-            logger.info("User not found");
-            throw new UserNotFoundException();
-        }
-
         Household household = householdService.findHouseholdByHouseholdId(householdId);
-        if (household == null) {
-            logger.info("Household not found");
-            throw new HouseholdNotFoundException();
-        }
 
         ArrayList<InventoryItem> inventoryItems = new ArrayList<>();
         for (Map<String, Object> item : requestBody) {

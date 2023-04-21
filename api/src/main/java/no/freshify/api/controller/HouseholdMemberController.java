@@ -39,16 +39,8 @@ public class HouseholdMemberController {
         logger.info("Adding user with id: " + userId + " to household with id: " + id);
 
         User user = userService.getUserById(userId);
-        if (user == null) {
-            logger.warn("User not found");
-            throw new UserNotFoundException();
-        }
 
         Household household = householdService.findHouseholdByHouseholdId(id);
-        if (household == null) {
-            logger.warn("Household not found");
-            throw new HouseholdNotFoundException();
-        }
 
         HouseholdMember householdMember = new HouseholdMember();
         householdMember.setUser(user);
