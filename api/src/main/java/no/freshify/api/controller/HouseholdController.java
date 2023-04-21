@@ -14,6 +14,7 @@ import no.freshify.api.repository.UserRepository;
 import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.HouseholdService;
 
+import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -47,6 +48,23 @@ public class HouseholdController {
         logger.info("Creating household");
         Household savedHousehold = householdRepository.save(household);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedHousehold);
+    }
+
+    /**
+     * Deletes a household
+     * @param householdId The household to delete
+     * @return
+     * @throws HouseholdNotFoundException If the household was not found
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteHousehold(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
+        logger.info("Deleting household");
+        if (!householdRepository.existsById(householdId)) {
+            logger.warn("Household not found");
+            throw new HouseholdNotFoundException();
+        }
+        householdRepository.deleteById(householdId);
+        return ResponseEntity.noContent().build();
     }
 
     /**
