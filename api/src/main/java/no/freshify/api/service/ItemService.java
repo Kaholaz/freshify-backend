@@ -19,8 +19,8 @@ public class ItemService {
         return itemRepository.findItemsByHousehold(household);
     }
 
-    public Item getItemById(long id) throws ItemNotFoundException {
-        Item item = itemRepository.findById(id).orElse(null);
+    public Item getItemByIdAndHousehold(long id, Household household) throws ItemNotFoundException {
+        Item item = itemRepository.findByIdAndHousehold(id, household);
         if (item == null) {
             throw new ItemNotFoundException();
         }
@@ -28,9 +28,8 @@ public class ItemService {
         return item;
     }
 
-    public void deleteItemById(long id) throws ItemNotFoundException {
-        Item item = getItemById(id);
-        itemRepository.delete(item);
+    public void deleteItemById(long id) {
+        itemRepository.deleteById(id);
     }
 
     public void addItem(Item item) {
