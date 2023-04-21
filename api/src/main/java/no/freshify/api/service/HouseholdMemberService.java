@@ -35,7 +35,7 @@ public class HouseholdMemberService {
 
     public HouseholdMember getHouseholdMemberByHouseholdMemberKey(HouseholdMemberKey householdMemberKey) throws UserDoesNotBelongToHouseholdException {
         if (this.householdMemberExists(householdMemberKey)) {
-            return householdMemberRepository.findByHouseHoldMemberKey(householdMemberKey);
+            return householdMemberRepository.findById(householdMemberKey);
         }
 
         throw new UserDoesNotBelongToHouseholdException();
