@@ -61,14 +61,14 @@ public class HouseholdMemberController {
     }
 
     /**
-     * Updates the type of a given user within a given household.
-     * @param householdId The household where the user type is updated
-     * @param userTypeRequest The new user type
-     * @return HouseholdMember representing the new
+     * Updates the household member role of a given user within a given household.
+     * @param householdId The household where the user role is updated
+     * @param userTypeRequest The new user role
+     * @return HouseholdMember object with updated role
      * @throws HouseholdNotFoundException If the household is not found
      * @throws UserNotFoundException If the user is not found inside given household
      * @throws UserDoesNotBelongToHouseholdException If the user is not a member of the household
-     * @throws InvalidHouseholdMemberRoleException If the new user type is invalid
+     * @throws InvalidHouseholdMemberRoleException If the new user role is invalid
      */
     @PutMapping("/{id}/users")
     public ResponseEntity<HouseholdMember> updateHouseholdMemberRole(@PathVariable("id") long householdId,
