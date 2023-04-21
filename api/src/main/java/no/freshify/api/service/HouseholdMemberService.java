@@ -22,7 +22,7 @@ public class HouseholdMemberService {
             logger.warn("Household member already exists");
             throw new HouseholdMemberAlreadyExistsException();
         }
-        householdMemberRepository.saveAndFlush(householdMember);
+        householdMemberRepository.save(householdMember);
     }
 
     public boolean householdMemberExists(HouseholdMemberKey householdMemberKey) {
