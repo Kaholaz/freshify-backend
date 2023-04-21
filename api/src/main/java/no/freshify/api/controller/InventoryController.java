@@ -126,9 +126,10 @@ public class InventoryController {
      * @throws ItemNotFoundException If the item is not found
      * @throws ItemDoesNotBelongToHouseholdException If the item does not belong to the household
      * @throws IllegalItemStatusException If the item status is invalid
+     * @throws IllegalItemParameterException If the item "remaining" field value is higher than 1 or lower than 0
      */
     @PutMapping("/{id}/inventory")
-    public ResponseEntity<String> updateInventoryItem(@PathVariable("id") long householdId, @RequestBody Map<String, Object> requestBody) throws HouseholdNotFoundException, ItemNotFoundException, IllegalItemStatusException, ItemDoesNotBelongToHouseholdException {
+    public ResponseEntity<String> updateInventoryItem(@PathVariable("id") long householdId, @RequestBody Map<String, Object> requestBody) throws HouseholdNotFoundException, IllegalItemStatusException, ItemDoesNotBelongToHouseholdException, IllegalItemParameterException, ItemNotFoundException {
         logger.info("Updating inventory item with id: " + requestBody.get("id"));
         long itemId = Long.parseLong(requestBody.get("itemId").toString());
         double remaining = Float.parseFloat(requestBody.get("remaining").toString());
