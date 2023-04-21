@@ -236,7 +236,7 @@ paths:
         '401':
           description: Access denied
         '404':
-            description: Household not found
+            description: Household or user not found
     post:
       tags:
         - household
