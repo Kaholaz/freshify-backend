@@ -11,6 +11,8 @@ import no.freshify.api.repository.HouseholdRepository;
 import no.freshify.api.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -67,5 +69,22 @@ public class HouseholdService {
         } else {
             return household;
         }
+    }
+
+    public ResponseEntity<Household> addHousehold(Household household) {
+        logger.info("Creating household");
+        Household savedHousehold = householdRepository.save(household);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedHousehold);
+    }
+
+    public ResponseEntity<HttpStatus> removeHousehold(long householdId) throws HouseholdNotFoundException {
+        logger.info("Deleting household");
+        if (!householdRepository.existsById(householdId)) {
+            logger.warn("A household with given id does not exist");
+            throw new HouseholdNotFoundException();
+        }
+
+        householdRepository.deleteById(householdId);
+        return ResponseEntity.noContent().build();
     }
 }
