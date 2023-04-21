@@ -13,9 +13,8 @@ import no.freshify.api.service.UserService;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -32,25 +31,25 @@ public class HouseholdMemberController {
 
     private final Logger logger = LoggerFactory.getLogger(HouseholdMemberController.class);
 
-    //TODO Remember to add authentication logic and verify access privileges before processing request
     /**
      * Adds a user to a household
-     * @param id The id of the household to add the user to
+     * @param householdId The id of the household to add the user to
      * @param requestBody The request body containing the id of the user to add
      * @return A response entity containing the result of the operation
      * @throws UserNotFoundException If the user is not found
      * @throws HouseholdNotFoundException If the household is not found
      * @throws HouseholdMemberAlreadyExistsException If the user is already a member of the household
      */
+    @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER')")
     @PostMapping("{id}/add")
-    public ResponseEntity<String> addUser(@PathVariable Long id, @RequestBody Map<String, Long> requestBody) throws UserNotFoundException, HouseholdNotFoundException, HouseholdMemberAlreadyExistsException {
+    public ResponseEntity<String> addUser(@PathVariable("id") Long householdId, @RequestBody Map<String, Long> requestBody) throws UserNotFoundException, HouseholdNotFoundException, HouseholdMemberAlreadyExistsException {
         Long userId = requestBody.get("userId");
 
-        logger.info("Adding user with id: " + userId + " to household with id: " + id);
+        logger.info("Adding user with id: " + userId + " to household with id: " + householdId);
 
         User user = userService.getUserById(userId);
 
-        Household household = householdService.findHouseholdByHouseholdId(id);
+        Household household = householdService.findHouseholdByHouseholdId(householdId);
 
         HouseholdMember householdMember = new HouseholdMember();
         householdMember.setUser(user);
@@ -73,6 +72,7 @@ public class HouseholdMemberController {
      * @throws UserDoesNotBelongToHouseholdException If the user is not a member of the household
      * @throws InvalidHouseholdMemberRoleException If the new user role is invalid
      */
+    @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER')")
     @PutMapping("/{id}/users")
     public ResponseEntity<HouseholdMemberDTO> updateHouseholdMemberRole(@PathVariable("id") long householdId,
                                                                         @RequestBody UserTypeRequest userTypeRequest)
@@ -81,7 +81,9 @@ public class HouseholdMemberController {
         Household household = householdService.findHouseholdByHouseholdId(householdId);
         User user = userService.getUserById(userTypeRequest.getUserId());
 
-        HouseholdMemberKey householdMemberKey = new HouseholdMemberKey(user.getId(), household.getId());
+        HouseholdMemberKey householdMemberKey = new HouseholdMemberKey();
+        householdMemberKey.setHouseholdId(household.getId());
+        householdMemberKey.setUserId(user.getId());
 
         HouseholdMember userInHousehold = householdMemberService.getHouseholdMemberByHouseholdMemberKey(householdMemberKey);
 
