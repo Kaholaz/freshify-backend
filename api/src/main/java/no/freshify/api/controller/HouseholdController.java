@@ -6,6 +6,7 @@ import no.freshify.api.exception.InvalidHouseholdMemberRoleException;
 import no.freshify.api.exception.UserDoesNotBelongToHouseholdException;
 import no.freshify.api.exception.UserNotFoundException;
 import no.freshify.api.model.*;
+import no.freshify.api.model.dto.UserFull;
 import no.freshify.api.model.dto.UserTypeRequest;
 import no.freshify.api.repository.HouseholdMemberRepository;
 import no.freshify.api.repository.HouseholdRepository;
@@ -79,7 +80,7 @@ public class HouseholdController {
      * @return A list of users in the given household
      */
     @GetMapping("/{id}/users")
-    public ResponseEntity<List<User>> getUsers(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
+    public ResponseEntity<List<UserFull>> getUsers(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
         return ResponseEntity.ok(householdService.getUsers(householdId));
     }
 

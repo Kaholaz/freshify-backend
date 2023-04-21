@@ -6,6 +6,7 @@ import no.freshify.api.exception.UserNotFoundException;
 import no.freshify.api.model.Household;
 import no.freshify.api.model.HouseholdMember;
 import no.freshify.api.model.User;
+import no.freshify.api.model.dto.UserFull;
 import no.freshify.api.repository.HouseholdMemberRepository;
 import no.freshify.api.repository.HouseholdRepository;
 import no.freshify.api.repository.UserRepository;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,16 +29,22 @@ public class HouseholdService {
 
     private final Logger logger = LoggerFactory.getLogger(HouseholdService.class);
 
-    public List<User> getUsers(long householdId) throws HouseholdNotFoundException {
+    public List<UserFull> getUsers(long householdId) throws HouseholdNotFoundException {
         logger.info("Getting users in household with id: " + householdId);
         if (!householdRepository.existsById(householdId)) {
             logger.warn("Household with id " + householdId + " not found");
             throw new HouseholdNotFoundException();
         }
 
-        return householdMemberRepository.findHouseholdMembersByHouseholdId(householdId)
-                .stream()
-                .map(HouseholdMember::getUser).toList();
+        List<HouseholdMember> householdMembers = householdMemberRepository.findHouseholdMembersByHouseholdId(householdId);
+        List<UserFull> users = new ArrayList<>();
+        for (HouseholdMember householdMember : householdMembers) {
+            User user = householdMember.getUser();
+            UserFull userFull = new UserFull(user.getId(), user.getFirstName(), user.getEmail());
+            users.add(userFull);
+        }
+
+        return users;
     }
 
     public List<Household> getHouseholds(long userId) throws UserNotFoundException {

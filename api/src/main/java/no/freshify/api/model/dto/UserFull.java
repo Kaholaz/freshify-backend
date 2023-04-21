@@ -1,13 +1,13 @@
 package no.freshify.api.model.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import no.freshify.api.model.User;
+import lombok.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserFull {
-    private long id;
+    private Long id;
     private String firstName;
     private String email;
 }
