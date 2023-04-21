@@ -235,9 +235,9 @@ paths:
     put:
       tags:
         - household
-      summary: Update user type
-      description: Updates the type of a user in the household. Can only be done by a superuser
-      operationId: updateUserType
+      summary: Update household member role of user
+      description: Updates the role of a user withing a given household. Can only be done by a superuser
+      operationId: updateHouseholdMemberRole
       parameters:
         - name: id
           in: path
@@ -255,10 +255,12 @@ paths:
       responses:
         '200':
           description: successful operation
+        '400':
+          description: Illegal household member role/User does not belong to household
         '401':
           description: Access denied
         '404':
-            description: Household or user not found
+            description: Household not found/user not found
     post:
       tags:
         - household
