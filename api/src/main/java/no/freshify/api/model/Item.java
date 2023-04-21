@@ -3,6 +3,7 @@ package no.freshify.api.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import no.freshify.api.exception.IllegalItemParameterException;
 
 import java.util.Date;
 
@@ -34,6 +35,13 @@ public class Item {
 
     @ManyToOne
     private User addedBy;
+
+    public void setRemaining(Double remaining) throws IllegalItemParameterException {
+        if (remaining < 0 || remaining > 1) {
+            throw new IllegalItemParameterException("Remaining must be between 0 and 1");
+        }
+        this.remaining = remaining;
+    }
 
     /**
      * Updates the lastChanged field automatically both when created or updated.
