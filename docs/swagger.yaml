@@ -618,7 +618,7 @@ paths:
         '401':
           description: Unauthorized response, user is not validated or does not have access
         '404':
-          description: Item not found in inventory
+          description: Item not found/household not found
   /itemtype:
     get:
       tags:
