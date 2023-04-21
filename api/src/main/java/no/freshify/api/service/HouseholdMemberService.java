@@ -5,8 +5,6 @@ import no.freshify.api.exception.HouseholdMemberAlreadyExistsException;
 import no.freshify.api.exception.UserDoesNotBelongToHouseholdException;
 import no.freshify.api.model.HouseholdMember;
 import no.freshify.api.model.HouseholdMemberKey;
-import no.freshify.api.model.HouseholdMemberRole;
-import no.freshify.api.model.User;
 import no.freshify.api.repository.HouseholdMemberRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +37,10 @@ public class HouseholdMemberService {
         }
 
         throw new UserDoesNotBelongToHouseholdException();
+    }
+
+    public void updateHouseholdMember(HouseholdMember householdMember) {
+        householdMemberRepository.saveAndFlush(householdMember);
     }
 
     public List<HouseholdMember> getHouseHoldMembersByUserId(Long userId) {
