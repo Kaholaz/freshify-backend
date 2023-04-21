@@ -67,9 +67,6 @@ public class UserController {
     @GetMapping("/{id}")
     public UserFull getUserById(@PathVariable long id) throws UserNotFoundException {
         User user = userService.getUserById(id);
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
         return userMapper.toUserFull(user);
     }
 
