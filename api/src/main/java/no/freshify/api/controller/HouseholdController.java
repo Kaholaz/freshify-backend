@@ -1,10 +1,7 @@
 package no.freshify.api.controller;
 
 import lombok.RequiredArgsConstructor;
-import no.freshify.api.exception.HouseholdNotFoundException;
-import no.freshify.api.exception.InvalidHouseholdMemberRoleException;
-import no.freshify.api.exception.UserDoesNotBelongToHouseholdException;
-import no.freshify.api.exception.UserNotFoundException;
+import no.freshify.api.exception.*;
 import no.freshify.api.model.*;
 import no.freshify.api.model.dto.UserFull;
 import no.freshify.api.model.dto.UserTypeRequest;
@@ -16,10 +13,13 @@ import no.freshify.api.service.HouseholdService;
 
 import no.freshify.api.service.UserService;
 import org.apache.coyote.Response;
+import org.hibernate.usertype.UserType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.relation.InvalidRoleValueException;
@@ -39,13 +39,23 @@ public class HouseholdController {
 
 
     /**
-     * Creates a new household.
+     * Creates a new household. Sets the logged on user as a superuser in the new household
      * @param household The new household
      * @return The new household
      */
+    @PreAuthorize("#user == authentication.principal")
     @PostMapping()
-    public ResponseEntity<Household> createHousehold(@RequestBody Household household) {
-        return householdService.addHousehold(household);
+    public ResponseEntity<Household> createHousehold(@RequestBody Household household,
+                                                     @AuthenticationPrincipal User user)
+            throws HouseholdMemberAlreadyExistsException {
+        ResponseEntity<Household> response = householdService.addHousehold(household);
+
+        householdMemberService.addHouseholdMember(
+                new HouseholdMember(
+                        new HouseholdMemberKey(household.getId(), user.getId()),
+                        household, user, HouseholdMemberRole.SUPERUSER));
+
+        return response;
     }
 
     /**
