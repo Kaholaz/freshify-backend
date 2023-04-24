@@ -33,4 +33,8 @@ public class UserService {
     public User createUser(User user) {
         return userRepository.saveAndFlush(user);
     }
+
+    public User updateUser(User user) throws UserNotFoundException {
+        return userRepository.saveAndFlush(user);
+    }
 }
