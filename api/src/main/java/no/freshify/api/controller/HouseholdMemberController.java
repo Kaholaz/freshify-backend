@@ -98,4 +98,34 @@ public class HouseholdMemberController {
 
         return ResponseEntity.ok(householdMemberMapper.toHouseholdMemberDTO(userInHousehold));
     }
+
+    /**
+     * Removes a user from a household, if the user is a superuser they can remove other users from the household.
+     * If the user is not a superuser they can only remove themselves from the household.
+     * @param householdId The id of the household to remove the user from
+     * @param userId The id of the user to remove
+     * @return A response entity containing the result of the operation
+     * @throws HouseholdNotFoundException If the household is not found
+     * @throws UserNotFoundException If the user is not found
+     * @throws UserDoesNotBelongToHouseholdException If the user is not a member of the household
+     */
+    @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER') || #userId == authentication.principal.id")
+    @DeleteMapping("/{householdId}/users/{userId}")
+    public ResponseEntity<String> removeUserFromHousehold(@PathVariable("householdId") long householdId,
+                                                          @PathVariable("userId") long userId)
+            throws HouseholdNotFoundException, UserNotFoundException, UserDoesNotBelongToHouseholdException {
+        logger.info("Removing user with id: " + userId + " from household with id: " + householdId);
+        Household household = householdService.findHouseholdByHouseholdId(householdId);
+        User user = userService.getUserById(userId);
+
+        HouseholdMemberKey householdMemberKey = new HouseholdMemberKey();
+        householdMemberKey.setHouseholdId(household.getId());
+        householdMemberKey.setUserId(user.getId());
+
+        HouseholdMember userInHousehold = householdMemberService.getHouseholdMemberByHouseholdMemberKey(householdMemberKey);
+
+        householdMemberService.removeHouseholdMember(userInHousehold);
+
+        return ResponseEntity.ok("Operation successful");
+    }
 }
