@@ -109,4 +109,11 @@ public class UserController {
     public ResponseEntity<List<HouseholdDTO>> getHouseholds(@PathVariable("id") long userId, @AuthenticationPrincipal UserDetailsImpl userDetails) throws UserNotFoundException {
         return ResponseEntity.ok(householdMapper.toHouseholdDTO(householdService.getHouseholds(userDetails.getId())));
     }
+
+    @PreAuthorize("isAuthenticated() && (hasRole('ADMIN') || #userId == authentication.principal.id)")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteUser(@PathVariable("id") long userId, @AuthenticationPrincipal UserDetailsImpl userDetails) throws UserNotFoundException {
+        userService.deleteUser(userDetails.getId());
+        return ResponseEntity.status(HttpStatus.OK).body("User deleted");
+    }
 }
