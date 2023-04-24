@@ -44,7 +44,7 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
     public boolean hasPrivilege(Authentication auth, Long resourceId, String targetType, String permission) {
         return auth.getAuthorities().stream()
                 .anyMatch(
-                        a -> a.getAuthority().startsWith(targetType) && a.getAuthority().contains(resourceId + '_' + permission)
+                        a -> a.getAuthority().startsWith(targetType) && a.getAuthority().contains(resourceId + "_" + permission)
                 );
     }
 }

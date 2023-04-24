@@ -9,6 +9,7 @@ import no.freshify.api.model.HouseholdMember;
 import no.freshify.api.model.User;
 import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,8 +34,16 @@ public class AuthenticationService {
     public static final TemporalAmount TOKEN_DURATION = ChronoUnit.MINUTES.getDuration().multipliedBy(10); // 10 minutes
     private final UserService userService;
     private final HouseholdMemberService householdMemberService;
-    private final Key signingKey =
-            Keys.hmacShaKeyFor("sdfghjgfghjawgyfvg wayvgbwvb agvwv wuyvwavhwaui vhwtvgwaiuv gwaiuvgwaoivg".getBytes());
+    @Value("${jwt.secret}")
+    private String secret;
+    private Key signingKey = null;
+
+    private Key getSigningKey() {
+        if (signingKey == null) {
+            signingKey = Keys.hmacShaKeyFor(secret.getBytes());
+        }
+        return signingKey;
+    }
 
     /**
      * Get the current user
@@ -57,7 +66,7 @@ public class AuthenticationService {
                 .setClaims(claims.getClaims())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(signingKey, SignatureAlgorithm.HS256)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -95,16 +104,6 @@ public class AuthenticationService {
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
-    /**
-     * Check if a token is valid
-     *
-     * @param token The jwtoken
-     * @return True if the token is non-expired and valid
-     */
-    public boolean validateToken(String token) {
-        return getExpirationDate(token).after(new Date());
-    }
-
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getClaims(token);
         return claimsResolver.apply(claims);
@@ -112,7 +111,7 @@ public class AuthenticationService {
 
     private Claims getClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(signingKey)
+                .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -125,17 +124,5 @@ public class AuthenticationService {
         UserDetails userDetails = new UserDetailsImpl(user, householdRelations);
 
         return new UserAuthentication(userDetails);
-    }
-
-    /**
-     * Get the currently logged-in user
-     *
-     * @return The currently logged-in user
-     */
-    public User getLoggedInUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) return null;
-        String email = auth.getName();
-        return this.userService.getUserByEmail(email);
     }
 }

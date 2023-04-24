@@ -3,23 +3,27 @@ package no.freshify.api.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.UserNotFoundException;
-import no.freshify.api.model.Household;
 import no.freshify.api.model.User;
 import no.freshify.api.model.dto.CreateUser;
+import no.freshify.api.model.dto.HouseholdDTO;
 import no.freshify.api.model.dto.LoginUser;
 import no.freshify.api.model.dto.UserFull;
+import no.freshify.api.model.mapper.HouseholdMapper;
 import no.freshify.api.model.mapper.UserMapper;
 import no.freshify.api.model.mapper.UserMapperImpl;
 import no.freshify.api.security.AuthenticationService;
 import no.freshify.api.security.CookieFactory;
+import no.freshify.api.security.UserDetailsImpl;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.UserService;
+import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +37,8 @@ public class UserController {
     private final UserMapper userMapper = new UserMapperImpl();
     private final AuthenticationManager authenticationManager;
     private final AuthenticationService authenticationService;
+    private final HouseholdMapper householdMapper = Mappers.getMapper(HouseholdMapper.class);
+
 
     @PostMapping
     public ResponseEntity<Object> createUser(@RequestBody CreateUser user) {
@@ -56,31 +62,27 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userMapper.toUserFull(userFromDb));
     }
 
-    //TODO Remember to add authentication logic and verify/enforce proper access privileges before processing request
     /**
-     * Gets a user by id
-     * @param id The id of the user to find
+     * Gets a user by id, admins can access everyone while users are restricted to themselves
+     * @param userId The id of the user to find
      * @return The found user
      * @throws UserNotFoundException If the user is not found
      */
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() && (hasRole('ADMIN') || #userId == authentication.principal.id)")
     @GetMapping("/{id}")
-    public UserFull getUserById(@PathVariable long id) throws UserNotFoundException {
-        User user = userService.getUserById(id);
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
+    public UserFull getUserById(@PathVariable("id") long userId, @AuthenticationPrincipal UserDetailsImpl userDetails) throws UserNotFoundException {
+        User user = userService.getUserById(userDetails.getId());
         return userMapper.toUserFull(user);
     }
 
-    //TODO Remember to add authentication logic and verify/enforce proper access privileges before processing request
     /**
-     * Gets the households that a given user is part of
+     * Gets the households that a given user is part of, admins can access everything while users are restricted to themselves
      * @param userId The user to find households from
      * @return A list of found households
      */
+    @PreAuthorize("isAuthenticated() && (hasRole('ADMIN') || #userId == authentication.principal.id)")
     @GetMapping("/{id}/households")
-    public ResponseEntity<List<Household>> getHouseholds(@PathVariable("id") long userId) throws UserNotFoundException {
-        return ResponseEntity.ok(householdService.getHouseholds(userId));
+    public ResponseEntity<List<HouseholdDTO>> getHouseholds(@PathVariable("id") long userId, @AuthenticationPrincipal UserDetailsImpl userDetails) throws UserNotFoundException {
+        return ResponseEntity.ok(householdMapper.toHouseholdDTO(householdService.getHouseholds(userDetails.getId())));
     }
 }

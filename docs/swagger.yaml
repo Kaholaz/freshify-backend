@@ -235,9 +235,9 @@ paths:
     put:
       tags:
         - household
-      summary: Update user type
-      description: Updates the type of a user in the household. Can only be done by a superuser
-      operationId: updateUserType
+      summary: Update household member role of user
+      description: Updates the role of a user withing a given household. Can only be done by a superuser
+      operationId: updateHouseholdMemberRole
       parameters:
         - name: id
           in: path
@@ -254,11 +254,16 @@ paths:
               $ref: "#/components/schemas/UpdateHouseholdUserType"
       responses:
         '200':
-          description: successful operation
+          description: The updated household member
+          content:
+            schema:
+              $ref: '#/components/schemas/HouseholdMember'
+        '400':
+          description: Illegal household member role/User does not belong to household
         '401':
           description: Access denied
         '404':
-            description: Household or user not found
+            description: Household not found/user not found
     post:
       tags:
         - household
@@ -318,7 +323,7 @@ paths:
         '204':
           description: successful operation
         '404':
-          description: User not found in the household
+          description: User not found/Household not found/User does not belong to household
         '401':
           description: Access denied
   /household/{id}:
@@ -668,30 +673,62 @@ paths:
           description: Unauthorized response, user is not validated or does not have access
         '404':
           description: Item not found/household not found
+  /household/{id}/inventory/suggest:
+    post:
+      tags:
+        - inventory
+      summary: Add suggestion to inventory
+      description: Takes a list of entries, each entry contains an item type id and count. These item types are added as suggestions to the inventory.
+      operationId: addInventorySuggestion
+      parameters:
+        - name: id
+          in: path
+          description: ID of the household to add items to.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: List of suggestions to be added to inventory
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  itemTypeId:
+                    type: integer
+                    format: int64
+                  count:
+                    type: integer
+                    format: int64
+      responses:
+        '201':
+          description: Returns a list of the newly added suggestions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItems'
+        '401':
+          description: Unauthorized response, user is not validated or does not have access
+        '404':
+          description: Household not found/User not found/Item type not found
   /itemtype:
     get:
       tags:
         - item type
-      summary: Search through item types
-      operationId: searchItemTypes
-      parameters:
-        - name: name
-          in: query
-          description: Search string to find item types by name
-          required: true
-          schema:
-            type: string
+      summary: Get all item types
+      operationId: getAllItemTypes
       responses:
         200:
-          description: Item types found
+          description: Successful operation returns a list of all item types
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/ItemType'
-        404:
-          description: Item types not found
 components:
   schemas:
     CreateUser:
@@ -879,6 +916,24 @@ components:
         userId:
           type: integer
           example: 123
+        type:
+          $ref: '#/components/schemas/HouseholdUserType'
+    HouseholdMemberKey:
+      type: object
+      properties:
+        householdId:
+          type: integer
+          example: 1
+        userId:
+          type: integer
+          example: 1
+    HouseholdMember:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/HouseholdMemberKey'
+        user:
+          $ref: '#/components/schemas/UserFull'
         type:
           $ref: '#/components/schemas/HouseholdUserType'
     Household:

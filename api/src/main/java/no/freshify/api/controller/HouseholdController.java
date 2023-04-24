@@ -36,8 +36,6 @@ public class HouseholdController {
 
     private final Logger logger = LoggerFactory.getLogger(HouseholdController.class);
     private final HouseholdRepository householdRepository;
-    private final HouseholdMemberRepository householdMemberRepository;
-    private final UserRepository userRepository;
 
 
     /**
@@ -105,37 +103,5 @@ public class HouseholdController {
             logger.warn("Household not found");
             throw new HouseholdNotFoundException();
         }
-    }
-
-    /**
-     * Updates the type of a given user within a given household.
-     * @param householdId The household where the user type is updated
-     * @param userTypeRequest The new user type
-     * @return HouseholdMember representing the new
-     * @throws HouseholdNotFoundException If the household is not found
-     * @throws UserNotFoundException If the user is not found inside given household
-     */
-    @PutMapping("/{id}/users")
-    public ResponseEntity<HouseholdMember> updateUserType(@PathVariable("id") long householdId,
-                                                          @RequestBody UserTypeRequest userTypeRequest)
-            throws HouseholdNotFoundException, UserNotFoundException, InvalidRoleValueException, UserDoesNotBelongToHouseholdException, InvalidHouseholdMemberRoleException {
-        logger.info("Updating user type");
-        Household household = householdService.findHouseholdByHouseholdId(householdId);
-        User user = userService.getUserById(userTypeRequest.getUserId());
-
-        HouseholdMemberKey householdMemberKey = new HouseholdMemberKey(user.getId(), household.getId());
-
-        HouseholdMember userInHousehold = householdMemberService.getHouseholdMemberByHouseholdMemberKey(householdMemberKey);
-
-        HouseholdMemberRole newRole;
-        try {
-            newRole = HouseholdMemberRole.valueOf(userTypeRequest.getUserType());
-        } catch (IllegalArgumentException e) {
-            logger.warn("Invalid role: " + userTypeRequest.getUserType());
-            throw new InvalidHouseholdMemberRoleException();
-        }
-
-        userInHousehold.setRole(newRole);
-        return ResponseEntity.ok(householdMemberRepository.save(userInHousehold));
     }
 }
