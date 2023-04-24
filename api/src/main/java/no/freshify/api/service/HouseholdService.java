@@ -81,10 +81,10 @@ public class HouseholdService {
         }
     }
 
-    public ResponseEntity<Household> addHousehold(Household household) {
+    public Household addHousehold(Household household) {
         logger.info("Creating household");
         Household savedHousehold = householdRepository.save(household);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedHousehold);
+        return savedHousehold;
     }
 
     public ResponseEntity<HttpStatus> removeHousehold(long householdId) throws HouseholdNotFoundException {
@@ -96,5 +96,10 @@ public class HouseholdService {
 
         householdRepository.deleteById(householdId);
         return ResponseEntity.noContent().build();
+    }
+
+    public void updateHousehold(Household household) {
+        logger.info("Updating household");
+        householdRepository.save(household);
     }
 }
