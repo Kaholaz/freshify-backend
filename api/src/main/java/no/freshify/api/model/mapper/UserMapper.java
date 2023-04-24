@@ -2,6 +2,7 @@ package no.freshify.api.model.mapper;
 
 import no.freshify.api.model.User;
 import no.freshify.api.model.dto.CreateUser;
+import no.freshify.api.model.dto.UpdateUser;
 import no.freshify.api.model.dto.UserFull;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -26,4 +27,6 @@ public abstract class UserMapper {
     public abstract User fromCreateUser(CreateUser user);
 
     public abstract UserFull toUserFull(User user);
+
+    public abstract User toUser (UpdateUser user);
 }
