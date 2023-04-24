@@ -47,4 +47,8 @@ public class HouseholdMemberService {
     public List<HouseholdMember> getHouseHoldMembersByUserId(Long userId) {
         return householdMemberRepository.findHouseholdMembersByUserId(userId);
     }
+
+    public void removeHouseholdMember(HouseholdMember householdMember) {
+        householdMemberRepository.delete(householdMember);
+    }
 }
