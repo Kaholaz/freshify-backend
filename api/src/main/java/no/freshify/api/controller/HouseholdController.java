@@ -4,10 +4,6 @@ import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.*;
 import no.freshify.api.model.*;
 import no.freshify.api.model.dto.UserFull;
-import no.freshify.api.model.dto.UserTypeRequest;
-import no.freshify.api.repository.HouseholdMemberRepository;
-import no.freshify.api.repository.HouseholdRepository;
-import no.freshify.api.repository.UserRepository;
 import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.HouseholdService;
 
@@ -32,10 +28,8 @@ import java.util.Optional;
 public class HouseholdController {
     private final HouseholdService householdService;
     private final HouseholdMemberService householdMemberService;
-    private final UserService userService;
 
     private final Logger logger = LoggerFactory.getLogger(HouseholdController.class);
-    private final HouseholdRepository householdRepository;
 
 
     /**
@@ -59,11 +53,12 @@ public class HouseholdController {
     }
 
     /**
-     * Deletes a household
+     * Deletes a household. Can only be done by a superuser.
      * @param householdId The household to delete
      * @return
      * @throws HouseholdNotFoundException If the household was not found
      */
+    @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteHousehold(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
         long idToDelete = householdService.findHouseholdByHouseholdId(householdId).getId();
@@ -94,12 +89,13 @@ public class HouseholdController {
 
 
     /**
-     * Updates the attributes of a given household.
+     * Updates the attributes of a given household. Can only be done by superuser
      * @param householdId The id of the household to update
      * @param household The new household
      * @return Household representing updated version
      * @throws HouseholdNotFoundException If household was not found
      */
+    @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER')")
     @PutMapping("/{id}")
     public ResponseEntity<Household> updateHousehold(@PathVariable("id") long householdId, @RequestBody Household household)
             throws HouseholdNotFoundException {
