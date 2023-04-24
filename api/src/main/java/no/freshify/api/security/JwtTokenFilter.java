@@ -51,16 +51,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             Arrays.stream(cookies)
                     .filter(cookie -> cookie.getName().equals("Authorization"))
                     .findFirst().ifPresent(cookie -> {
-                        if (!authenticationService.validateToken(cookie.getValue())) return;
-                        try {
-                            SecurityContextHolder.getContext().setAuthentication(authenticationService.getAuthentication(cookie.getValue()));
-                            response.addCookie(CookieFactory.getAuthorizationCookie(authenticationService.renewToken(cookie.getValue())));
-                        } catch (Exception e) {
-                            SecurityContextHolder.clearContext();
-                        }
+                        SecurityContextHolder.getContext()
+                                .setAuthentication(authenticationService.getAuthentication(cookie.getValue()));
+                        response.addCookie(
+                                CookieFactory.getAuthorizationCookie(
+                                        authenticationService.renewToken(cookie.getValue())
+                                )
+                        );
                     });
-        } else {
-            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);
