@@ -103,15 +103,10 @@ public class HouseholdController {
     @PutMapping("/{id}")
     public ResponseEntity<Household> updateHousehold(@PathVariable("id") long householdId, @RequestBody Household household)
             throws HouseholdNotFoundException {
-        Optional<Household> householdData = householdRepository.findById(householdId);
+        Household _household = householdService.findHouseholdByHouseholdId(householdId);
 
-        if (householdData.isPresent()) {
-            Household _household = householdData.get();
-            _household.setName(household.getName());
-            return ResponseEntity.ok(householdRepository.save(_household));
-        } else {
-            logger.warn("Household not found");
-            throw new HouseholdNotFoundException();
-        }
+        _household.setName(_household.getName());
+
+        return householdService.addHousehold(_household);
     }
 }
