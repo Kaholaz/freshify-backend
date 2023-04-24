@@ -3,11 +3,12 @@ package no.freshify.api.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.UserNotFoundException;
-import no.freshify.api.model.Household;
 import no.freshify.api.model.User;
 import no.freshify.api.model.dto.CreateUser;
+import no.freshify.api.model.dto.HouseholdDTO;
 import no.freshify.api.model.dto.LoginUser;
 import no.freshify.api.model.dto.UserFull;
+import no.freshify.api.model.mapper.HouseholdMapper;
 import no.freshify.api.model.mapper.UserMapper;
 import no.freshify.api.model.mapper.UserMapperImpl;
 import no.freshify.api.security.AuthenticationService;
@@ -15,6 +16,7 @@ import no.freshify.api.security.CookieFactory;
 import no.freshify.api.security.UserDetailsImpl;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.UserService;
+import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,6 +37,8 @@ public class UserController {
     private final UserMapper userMapper = new UserMapperImpl();
     private final AuthenticationManager authenticationManager;
     private final AuthenticationService authenticationService;
+    private final HouseholdMapper householdMapper = Mappers.getMapper(HouseholdMapper.class);
+
 
     @PostMapping
     public ResponseEntity<Object> createUser(@RequestBody CreateUser user) {
@@ -78,7 +82,7 @@ public class UserController {
      */
     @PreAuthorize("isAuthenticated() && (hasRole('ADMIN') || #userId == authentication.principal.id)")
     @GetMapping("/{id}/households")
-    public ResponseEntity<List<Household>> getHouseholds(@PathVariable("id") long userId, @AuthenticationPrincipal UserDetailsImpl userDetails) throws UserNotFoundException {
-        return ResponseEntity.ok(householdService.getHouseholds(userDetails.getId()));
+    public ResponseEntity<List<HouseholdDTO>> getHouseholds(@PathVariable("id") long userId, @AuthenticationPrincipal UserDetailsImpl userDetails) throws UserNotFoundException {
+        return ResponseEntity.ok(householdMapper.toHouseholdDTO(householdService.getHouseholds(userDetails.getId())));
     }
 }
