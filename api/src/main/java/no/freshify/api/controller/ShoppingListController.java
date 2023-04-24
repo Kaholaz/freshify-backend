@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,9 +49,11 @@ public class ShoppingListController {
      * @throws ShoppingListEntryAlreadyExistsException If the shopping list entry already exists in the shopping list
      */
     //TODO: legg til 'addedBy' i shoppingListEntry
+    @PreAuthorize("#user == authentication.principal")
     @PostMapping
     public ResponseEntity<ShoppingListEntry> addItem(@PathVariable("id") long householdId,
-                                                       @RequestBody ShoppingListEntryRequest requestBody)
+                                                     @RequestBody ShoppingListEntryRequest requestBody,
+                                                     @AuthenticationPrincipal User user)
             throws HouseholdNotFoundException, ItemTypeNotFoundException, ShoppingListEntryAlreadyExistsException {
 
         // Find the household by ID
@@ -61,6 +65,7 @@ public class ShoppingListController {
         shoppingListEntry.setCount(requestBody.getCount());
         shoppingListEntry.setSuggested(requestBody.getSuggested());
         shoppingListEntry.setHousehold(household);
+        shoppingListEntry.setAddedBy(user);
 
         // Add the new ShoppingListEntry to the household's shopping list
         shoppingListEntryService.addItem(shoppingListEntry);

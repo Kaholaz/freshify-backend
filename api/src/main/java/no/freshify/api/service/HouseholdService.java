@@ -1,11 +1,11 @@
 package no.freshify.api.service;
 
+import jakarta.persistence.*;
 import lombok.RequiredArgsConstructor;
+import no.freshify.api.exception.HouseholdMemberAlreadyExistsException;
 import no.freshify.api.exception.HouseholdNotFoundException;
 import no.freshify.api.exception.UserNotFoundException;
-import no.freshify.api.model.Household;
-import no.freshify.api.model.HouseholdMember;
-import no.freshify.api.model.User;
+import no.freshify.api.model.*;
 import no.freshify.api.model.dto.UserFull;
 import no.freshify.api.repository.HouseholdMemberRepository;
 import no.freshify.api.repository.HouseholdRepository;
@@ -22,6 +22,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class HouseholdService {
+
+    private final HouseholdMemberService householdMemberService;
 
     private final HouseholdRepository householdRepository;
     private final HouseholdMemberRepository householdMemberRepository;

@@ -49,7 +49,10 @@ public class TestAuthenticationService {
         var member = new HouseholdMember();
         member.setId(memberKey);
         member.setRole(HouseholdMemberRole.SUPERUSER);
-        member.setHousehold(new Household(1L, "Test"));
+        Household newHousehold = new Household();
+        newHousehold.setId(1L);
+        newHousehold.setName("Test");
+        member.setHousehold(newHousehold);
 
         householdMembers = List.of(member);
         authentication = new UserAuthentication(new UserDetailsImpl(user, householdMembers));

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -18,4 +20,13 @@ public class Household {
 
     @Column
     private String name;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "household")
+    private Set<HouseholdMember> householdMembers;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "household")
+    private Set<Item> items;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "household")
+    private Set<ShoppingListEntry> shoppingLists;
 }
