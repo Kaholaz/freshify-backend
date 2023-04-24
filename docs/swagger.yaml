@@ -508,8 +508,8 @@ paths:
       responses:
         '200':
           description: Successful operation
-        '400':
-          description: Invalid operation. More items are removed than in shopping list.
+        '404':
+          description: Shopping list or shopping list entry not found.
         '401':
           description: Unauthorized response, user is not validated or does not have access
   /household/{id}/shoppinglist/buy:
