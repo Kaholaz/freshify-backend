@@ -10,6 +10,7 @@ import no.freshify.api.model.dto.ShoppingListEntryResponse;
 import no.freshify.api.model.mapper.HouseholdMapper;
 import no.freshify.api.model.mapper.ShoppingListEntryMapper;
 import no.freshify.api.repository.ShoppingListEntryRepository;
+import no.freshify.api.security.AuthenticationService;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.ItemTypeService;
 import no.freshify.api.service.ShoppingListEntryService;
@@ -33,6 +34,7 @@ public class ShoppingListController {
     private final HouseholdService householdService;
     private final ShoppingListEntryService shoppingListEntryService;
     private final ItemTypeService itemTypeService;
+    private final AuthenticationService authenticationService;
 
     private final Logger logger = LoggerFactory.getLogger(InventoryController.class);
     private final ShoppingListEntryRepository shoppingListEntryRepository;
@@ -48,15 +50,11 @@ public class ShoppingListController {
      * @throws ItemTypeNotFoundException If the item type was not found
      * @throws ShoppingListEntryAlreadyExistsException If the shopping list entry already exists in the shopping list
      */
-    //TODO: legg til 'addedBy' i shoppingListEntry
-    @PreAuthorize("#user == authentication.principal")
     @PostMapping
     public ResponseEntity<ShoppingListEntry> addItem(@PathVariable("id") long householdId,
-                                                     @RequestBody ShoppingListEntryRequest requestBody,
-                                                     @AuthenticationPrincipal User user)
+                                                     @RequestBody ShoppingListEntryRequest requestBody)
             throws HouseholdNotFoundException, ItemTypeNotFoundException, ShoppingListEntryAlreadyExistsException {
-
-        // Find the household by ID
+        User loggedInUser = authenticationService.getLoggedInUser();
         Household household = householdService.findHouseholdByHouseholdId(householdId);
 
         // Create a new ShoppingListEntry object
@@ -64,8 +62,10 @@ public class ShoppingListController {
         shoppingListEntry.setType(itemTypeService.getItemTypeById(requestBody.getItemTypeId()));
         shoppingListEntry.setCount(requestBody.getCount());
         shoppingListEntry.setSuggested(requestBody.getSuggested());
+
+        //TODO: These crash the program, not sure why
         shoppingListEntry.setHousehold(household);
-        shoppingListEntry.setAddedBy(user);
+        shoppingListEntry.setAddedBy(loggedInUser);
 
         // Add the new ShoppingListEntry to the household's shopping list
         shoppingListEntryService.addItem(shoppingListEntry);
@@ -83,6 +83,7 @@ public class ShoppingListController {
      * in the given household's shopping list
      * @throws HouseholdNotFoundException If the given household was not found
      */
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{listEntryId}")
     public ResponseEntity<HttpStatus> deleteShoppingListEntry(@PathVariable("id") long householdId,
                                                               @PathVariable("listEntryId") long listEntryId)
