@@ -5,10 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.UserNotFoundException;
 import no.freshify.api.model.User;
-import no.freshify.api.model.dto.CreateUser;
-import no.freshify.api.model.dto.HouseholdDTO;
-import no.freshify.api.model.dto.LoginUser;
-import no.freshify.api.model.dto.UserFull;
+import no.freshify.api.model.dto.*;
 import no.freshify.api.model.mapper.HouseholdMapper;
 import no.freshify.api.model.mapper.UserMapper;
 import no.freshify.api.model.mapper.UserMapperImpl;
@@ -25,6 +22,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +36,7 @@ public class UserController {
     private final UserMapper userMapper = new UserMapperImpl();
     private final AuthenticationManager authenticationManager;
     private final AuthenticationService authenticationService;
+    private final PasswordEncoder passwordEncoder;
     private final HouseholdMapper householdMapper = Mappers.getMapper(HouseholdMapper.class);
 
 
@@ -53,6 +52,22 @@ public class UserController {
         cookie.setMaxAge(0);
         response.addCookie(cookie);
         return ResponseEntity.status(HttpStatus.OK).body("Logged out");
+    }
+
+    @PreAuthorize("isAuthenticated() && (hasRole('ADMIN') || #updateRequest.id == authentication.principal.id)")
+    @PutMapping
+    public ResponseEntity<UserFull> updateUser(@RequestBody UpdateUser updateRequest) throws UserNotFoundException {
+        User user = userService.getUserById(updateRequest.getId());
+        user.setFirstName(updateRequest.getFirstName());
+        user.setEmail(updateRequest.getEmail());
+
+        if (!updateRequest.getPassword().equals("") && updateRequest.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
+        }
+
+        userService.updateUser(user);
+
+        return ResponseEntity.status(HttpStatus.OK).body(userMapper.toUserFull(user));
     }
 
     @PostMapping("/login")
