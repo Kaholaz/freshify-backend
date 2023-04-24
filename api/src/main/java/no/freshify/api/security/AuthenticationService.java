@@ -104,16 +104,6 @@ public class AuthenticationService {
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
-    /**
-     * Check if a token is valid
-     *
-     * @param token The jwtoken
-     * @return True if the token is non-expired and valid
-     */
-    public boolean validateToken(String token) {
-        return getExpirationDate(token).after(new Date());
-    }
-
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getClaims(token);
         return claimsResolver.apply(claims);
@@ -134,17 +124,5 @@ public class AuthenticationService {
         UserDetails userDetails = new UserDetailsImpl(user, householdRelations);
 
         return new UserAuthentication(userDetails);
-    }
-
-    /**
-     * Get the currently logged-in user
-     *
-     * @return The currently logged-in user
-     */
-    public User getLoggedInUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) return null;
-        String email = auth.getName();
-        return this.userService.getUserByEmail(email);
     }
 }
