@@ -34,7 +34,13 @@ public class UserService {
         return userRepository.saveAndFlush(user);
     }
 
-    public User updateUser(User user) throws UserNotFoundException {
+    public User updateUser(User user) {
         return userRepository.saveAndFlush(user);
+    }
+
+    public User deleteUser(long id) throws UserNotFoundException {
+        User user = this.getUserById(id);
+        userRepository.deleteById(id);
+        return user;
     }
 }
