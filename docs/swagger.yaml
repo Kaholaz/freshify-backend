@@ -719,17 +719,26 @@ paths:
     get:
       tags:
         - item type
-      summary: Get all item types
-      operationId: getAllItemTypes
+      summary: Search through item types
+      operationId: searchItemTypes
+      parameters:
+        - name: name
+          in: query
+          description: Search string to find item types by name
+          required: true
+          schema:
+            type: string
       responses:
         200:
-          description: Successful operation returns a list of all item types
+          description: Item types found
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/ItemType'
+        404:
+          description: Item types not found
 components:
   schemas:
     CreateUser:
