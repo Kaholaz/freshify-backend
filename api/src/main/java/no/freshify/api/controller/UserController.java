@@ -59,30 +59,24 @@ public class UserController {
     }
 
     /**
-     * Gets a user by id
+     * Gets a user by id, admins can access everyone while users are restricted to themselves
      * @param userId The id of the user to find
      * @return The found user
      * @throws UserNotFoundException If the user is not found
      */
-    //TODO Discuss the need for authentication logic for differentiating between admin and normal user
-    // normal users can only access their own data, admins should be able to access all data
-    // For now the userId parameter variable is redundant since we don't have admins
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() && (hasRole('ADMIN') || #userId == authentication.principal.id)")
     @GetMapping("/{id}")
-    public UserFull getUserById(@PathVariable long userId, @AuthenticationPrincipal UserDetailsImpl userDetails) throws UserNotFoundException {
+    public UserFull getUserById(@PathVariable("id") long userId, @AuthenticationPrincipal UserDetailsImpl userDetails) throws UserNotFoundException {
         User user = userService.getUserById(userDetails.getId());
         return userMapper.toUserFull(user);
     }
 
     /**
-     * Gets the households that a given user is part of
+     * Gets the households that a given user is part of, admins can access everything while users are restricted to themselves
      * @param userId The user to find households from
      * @return A list of found households
      */
-    //TODO Discuss the need for authentication logic for differentiating between admin and normal user
-    // normal users can only access their own data, admins should be able to access all data
-    // For now the userId path variable parameter is redundant since we don't have admins
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() && (hasRole('ADMIN') || #userId == authentication.principal.id)")
     @GetMapping("/{id}/households")
     public ResponseEntity<List<Household>> getHouseholds(@PathVariable("id") long userId, @AuthenticationPrincipal UserDetailsImpl userDetails) throws UserNotFoundException {
         return ResponseEntity.ok(householdService.getHouseholds(userDetails.getId()));
