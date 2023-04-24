@@ -256,8 +256,9 @@ paths:
         '200':
           description: The updated household member
           content:
-            schema:
-              $ref: '#/components/schemas/HouseholdMember'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HouseholdMember'
         '400':
           description: Illegal household member role/User does not belong to household
         '401':
@@ -895,7 +896,11 @@ components:
               type: number
               format: double
               example: 1
-            bought:
+            lastChanged:
+              type: string
+              format: date
+              example: "2020-01-01"
+            addedDate:
               type: string
               format: date
               example: "2020-01-01"

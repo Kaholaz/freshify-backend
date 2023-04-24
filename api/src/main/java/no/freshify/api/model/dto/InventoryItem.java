@@ -12,6 +12,7 @@ import java.util.Date;
 public class InventoryItem {
     private Long id;
     private Date lastChanged;
+    private Date addedDate;
     private Double remaining = 1.0;
     private Boolean suggested = false;
     private ItemStatus status;

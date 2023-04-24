@@ -58,7 +58,7 @@ public class InventoryController {
         ArrayList<InventoryItem> inventoryItems = new ArrayList<>();
         for (Map<String, Object> item : requestBody) {
             long itemTypeId = Long.parseLong(item.get("itemTypeId").toString());
-            int count = (int) item.get("count");
+            long count = Long.parseLong(item.get("count").toString());
 
             for (int i = 0; i < count; i++) {
                 Item newItem = new Item();

@@ -19,6 +19,9 @@ public class Item {
     private Date lastChanged;
 
     @Column(nullable = false)
+    private Date addedDate;
+
+    @Column(nullable = false)
     private Double remaining = 1.0;
 
     @Column(nullable = false)
@@ -44,9 +47,17 @@ public class Item {
     }
 
     /**
-     * Updates the lastChanged field automatically both when created or updated.
+     * Sets addedDate and lastChanged date automatically when created.
      */
     @PrePersist
+    public void setAddedDate() {
+        this.addedDate = new Date();
+        this.lastChanged = this.addedDate;
+    }
+
+    /**
+     * Updates the lastChanged field automatically when updated.
+     */
     @PreUpdate
     public void updateLastChanged() {
         this.lastChanged = new Date();
