@@ -673,6 +673,47 @@ paths:
           description: Unauthorized response, user is not validated or does not have access
         '404':
           description: Item not found/household not found
+  /household/{id}/inventory/suggest:
+    post:
+      tags:
+        - inventory
+      summary: Add suggestion to inventory
+      description: Takes a list of entries, each entry contains an item type id and count. These item types are added as suggestions to the inventory.
+      operationId: addInventorySuggestion
+      parameters:
+        - name: id
+          in: path
+          description: ID of the household to add items to.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: List of suggestions to be added to inventory
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  itemTypeId:
+                    type: integer
+                    format: int64
+                  count:
+                    type: integer
+                    format: int64
+      responses:
+        '201':
+          description: Returns a list of the newly added suggestions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItems'
+        '401':
+          description: Unauthorized response, user is not validated or does not have access
+        '404':
+          description: Household not found/User not found/Item type not found
   /itemtype:
     get:
       tags:
