@@ -1,18 +1,22 @@
 package no.freshify.api.controller;
 
 import lombok.RequiredArgsConstructor;
-import no.freshify.api.exception.HouseholdNotFoundException;
-import no.freshify.api.exception.ItemTypeNotFoundException;
-import no.freshify.api.exception.ShoppingListEntryAlreadyExistsException;
+import no.freshify.api.exception.*;
 import no.freshify.api.model.*;
+import no.freshify.api.model.dto.ShoppingListEntryEditRequest;
 import no.freshify.api.model.dto.ShoppingListEntryRequest;
+import no.freshify.api.model.dto.ShoppingListEntryResponse;
+import no.freshify.api.repository.ShoppingListEntryRepository;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.ItemTypeService;
-import no.freshify.api.service.ShoppingListService;
+import no.freshify.api.service.ShoppingListEntryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/household/{id}/shoppinglist")
@@ -20,10 +24,11 @@ import org.springframework.web.bind.annotation.*;
 public class ShoppingListController {
 
     private final HouseholdService householdService;
-    private final ShoppingListService shoppingListService;
+    private final ShoppingListEntryService shoppingListEntryService;
     private final ItemTypeService itemTypeService;
 
     private final Logger logger = LoggerFactory.getLogger(InventoryController.class);
+    private final ShoppingListEntryRepository shoppingListEntryRepository;
 
 
     /**
@@ -36,7 +41,7 @@ public class ShoppingListController {
      * @throws ShoppingListEntryAlreadyExistsException If the shopping list entry already exists in the shopping list
      */
     //TODO: legg til 'addedBy' i shoppingListEntry
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<ShoppingListEntry> addItem(@PathVariable("id") long householdId,
                                                        @RequestBody ShoppingListEntryRequest requestBody)
             throws HouseholdNotFoundException, ItemTypeNotFoundException, ShoppingListEntryAlreadyExistsException {
@@ -52,9 +57,56 @@ public class ShoppingListController {
         shoppingListEntry.setHousehold(household);
 
         // Add the new ShoppingListEntry to the household's shopping list
-        shoppingListService.addItem(shoppingListEntry);
+        shoppingListEntryService.addItem(shoppingListEntry);
 
         // Return the updated shopping list
         return ResponseEntity.ok(shoppingListEntry);
     }
+
+    /**
+     * Updates an entry in a shopping list which belongs to given household.
+     * @param householdId The household whose shopping list to edit an item in
+     * @param requestBody The new shopping list item
+     * @return
+     * @throws InvalidItemCountException If the new item count is invalid
+     * @throws HouseholdNotFoundException If the household is not found
+     * @throws ItemTypeNotFoundException If the new item type is invalid
+     */
+    @PutMapping
+    public ResponseEntity<ShoppingListEntry> updateShoppingListEntry(@PathVariable("id") long householdId,
+                                                                     @RequestBody ShoppingListEntryEditRequest requestBody) throws InvalidItemCountException, HouseholdNotFoundException, ItemTypeNotFoundException, ShoppingListEntryNotFoundException {
+        Household household = householdService.findHouseholdByHouseholdId(householdId);
+
+        ShoppingListEntry updatedEntry = new ShoppingListEntry();
+        updatedEntry.setId(shoppingListEntryService.findShoppingListEntryByItemType(householdId, requestBody.getId()).getId());
+        updatedEntry.setType(itemTypeService.getItemTypeById(requestBody.getId()));
+        updatedEntry.setCount(requestBody.getCount());
+        updatedEntry.setSuggested(requestBody.getSuggested());
+        updatedEntry.setChecked(requestBody.getChecked());
+        updatedEntry.setHousehold(household);
+
+        shoppingListEntryService.updateShoppingListEntry(updatedEntry);
+
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Gets the shopping list items of a given household
+     * @param householdId The household to get shopping list items from
+     * @return A list of shopping list items belonging to the household
+     * @throws HouseholdNotFoundException If the household is not found
+     */
+    @GetMapping
+    public ResponseEntity<List<ShoppingListEntryResponse>> getShoppingList(@PathVariable("id") long householdId)
+            throws HouseholdNotFoundException {
+
+        List<ShoppingListEntry> entries = shoppingListEntryService.getShoppingList(householdId);
+
+        List<ShoppingListEntryResponse> responseObjects = entries.stream()
+                .map(o -> new ShoppingListEntryResponse(o.getId(), o.getCount(), o.getSuggested(), o.getChecked(), o.getAddedBy(), o.getType()))
+                .toList();
+
+        return ResponseEntity.ok(responseObjects);
+    }
+
 }
