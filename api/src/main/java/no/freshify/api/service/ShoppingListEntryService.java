@@ -77,4 +77,35 @@ public class ShoppingListEntryService {
 
         return shoppingListEntryRepository.findByHouseholdId(householdId);
     }
+
+    public ShoppingListEntry findShoppingListEntryById(long listEntryId) throws ShoppingListEntryNotFoundException {
+        logger.info("Getting shopping list entry");
+
+        Optional<ShoppingListEntry> found = shoppingListEntryRepository.findById(listEntryId);
+
+        if (found.isPresent()) {
+            return found.get();
+        } else {
+            logger.warn("Shopping list entry not found");
+            throw new ShoppingListEntryNotFoundException();
+        }
+    }
+
+    public void deleteShoppingListEntryById(long householdId, long listEntryId)
+            throws ShoppingListEntryNotFoundException, HouseholdNotFoundException {
+        logger.info("Deleting a shopping list entry");
+
+        List<ShoppingListEntry> shoppingListEntries = getShoppingList(householdId);
+
+        Optional<ShoppingListEntry> entry = shoppingListEntries.stream()
+                .filter(o -> o.getId() == listEntryId)
+                .findFirst();
+
+        if (entry.isPresent()) {
+            shoppingListEntryRepository.deleteById(listEntryId);
+        } else {
+            logger.warn("Shopping list entry not found");
+            throw new ShoppingListEntryNotFoundException();
+        }
+    }
 }
