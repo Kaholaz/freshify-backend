@@ -323,7 +323,7 @@ paths:
         '204':
           description: successful operation
         '404':
-          description: User not found in the household
+          description: User not found/Household not found/User does not belong to household
         '401':
           description: Access denied
   /household/{id}:
