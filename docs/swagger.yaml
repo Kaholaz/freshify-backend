@@ -508,8 +508,8 @@ paths:
       responses:
         '200':
           description: Successful operation
-        '400':
-          description: Invalid operation. More items are removed than in shopping list.
+        '404':
+          description: Shopping list or shopping list entry not found.
         '401':
           description: Unauthorized response, user is not validated or does not have access
   /household/{id}/shoppinglist/buy:
@@ -719,17 +719,26 @@ paths:
     get:
       tags:
         - item type
-      summary: Get all item types
-      operationId: getAllItemTypes
+      summary: Search through item types
+      operationId: searchItemTypes
+      parameters:
+        - name: name
+          in: query
+          description: Search string to find item types by name
+          required: true
+          schema:
+            type: string
       responses:
         200:
-          description: Successful operation returns a list of all item types
+          description: All ItemTypes that match the search string
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/ItemType'
+        404:
+          description: No item types found
 components:
   schemas:
     CreateUser:
