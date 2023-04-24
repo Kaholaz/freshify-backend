@@ -1,5 +1,6 @@
 package no.freshify.api.controller;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.UserNotFoundException;
@@ -44,6 +45,14 @@ public class UserController {
     public ResponseEntity<Object> createUser(@RequestBody CreateUser user) {
         userService.createUser(userMapper.fromCreateUser(user));
         return ResponseEntity.status(HttpStatus.CREATED).body("User created");
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Object> logout(HttpServletResponse response) {
+        Cookie cookie = CookieFactory.getAuthorizationCookie("");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return ResponseEntity.status(HttpStatus.OK).body("Logged out");
     }
 
     @PostMapping("/login")
