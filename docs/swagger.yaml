@@ -895,7 +895,11 @@ components:
               type: number
               format: double
               example: 1
-            bought:
+            lastChanged:
+              type: string
+              format: date
+              example: "2020-01-01"
+            addedDate:
               type: string
               format: date
               example: "2020-01-01"
