@@ -2,6 +2,7 @@ package no.freshify.api.service;
 
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.ItemTypeNotFoundException;
+import no.freshify.api.exception.ItemTypesNotFoundException;
 import no.freshify.api.model.ItemType;
 import no.freshify.api.repository.ItemTypeRepository;
 import org.slf4j.Logger;
@@ -28,5 +29,13 @@ public class ItemTypeService {
 
     public List<ItemType> getAllItemTypes() {
         return itemTypeRepository.findAll();
+    }
+
+    public List<ItemType> searchItemTypes(String name) throws ItemTypesNotFoundException {
+        var items = itemTypeRepository.searchItemTypeByName(name);
+        if (items.isEmpty()) {
+            throw new ItemTypesNotFoundException();
+        }
+        return itemTypeRepository.searchItemTypeByName(name);
     }
 }
