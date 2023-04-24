@@ -256,8 +256,9 @@ paths:
         '200':
           description: The updated household member
           content:
-            schema:
-              $ref: '#/components/schemas/HouseholdMember'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HouseholdMember'
         '400':
           description: Illegal household member role/User does not belong to household
         '401':
