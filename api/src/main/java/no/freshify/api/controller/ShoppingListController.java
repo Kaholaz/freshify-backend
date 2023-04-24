@@ -7,10 +7,13 @@ import no.freshify.api.model.*;
 import no.freshify.api.model.dto.ShoppingListEntryEditRequest;
 import no.freshify.api.model.dto.ShoppingListEntryRequest;
 import no.freshify.api.model.dto.ShoppingListEntryResponse;
+import no.freshify.api.model.mapper.HouseholdMapper;
+import no.freshify.api.model.mapper.ShoppingListEntryMapper;
 import no.freshify.api.repository.ShoppingListEntryRepository;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.ItemTypeService;
 import no.freshify.api.service.ShoppingListEntryService;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -31,6 +34,7 @@ public class ShoppingListController {
 
     private final Logger logger = LoggerFactory.getLogger(InventoryController.class);
     private final ShoppingListEntryRepository shoppingListEntryRepository;
+    private final ShoppingListEntryMapper shoppingListEntryMapper = Mappers.getMapper(ShoppingListEntryMapper.class);
 
 
     /**
@@ -93,7 +97,8 @@ public class ShoppingListController {
      */
     @PutMapping
     public ResponseEntity<HttpStatus> updateShoppingListEntry(@PathVariable("id") long householdId,
-                                                                @RequestBody ShoppingListEntryEditRequest requestBody) throws InvalidItemCountException, HouseholdNotFoundException, ItemTypeNotFoundException, ShoppingListEntryNotFoundException {
+                                                                @RequestBody ShoppingListEntryEditRequest requestBody)
+            throws InvalidItemCountException, HouseholdNotFoundException, ItemTypeNotFoundException, ShoppingListEntryNotFoundException {
         Household household = householdService.findHouseholdByHouseholdId(householdId);
 
         ShoppingListEntry updatedEntry = new ShoppingListEntry();
@@ -120,10 +125,7 @@ public class ShoppingListController {
             throws HouseholdNotFoundException {
 
         List<ShoppingListEntry> entries = shoppingListEntryService.getShoppingList(householdId);
-
-        List<ShoppingListEntryResponse> responseObjects = entries.stream()
-                .map(o -> new ShoppingListEntryResponse(o.getId(), o.getCount(), o.getSuggested(), o.getChecked(), o.getAddedBy(), o.getType()))
-                .toList();
+        List<ShoppingListEntryResponse> responseObjects = shoppingListEntryMapper.toShoppingListEntryResponse(entries);
 
         return ResponseEntity.ok(responseObjects);
     }
