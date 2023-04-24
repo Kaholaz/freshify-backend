@@ -156,4 +156,45 @@ public class InventoryController {
         logger.info("Updated inventory item with id: " + itemId);
         return ResponseEntity.ok("Updated inventory item with id: " + itemId);
     }
+
+    /**
+     * Adds inventory item suggestion to the inventory of a given household
+     * @param householdId The id of the household
+     * @param requestBody A list of objects each containing the itemTypeId and count of the item to suggest
+     * @return A list of the added inventory suggestions
+     * @throws UserNotFoundException If the user is not found
+     * @throws HouseholdNotFoundException If the household is not found
+     * @throws ItemTypeNotFoundException If the item type is not found
+     */
+    @PreAuthorize("hasPermission(#householdId, 'Household', '')")
+    @PostMapping("/{id}/inventory/suggest")
+    public ResponseEntity<List<InventoryItem>> addInventorySuggestion(@PathVariable("id") long householdId, @RequestBody List<Map<String, Object>> requestBody, @AuthenticationPrincipal UserDetailsImpl userDetails) throws UserNotFoundException, HouseholdNotFoundException, ItemTypeNotFoundException {
+        User user = userService.getUserById(userDetails.getId());
+
+        logger.info("Adding suggestions to inventory of household with id: " + householdId);
+
+        Household household = householdService.findHouseholdByHouseholdId(householdId);
+
+        ArrayList<InventoryItem> inventoryItems = new ArrayList<>();
+        for (Map<String, Object> item : requestBody) {
+            long itemTypeId = Long.parseLong(item.get("itemTypeId").toString());
+            int count = (int) item.get("count");
+
+            for (int i = 0; i < count; i++) {
+                Item newItem = new Item();
+                newItem.setSuggested(true);
+                newItem.setHousehold(household);
+                newItem.setAddedBy(user);
+                newItem.setType(itemTypeService.getItemTypeById(itemTypeId));
+                newItem.setStatus(ItemStatus.INVENTORY);
+
+                itemService.addItem(newItem);
+                inventoryItems.add(itemMapper.toItemDto(newItem));
+            }
+        }
+
+        logger.info("Added suggestion to inventory");
+
+        return ResponseEntity.ok(inventoryItems);
+    }
 }
