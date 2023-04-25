@@ -9,7 +9,10 @@ import no.freshify.api.model.dto.ShoppingListEntryRequest;
 import no.freshify.api.model.dto.ShoppingListEntryResponse;
 import no.freshify.api.model.mapper.HouseholdMapper;
 import no.freshify.api.model.mapper.ShoppingListEntryMapper;
+import no.freshify.api.repository.HouseholdRepository;
 import no.freshify.api.repository.ShoppingListEntryRepository;
+import no.freshify.api.repository.UserRepository;
+import no.freshify.api.security.AuthenticationService;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.ItemTypeService;
 import no.freshify.api.service.ShoppingListEntryService;
@@ -18,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,11 +36,14 @@ public class ShoppingListController {
     private final HouseholdService householdService;
     private final ShoppingListEntryService shoppingListEntryService;
     private final ItemTypeService itemTypeService;
+    private final AuthenticationService authenticationService;
 
     private final Logger logger = LoggerFactory.getLogger(InventoryController.class);
     private final ShoppingListEntryRepository shoppingListEntryRepository;
     private final ShoppingListEntryMapper shoppingListEntryMapper = Mappers.getMapper(ShoppingListEntryMapper.class);
 
+    private final HouseholdRepository householdRepository;
+    private final UserRepository userRepository;
 
     /**
      * Adds an item to the given household's shopping list
@@ -46,27 +54,29 @@ public class ShoppingListController {
      * @throws ItemTypeNotFoundException If the item type was not found
      * @throws ShoppingListEntryAlreadyExistsException If the shopping list entry already exists in the shopping list
      */
-    //TODO: legg til 'addedBy' i shoppingListEntry
     @PostMapping
-    public ResponseEntity<ShoppingListEntry> addItem(@PathVariable("id") long householdId,
-                                                       @RequestBody ShoppingListEntryRequest requestBody)
-            throws HouseholdNotFoundException, ItemTypeNotFoundException, ShoppingListEntryAlreadyExistsException {
-
-        // Find the household by ID
-        Household household = householdService.findHouseholdByHouseholdId(householdId);
+    public ResponseEntity<ShoppingListEntryResponse> addItem(@PathVariable("id") long householdId,
+                                                     @RequestBody ShoppingListEntryRequest requestBody)
+            throws ItemTypeNotFoundException, ShoppingListEntryAlreadyExistsException {
+        User loggedInUser = authenticationService.getLoggedInUser();
 
         // Create a new ShoppingListEntry object
         ShoppingListEntry shoppingListEntry = new ShoppingListEntry();
         shoppingListEntry.setType(itemTypeService.getItemTypeById(requestBody.getItemTypeId()));
         shoppingListEntry.setCount(requestBody.getCount());
         shoppingListEntry.setSuggested(requestBody.getSuggested());
-        shoppingListEntry.setHousehold(household);
+
+        Household householdRef = householdRepository.getReferenceById(householdId);
+        User userRef = userRepository.getReferenceById(loggedInUser.getId());
+
+        shoppingListEntry.setHousehold(householdRef);
+        shoppingListEntry.setAddedBy(userRef);
 
         // Add the new ShoppingListEntry to the household's shopping list
         shoppingListEntryService.addItem(shoppingListEntry);
 
         // Return the updated shopping list
-        return ResponseEntity.ok(shoppingListEntry);
+        return ResponseEntity.ok(shoppingListEntryMapper.toShoppingListEntryResponse(shoppingListEntry));
     }
 
     /**
@@ -78,6 +88,7 @@ public class ShoppingListController {
      * in the given household's shopping list
      * @throws HouseholdNotFoundException If the given household was not found
      */
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{listEntryId}")
     public ResponseEntity<HttpStatus> deleteShoppingListEntry(@PathVariable("id") long householdId,
                                                               @PathVariable("listEntryId") long listEntryId)

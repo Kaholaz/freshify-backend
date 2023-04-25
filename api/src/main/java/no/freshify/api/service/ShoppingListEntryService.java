@@ -29,7 +29,8 @@ public class ShoppingListEntryService {
 
     public void addItem(ShoppingListEntry shoppingListEntry) throws ShoppingListEntryAlreadyExistsException {
         logger.info("Adding item to shopping list");
-        if (shoppingListEntryRepository.existsById(shoppingListEntry.getId())) {
+        if (shoppingListEntry.getId() != null &&
+                shoppingListEntryRepository.existsById(shoppingListEntry.getId())) {
             logger.warn("Shopping list entry already exists in the shopping list");
             throw new ShoppingListEntryAlreadyExistsException();
         }

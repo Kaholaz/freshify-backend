@@ -1,30 +1,36 @@
 package no.freshify.api.controller;
 
 import lombok.RequiredArgsConstructor;
-import no.freshify.api.exception.HouseholdNotFoundException;
-import no.freshify.api.exception.InvalidHouseholdMemberRoleException;
-import no.freshify.api.exception.UserDoesNotBelongToHouseholdException;
-import no.freshify.api.exception.UserNotFoundException;
+import no.freshify.api.exception.*;
 import no.freshify.api.model.*;
+import no.freshify.api.model.dto.CreateHousehold;
+import no.freshify.api.model.dto.HouseholdDTO;
 import no.freshify.api.model.dto.UserFull;
-import no.freshify.api.model.dto.UserTypeRequest;
-import no.freshify.api.repository.HouseholdMemberRepository;
-import no.freshify.api.repository.HouseholdRepository;
-import no.freshify.api.repository.UserRepository;
+import no.freshify.api.model.mapper.HouseholdMapper;
+import no.freshify.api.model.mapper.HouseholdMemberMapper;
+import no.freshify.api.security.AuthenticationService;
+import no.freshify.api.security.UserDetailsImpl;
 import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.HouseholdService;
 
 import no.freshify.api.service.UserService;
 import org.apache.coyote.Response;
+import org.hibernate.usertype.UserType;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.relation.InvalidRoleValueException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RequestMapping("/household")
 @RequiredArgsConstructor
@@ -32,28 +38,46 @@ import java.util.Optional;
 public class HouseholdController {
     private final HouseholdService householdService;
     private final HouseholdMemberService householdMemberService;
-    private final UserService userService;
+    private final AuthenticationService authenticationService;
+
+    private final HouseholdMapper householdMapper = Mappers.getMapper(HouseholdMapper.class);
 
     private final Logger logger = LoggerFactory.getLogger(HouseholdController.class);
-    private final HouseholdRepository householdRepository;
 
 
     /**
-     * Creates a new household.
+     * Creates a new household. Sets the logged on user as a superuser in the new household.
      * @param household The new household
      * @return The new household
      */
+    @PreAuthorize("isAuthenticated()")
     @PostMapping()
-    public ResponseEntity<Household> createHousehold(@RequestBody Household household) {
-        return householdService.addHousehold(household);
+    public ResponseEntity<HouseholdDTO> createHousehold(@RequestBody CreateHousehold household) {
+        User loggedInUser = authenticationService.getLoggedInUser();
+        Household _household = new Household();
+        _household.setName(household.getName());
+
+        Set<HouseholdMember> members = new HashSet<>();
+        // Add logged in user as superuser in the new household
+        members.add(
+                new HouseholdMember(
+                        new HouseholdMemberKey(_household.getId(), loggedInUser.getId()),
+                        _household, loggedInUser, HouseholdMemberRole.SUPERUSER)
+        );
+        _household.setHouseholdMembers(members);
+
+        HouseholdDTO createdDTO = householdMapper.toHouseholdDTO(householdService.addHousehold(_household));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdDTO);
     }
 
     /**
-     * Deletes a household
+     * Deletes a household. Can only be done by a superuser.
      * @param householdId The household to delete
      * @return
      * @throws HouseholdNotFoundException If the household was not found
      */
+    @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteHousehold(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
         long idToDelete = householdService.findHouseholdByHouseholdId(householdId).getId();
@@ -67,8 +91,8 @@ public class HouseholdController {
      * @throws HouseholdNotFoundException If household with given id is not found
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Household> getHouseholdById(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
-        return ResponseEntity.ok(householdService.getHousehold(householdId));
+    public ResponseEntity<HouseholdDTO> getHouseholdById(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
+        return ResponseEntity.ok(householdMapper.toHouseholdDTO(householdService.getHousehold(householdId)));
     }
 
     //TODO Remember to add authentication logic and verify/enforce access privileges before processing request
@@ -82,26 +106,21 @@ public class HouseholdController {
         return ResponseEntity.ok(householdService.getUsers(householdId));
     }
 
-
     /**
-     * Updates the attributes of a given household.
+     * Updates the attributes of a given household. Can only be done by superuser
      * @param householdId The id of the household to update
      * @param household The new household
      * @return Household representing updated version
      * @throws HouseholdNotFoundException If household was not found
      */
+    @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER')")
     @PutMapping("/{id}")
-    public ResponseEntity<Household> updateHousehold(@PathVariable("id") long householdId, @RequestBody Household household)
+    public ResponseEntity<HttpStatus> updateHousehold(@PathVariable("id") long householdId, @RequestBody HouseholdDTO household)
             throws HouseholdNotFoundException {
-        Optional<Household> householdData = householdRepository.findById(householdId);
+        Household _household = householdService.findHouseholdByHouseholdId(householdId);
+        _household.setName(household.getName());
 
-        if (householdData.isPresent()) {
-            Household _household = householdData.get();
-            _household.setName(household.getName());
-            return ResponseEntity.ok(householdRepository.save(_household));
-        } else {
-            logger.warn("Household not found");
-            throw new HouseholdNotFoundException();
-        }
+        householdService.updateHousehold(_household);
+        return ResponseEntity.ok().build();
     }
 }

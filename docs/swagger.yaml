@@ -189,7 +189,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Household'
+              $ref: '#/components/schemas/CreateHousehold'
       responses:
         '201':
           description: successful operation
@@ -956,6 +956,12 @@ components:
         id:
           type: integer
           example: 123
+        name:
+          type: string
+          example: "My family"
+    CreateHousehold:
+      type: object
+      properties:
         name:
           type: string
           example: "My family"

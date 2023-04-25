@@ -16,6 +16,5 @@ public class ShoppingListEntryResponse {
     Long count;
     Boolean suggested;
     Boolean checked;
-    User addedBy;
     ItemType type;
 }

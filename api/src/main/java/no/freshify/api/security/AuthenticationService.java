@@ -125,4 +125,9 @@ public class AuthenticationService {
 
         return new UserAuthentication(userDetails);
     }
+
+    public User getLoggedInUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return userService.getUserByEmail(auth.getName());
+    }
 }
