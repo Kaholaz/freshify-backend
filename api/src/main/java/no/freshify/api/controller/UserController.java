@@ -46,6 +46,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body("User created");
     }
 
+    @GetMapping
+    public ResponseEntity<Object> getUserByEmail(@RequestParam String email) throws UserNotFoundException {
+        User user = userService.getUserByEmail(email);
+        if (user == null) throw new UserNotFoundException();
+        return ResponseEntity.status(HttpStatus.OK).body(userMapper.toUserId(user));
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<Object> logout(HttpServletResponse response) {
         Cookie cookie = CookieFactory.getAuthorizationCookie("");
@@ -61,7 +68,7 @@ public class UserController {
         user.setFirstName(updateRequest.getFirstName());
         user.setEmail(updateRequest.getEmail());
 
-        if (!updateRequest.getPassword().equals("") && updateRequest.getPassword() != null) {
+        if (updateRequest.getPassword() != null && !updateRequest.getPassword().equals("")) {
             user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
         }
 
