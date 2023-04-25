@@ -19,12 +19,12 @@ public class HouseholdMemberService {
 
     Logger logger = LoggerFactory.getLogger(HouseholdMemberService.class);
 
-    public void addHouseholdMember(HouseholdMember householdMember) throws HouseholdMemberAlreadyExistsException {
+    public HouseholdMember addHouseholdMember(HouseholdMember householdMember) throws HouseholdMemberAlreadyExistsException {
         if (householdMemberExists(householdMember.getId())) {
             logger.warn("Household member already exists");
             throw new HouseholdMemberAlreadyExistsException();
         }
-        householdMemberRepository.save(householdMember);
+        return householdMemberRepository.save(householdMember);
     }
 
     public boolean householdMemberExists(HouseholdMemberKey householdMemberKey) {
@@ -40,8 +40,9 @@ public class HouseholdMemberService {
         throw new UserDoesNotBelongToHouseholdException();
     }
 
-    public void updateHouseholdMember(HouseholdMember householdMember) {
+    public HouseholdMember updateHouseholdMember(HouseholdMember householdMember) {
         householdMemberRepository.save(householdMember);
+        return householdMember;
     }
 
     public List<HouseholdMember> getHouseHoldMembersByUserId(Long userId) {
