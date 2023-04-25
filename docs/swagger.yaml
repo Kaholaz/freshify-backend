@@ -876,6 +876,7 @@ components:
         suggested:
           type: boolean
         checked:
+          example: false
           type: boolean
         addedBy:
           $ref: '#/components/schemas/UserFull'
