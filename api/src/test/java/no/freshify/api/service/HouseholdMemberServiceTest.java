@@ -7,7 +7,6 @@ import no.freshify.api.model.HouseholdMember;
 import no.freshify.api.model.HouseholdMemberKey;
 import no.freshify.api.model.User;
 import no.freshify.api.repository.HouseholdMemberRepository;
-import no.freshify.api.service.HouseholdMemberService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
