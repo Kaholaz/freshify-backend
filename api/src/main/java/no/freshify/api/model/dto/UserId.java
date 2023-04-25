@@ -1,2 +1,5 @@
-package no.freshify.api.model.dto;public class UserId {
+package no.freshify.api.model.dto;
+
+public class UserId {
+    public Long userId;
 }

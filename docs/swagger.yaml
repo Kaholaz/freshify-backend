@@ -27,6 +27,34 @@ tags:
     description: Operations about shopping list
 paths:
   /user:
+    get:
+      tags:
+        - account
+      summary: Get user by email
+      description: Returns a single user by email
+      operationId: getUserByEmail
+      parameters:
+        - name: email
+          in: query
+          description: Email of user to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: integer
+                    format: int64
+        '400':
+          description: No email provided
+        '404':
+          description: User not found
     post:
       tags:
         - account

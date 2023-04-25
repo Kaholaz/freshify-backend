@@ -4,6 +4,7 @@ import no.freshify.api.model.User;
 import no.freshify.api.model.dto.CreateUser;
 import no.freshify.api.model.dto.UpdateUser;
 import no.freshify.api.model.dto.UserFull;
+import no.freshify.api.model.dto.UserId;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -27,6 +28,8 @@ public abstract class UserMapper {
     public abstract User fromCreateUser(CreateUser user);
 
     public abstract UserFull toUserFull(User user);
+
+    public abstract UserId toUserId(User user);
 
     public abstract User toUser (UpdateUser user);
 }
