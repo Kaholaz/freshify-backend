@@ -9,7 +9,9 @@ import no.freshify.api.model.dto.ShoppingListEntryRequest;
 import no.freshify.api.model.dto.ShoppingListEntryResponse;
 import no.freshify.api.model.mapper.HouseholdMapper;
 import no.freshify.api.model.mapper.ShoppingListEntryMapper;
+import no.freshify.api.repository.HouseholdRepository;
 import no.freshify.api.repository.ShoppingListEntryRepository;
+import no.freshify.api.repository.UserRepository;
 import no.freshify.api.security.AuthenticationService;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.ItemTypeService;
@@ -40,6 +42,8 @@ public class ShoppingListController {
     private final ShoppingListEntryRepository shoppingListEntryRepository;
     private final ShoppingListEntryMapper shoppingListEntryMapper = Mappers.getMapper(ShoppingListEntryMapper.class);
 
+    private final HouseholdRepository householdRepository;
+    private final UserRepository userRepository;
 
     /**
      * Adds an item to the given household's shopping list
@@ -51,11 +55,10 @@ public class ShoppingListController {
      * @throws ShoppingListEntryAlreadyExistsException If the shopping list entry already exists in the shopping list
      */
     @PostMapping
-    public ResponseEntity<ShoppingListEntry> addItem(@PathVariable("id") long householdId,
+    public ResponseEntity<ShoppingListEntryResponse> addItem(@PathVariable("id") long householdId,
                                                      @RequestBody ShoppingListEntryRequest requestBody)
-            throws HouseholdNotFoundException, ItemTypeNotFoundException, ShoppingListEntryAlreadyExistsException {
+            throws ItemTypeNotFoundException, ShoppingListEntryAlreadyExistsException {
         User loggedInUser = authenticationService.getLoggedInUser();
-        Household household = householdService.findHouseholdByHouseholdId(householdId);
 
         // Create a new ShoppingListEntry object
         ShoppingListEntry shoppingListEntry = new ShoppingListEntry();
@@ -63,15 +66,17 @@ public class ShoppingListController {
         shoppingListEntry.setCount(requestBody.getCount());
         shoppingListEntry.setSuggested(requestBody.getSuggested());
 
-        //TODO: These crash the program, not sure why
-        shoppingListEntry.setHousehold(household);
-        shoppingListEntry.setAddedBy(loggedInUser);
+        Household householdRef = householdRepository.getReferenceById(householdId);
+        User userRef = userRepository.getReferenceById(loggedInUser.getId());
+
+        shoppingListEntry.setHousehold(householdRef);
+        shoppingListEntry.setAddedBy(userRef);
 
         // Add the new ShoppingListEntry to the household's shopping list
         shoppingListEntryService.addItem(shoppingListEntry);
 
         // Return the updated shopping list
-        return ResponseEntity.ok(shoppingListEntry);
+        return ResponseEntity.ok(shoppingListEntryMapper.toShoppingListEntryResponse(shoppingListEntry));
     }
 
     /**
