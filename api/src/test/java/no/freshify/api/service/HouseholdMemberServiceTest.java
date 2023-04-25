@@ -1,4 +1,4 @@
-package no.freshify.api;
+package no.freshify.api.service;
 
 import no.freshify.api.exception.HouseholdMemberAlreadyExistsException;
 import no.freshify.api.exception.UserDoesNotBelongToHouseholdException;
