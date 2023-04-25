@@ -3,6 +3,7 @@ package no.freshify.api.model.mapper;
 import no.freshify.api.model.Item;
 import no.freshify.api.model.ItemType;
 import no.freshify.api.model.dto.InventoryItem;
+import no.freshify.api.model.dto.ItemTypeDTO;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 public abstract class ItemMapper {
     public abstract InventoryItem toItemDto(Item item);
 
-    public abstract ItemType toItemTypeDTO(ItemType itemType);
+    public abstract ItemTypeDTO toItemTypeDTO(ItemType itemType);
 
-    public abstract List<ItemType> toItemTypeDTO(List<ItemType> itemTypes);
+    public abstract List<ItemTypeDTO> toItemTypeDTO(List<ItemType> itemTypes);
 }
