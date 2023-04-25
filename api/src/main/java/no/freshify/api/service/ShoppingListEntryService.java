@@ -1,6 +1,8 @@
 package no.freshify.api.service;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import no.freshify.api.exception.HouseholdNotFoundException;
 import no.freshify.api.exception.InvalidItemCountException;
 import no.freshify.api.exception.ShoppingListEntryAlreadyExistsException;
@@ -19,13 +21,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Getter
 @RequiredArgsConstructor
 public class ShoppingListEntryService {
 
     private final ShoppingListEntryRepository shoppingListEntryRepository;
 
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
-    private final HouseholdRepository householdRepository;
+
+    private final HouseholdService householdService;
 
     public void addItem(ShoppingListEntry shoppingListEntry) throws ShoppingListEntryAlreadyExistsException {
         logger.info("Adding item to shopping list");
@@ -71,7 +75,7 @@ public class ShoppingListEntryService {
 
     public List<ShoppingListEntry> getShoppingList(long householdId) throws HouseholdNotFoundException {
         logger.info("Getting shopping list");
-        if (!householdRepository.existsById(householdId)) {
+        if (!householdService.householdExists(householdId)) {
             logger.warn("Household not found");
             throw new HouseholdNotFoundException();
         }

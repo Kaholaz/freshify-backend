@@ -92,4 +92,8 @@ public class HouseholdService {
         logger.info("Updating household");
         return householdRepository.saveAndFlush(household);
     }
+
+    public boolean householdExists(long householdId) {
+        return householdRepository.existsById(householdId);
+    }
 }
