@@ -42,7 +42,7 @@ import static org.hamcrest.CoreMatchers.is;
 @WebMvcTest(HouseholdController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
-public class HouseholdControllerIntegrationTest {
+public class HouseholdControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

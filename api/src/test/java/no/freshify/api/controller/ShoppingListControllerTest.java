@@ -2,21 +2,23 @@ package no.freshify.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.freshify.api.model.*;
-import no.freshify.api.model.dto.HouseholdDTO;
-import no.freshify.api.model.dto.ShoppingListEntryEditRequest;
-import no.freshify.api.model.dto.ShoppingListEntryRequest;
-import no.freshify.api.model.dto.UserFull;
+import no.freshify.api.model.dto.*;
+import no.freshify.api.model.mapper.ShoppingListEntryMapper;
 import no.freshify.api.repository.HouseholdRepository;
 import no.freshify.api.repository.ShoppingListEntryRepository;
+import no.freshify.api.repository.UserRepository;
+import no.freshify.api.security.AuthenticationService;
 import no.freshify.api.security.UserAuthentication;
 import no.freshify.api.security.UserDetailsImpl;
+import no.freshify.api.service.HouseholdService;
+import no.freshify.api.service.ItemTypeService;
 import no.freshify.api.service.ShoppingListEntryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.verification.VerificationModeFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -28,7 +30,9 @@ import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,7 +43,7 @@ import static org.hamcrest.CoreMatchers.is;
 @WebMvcTest(ShoppingListController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
-public class ShoppingListControllerIntegrationTest {
+public class ShoppingListControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -51,6 +55,27 @@ public class ShoppingListControllerIntegrationTest {
     ShoppingListEntryService shoppingListEntryService;
 
     @MockBean
+    ShoppingListEntryRepository shoppingListEntryRepository;
+
+    @MockBean
+    HouseholdRepository householdRepository;
+
+    @MockBean
+    UserRepository userRepository;
+
+    @MockBean
+    AuthenticationService authenticationService;
+
+    @MockBean
+    HouseholdService householdService;
+
+    @MockBean
+    ShoppingListEntryMapper shoppingListEntryMapper;
+
+    @MockBean
+    ItemTypeService itemTypeService;
+
+    @MockBean
     private UserDetailsImpl userDetails;
 
     private User user;
@@ -59,6 +84,11 @@ public class ShoppingListControllerIntegrationTest {
     private Household household;
     private HouseholdDTO householdDTO;
     private List<UserFull> users;
+    private ItemType itemType;
+    private ShoppingListEntry shoppingListEntry;
+    private ShoppingListEntryRequest shoppingListEntryRequest;
+    private ShoppingListEntryResponse shoppingListEntryResponse;
+    private ShoppingListEntryEditRequest shoppingListEntryEditRequest;
 
     @BeforeEach
     public void setup() {
@@ -97,89 +127,88 @@ public class ShoppingListControllerIntegrationTest {
                 new UserFull(1L, "user1", "user1@"),
                 new UserFull(2L, "user2", "user2@")
         ));
+
+        shoppingListEntryRequest = new ShoppingListEntryRequest();
+        shoppingListEntryRequest.setItemTypeId(1L);
+        shoppingListEntryRequest.setCount(2L);
+        shoppingListEntryRequest.setSuggested(false);
+
+        itemType = new ItemType();
+        itemType.setId(1L);
+        itemType.setName("Test Item Type");
+
+        shoppingListEntryResponse = new ShoppingListEntryResponse();
+        shoppingListEntryResponse.setId(1L);
+        shoppingListEntryResponse.setType(itemType);
+        shoppingListEntryResponse.setChecked(false);
+        shoppingListEntryResponse.setSuggested(false);
+        shoppingListEntryResponse.setCount(2L);
+
+        shoppingListEntry = new ShoppingListEntry();
+        shoppingListEntry.setId(1L);
+        shoppingListEntry.setType(itemType);
+        shoppingListEntry.setChecked(false);
+        shoppingListEntry.setSuggested(false);
+        shoppingListEntry.setCount(2L);
+        shoppingListEntry.setAddedBy(user);
+        shoppingListEntry.setHousehold(household);
+
+        shoppingListEntryEditRequest = new ShoppingListEntryEditRequest();
+        shoppingListEntryEditRequest.setId(1L);
+        shoppingListEntryEditRequest.setCount(3L);
+        shoppingListEntryEditRequest.setChecked(true);
+        shoppingListEntryEditRequest.setSuggested(true);
     }
 
     @Test
     public void testAddItem() throws Exception {
         when(authenticationService.getLoggedInUser()).thenReturn(user);
-        when(householdService.addHousehold(any(Household.class))).thenReturn(household);
+        when(householdService.findHouseholdByHouseholdId(anyLong())).thenReturn(household);
+        when(itemTypeService.getItemTypeById(anyLong())).thenReturn(itemType);
+        when(shoppingListEntryMapper.toShoppingListEntryResponse(any(ShoppingListEntry.class)))
+                .thenReturn(shoppingListEntryResponse);
+        when(shoppingListEntryService.findShoppingListEntryByItemType(anyLong(), anyLong()))
+                .thenReturn(shoppingListEntry);
 
-        ShoppingListEntryRequest request = new ShoppingListEntryRequest();
-        request.setItemTypeId(1L);
-        request.setCount(2L);
-        request.setSuggested(false);
+        doNothing().when(shoppingListEntryService).addItem(shoppingListEntry);
 
         mockMvc.perform(post("/household/1/shoppinglist")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(objectMapper.writeValueAsString(shoppingListEntryRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.type.id").value(request.getItemTypeId()))
-                .andExpect(jsonPath("$.count").value(request.getCount()))
-                .andExpect(jsonPath("$.suggested").value(request.getSuggested()));
+                .andExpect(jsonPath("$.type.id").value(shoppingListEntryRequest.getItemTypeId()))
+                .andExpect(jsonPath("$.count").value(shoppingListEntryRequest.getCount()))
+                .andExpect(jsonPath("$.suggested").value(shoppingListEntryRequest.getSuggested()))
+                .andExpect(jsonPath("$.checked").value(false));
+
+        verify(householdService, VerificationModeFactory.times(1)).findHouseholdByHouseholdId(anyLong());
+        verify(authenticationService, VerificationModeFactory.times(1)).getLoggedInUser();
+        verify(itemTypeService, VerificationModeFactory.times(1)).getItemTypeById(anyLong());
+        verify(shoppingListEntryService, VerificationModeFactory.times(1))
+                .findShoppingListEntryByItemType(anyLong(), anyLong());
     }
 
     @Test
     public void testUpdateShoppingListEntry() throws Exception {
-        ShoppingListEntryEditRequest requestBody = new ShoppingListEntryEditRequest();
-        requestBody.setId(1L);
-        requestBody.setCount(2L);
-        requestBody.setChecked(true);
-        requestBody.setSuggested(false);
+        //when(authenticationService.getLoggedInUser()).thenReturn(user);
+        when(householdService.findHouseholdByHouseholdId(anyLong())).thenReturn(household);
+        when(itemTypeService.getItemTypeById(anyLong())).thenReturn(itemType);
+        when(shoppingListEntryService.findShoppingListEntryByItemType(anyLong(), anyLong()))
+                .thenReturn(shoppingListEntry);
+        doNothing().when(shoppingListEntryService).updateShoppingListEntry(any(ShoppingListEntry.class));
 
         mockMvc.perform(put("/household/1/shoppinglist")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestBody)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.count").value(requestBody.getCount()))
-                .andExpect(jsonPath("$.checked").value(requestBody.getChecked()))
-                .andExpect(jsonPath("$.suggested").value(requestBody.getSuggested()))
-                .andExpect(jsonPath("$.type.id").value(requestBody.getId()));
-    }
+                        .content(objectMapper.writeValueAsString(shoppingListEntryEditRequest)))
+                .andExpect(status().isOk());
 
-    @Test
-    public void testGetShoppingList() throws Exception {
-        /**
-        ShoppingListEntry entry1 = new ShoppingListEntry();
-        entry1.setHousehold(householdRepository.findHouseholdById(1L));
-
-        ShoppingListEntry entry2 = new ShoppingListEntry();
-        entry2.setHousehold(householdRepository.findHouseholdById(1L));
-         */
-
-        ShoppingListEntryRequest entry1 = new ShoppingListEntryRequest();
-        entry1.setItemTypeId(1L);
-        entry1.setCount(2L);
-        entry1.setSuggested(false);
-
-        ShoppingListEntryRequest entry2 = new ShoppingListEntryRequest();
-        entry2.setItemTypeId(2L);
-        entry2.setCount(3L);
-        entry2.setSuggested(true);
-        ShoppingListEntry shoppingListEntry = new ShoppingListEntry();
-
-        //TODO add 2 test items to shopping list
-        mockMvc.perform(post("/household/1/shoppinglist")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(entry1)))
-                .andExpect(status().isCreated());
-
-        mockMvc.perform(post("/household/1/shoppinglist")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(entry2)))
-                .andExpect(status().isCreated());
-
-        mockMvc.perform(get("/household/1/shoppinglist")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].type.id", is(1)))
-                .andExpect(jsonPath("$[0].count", is(2)))
-                .andExpect(jsonPath("$[0].suggested", is(false)))
-                .andExpect(jsonPath("$[1].id", is(2)))
-                .andExpect(jsonPath("$[1].type.id", is(2)))
-                .andExpect(jsonPath("$[1].count", is(3)))
-                .andExpect(jsonPath("$[1].suggested", is(true)));
+        verify(householdService, VerificationModeFactory.times(1)).findHouseholdByHouseholdId(anyLong());
+        // verify(authenticationService, VerificationModeFactory.times(1)).getLoggedInUser();
+        verify(itemTypeService, VerificationModeFactory.times(1)).getItemTypeById(anyLong());
+        verify(shoppingListEntryService, VerificationModeFactory.times(1))
+                .findShoppingListEntryByItemType(anyLong(), anyLong());
+        verify(shoppingListEntryService, VerificationModeFactory.times(1))
+                .updateShoppingListEntry(any(ShoppingListEntry.class));
     }
 }

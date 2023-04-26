@@ -25,7 +25,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class TestHouseholdService {
+public class HouseholdServiceTest {
 
     @Mock
     private HouseholdRepository householdRepository;
