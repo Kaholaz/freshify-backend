@@ -6,7 +6,6 @@ import no.freshify.api.model.*;
 import no.freshify.api.model.dto.HouseholdMemberDTO;
 import no.freshify.api.model.dto.UserTypeRequest;
 import no.freshify.api.model.mapper.HouseholdMemberMapper;
-import no.freshify.api.repository.HouseholdMemberRepository;
 import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.UserService;

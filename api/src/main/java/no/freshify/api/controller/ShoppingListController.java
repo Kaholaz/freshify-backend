@@ -1,32 +1,33 @@
 package no.freshify.api.controller;
 
-import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import lombok.RequiredArgsConstructor;
+
 import no.freshify.api.exception.*;
+
 import no.freshify.api.model.*;
 import no.freshify.api.model.dto.ShoppingListEntryEditRequest;
 import no.freshify.api.model.dto.ShoppingListEntryRequest;
 import no.freshify.api.model.dto.ShoppingListEntryResponse;
-import no.freshify.api.model.mapper.HouseholdMapper;
 import no.freshify.api.model.mapper.ShoppingListEntryMapper;
+
 import no.freshify.api.repository.HouseholdRepository;
 import no.freshify.api.repository.ShoppingListEntryRepository;
 import no.freshify.api.repository.UserRepository;
+
 import no.freshify.api.security.AuthenticationService;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.ItemTypeService;
 import no.freshify.api.service.ShoppingListEntryService;
-import org.mapstruct.factory.Mappers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import org.mapstruct.factory.Mappers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/household/{id}/shoppinglist")
@@ -60,7 +61,6 @@ public class ShoppingListController {
             throws ItemTypeNotFoundException, ShoppingListEntryAlreadyExistsException {
         User loggedInUser = authenticationService.getLoggedInUser();
 
-        // Create a new ShoppingListEntry object
         ShoppingListEntry shoppingListEntry = new ShoppingListEntry();
         shoppingListEntry.setType(itemTypeService.getItemTypeById(requestBody.getItemTypeId()));
         shoppingListEntry.setCount(requestBody.getCount());
@@ -72,10 +72,8 @@ public class ShoppingListController {
         shoppingListEntry.setHousehold(householdRef);
         shoppingListEntry.setAddedBy(userRef);
 
-        // Add the new ShoppingListEntry to the household's shopping list
         shoppingListEntryService.addItem(shoppingListEntry);
 
-        // Return the updated shopping list
         return ResponseEntity.ok(shoppingListEntryMapper.toShoppingListEntryResponse(shoppingListEntry));
     }
 
