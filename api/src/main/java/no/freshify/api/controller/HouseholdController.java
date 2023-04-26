@@ -5,8 +5,10 @@ import no.freshify.api.exception.*;
 import no.freshify.api.model.*;
 import no.freshify.api.model.dto.CreateHousehold;
 import no.freshify.api.model.dto.HouseholdDTO;
+import no.freshify.api.model.dto.HouseholdMemberDTO;
 import no.freshify.api.model.dto.UserFull;
 import no.freshify.api.model.mapper.HouseholdMapper;
+import no.freshify.api.model.mapper.HouseholdMemberMapper;
 import no.freshify.api.security.AuthenticationService;
 import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.HouseholdService;
@@ -32,6 +34,7 @@ public class HouseholdController {
     private final AuthenticationService authenticationService;
 
     private final HouseholdMapper householdMapper = Mappers.getMapper(HouseholdMapper.class);
+    private final HouseholdMemberMapper householdMemberMapper = Mappers.getMapper(HouseholdMemberMapper.class);
 
     private final Logger logger = LoggerFactory.getLogger(HouseholdController.class);
 
@@ -93,8 +96,9 @@ public class HouseholdController {
      * @return A list of users in the given household
      */
     @GetMapping("/{id}/users")
-    public ResponseEntity<List<UserFull>> getUsers(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
-        return ResponseEntity.ok(householdService.getUsers(householdId));
+    public ResponseEntity<List<HouseholdMemberDTO>> getUsers(@PathVariable("id") long householdId)
+            throws HouseholdNotFoundException {
+        return ResponseEntity.ok(householdMemberMapper.householdMemberDTOS(householdService.getUsers(householdId)));
     }
 
     /**

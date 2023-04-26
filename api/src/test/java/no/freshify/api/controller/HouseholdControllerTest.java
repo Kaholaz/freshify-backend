@@ -71,6 +71,7 @@ public class HouseholdControllerTest {
     private Household household;
     private HouseholdDTO householdDTO;
     private List<UserFull> users;
+    private List<HouseholdMember> members;
 
     @BeforeEach
     public void setup() {
@@ -98,6 +99,8 @@ public class HouseholdControllerTest {
         householdMember.setRole(HouseholdMemberRole.SUPERUSER);
         householdMember.setUser(user);
 
+        members = new ArrayList<>();
+        members.add(householdMember);
         Set<HouseholdMember> householdMembers = new HashSet<>(Collections.singletonList(householdMember));
 
         household.setHouseholdMembers(householdMembers);
@@ -156,10 +159,10 @@ public class HouseholdControllerTest {
 
     @Test
     public void getUsersTest() throws Exception {
-        when(householdService.getUsers(anyLong())).thenReturn(users);
+        when(householdService.getUsers(anyLong())).thenReturn(members);
         mockMvc.perform(get("/household/{id}/users", householdId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$", hasSize(1)));
 
         verify(householdService, VerificationModeFactory.times(1)).getUsers(anyLong());
     }

@@ -121,7 +121,7 @@ public class HouseholdServiceTest {
         Mockito.when(householdMemberRepository.findHouseholdMembersByHouseholdId(householdId))
                 .thenReturn(members);
 
-        List<UserFull> result = householdService.getUsers(householdId);
+        List<HouseholdMember> result = householdService.getUsers(householdId);
 
         assertEquals(this.householdMembersUserFull.size(), result.size());
     }
