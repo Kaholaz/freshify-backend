@@ -37,6 +37,7 @@ public class ShoppingListController {
     private final HouseholdService householdService;
     private final ShoppingListEntryService shoppingListEntryService;
     private final AuthenticationService authenticationService;
+    private final ItemTypeService itemTypeService;
 
     private final Logger logger = LoggerFactory.getLogger(InventoryController.class);
     private final ShoppingListEntryMapper shoppingListEntryMapper = Mappers.getMapper(ShoppingListEntryMapper.class);
@@ -53,13 +54,16 @@ public class ShoppingListController {
     @PostMapping
     public ResponseEntity<ShoppingListEntryResponse> addItem(@PathVariable("id") long householdId,
                                                      @RequestBody ShoppingListEntryRequest requestBody)
-            throws ShoppingListEntryAlreadyExistsException, HouseholdNotFoundException {
+            throws ShoppingListEntryAlreadyExistsException, HouseholdNotFoundException, ItemTypeNotFoundException {
         User loggedInUser = authenticationService.getLoggedInUser();
         Household household = householdService.findHouseholdByHouseholdId(householdId);
 
         var shoppingListEntry = shoppingListEntryMapper.fromShoppingListEntryRequest(requestBody);
         shoppingListEntry.setHousehold(household);
         shoppingListEntry.setAddedBy(loggedInUser);
+
+        var itemType = itemTypeService.getItemTypeById(shoppingListEntry.getType().getId());
+        shoppingListEntry.setType(itemType);
 
         var newShoppingListEntry = shoppingListEntryService.addItem(shoppingListEntry);
         return ResponseEntity.status(HttpStatus.CREATED).body(shoppingListEntryMapper.toShoppingListEntryResponse(newShoppingListEntry));
