@@ -135,8 +135,10 @@ public class InventoryController {
     public ResponseEntity<String> updateInventoryItem(
             @PathVariable("id") long householdId,
             @RequestBody UpdateInventoryItem requestBody
-    ) throws HouseholdNotFoundException, ItemDoesNotBelongToHouseholdException, IllegalItemParameterException, ItemNotFoundException {
+    ) throws HouseholdNotFoundException, ItemDoesNotBelongToHouseholdException, IllegalItemParameterException, ItemNotFoundException, IllegalItemStatusException {
         logger.info("Updating inventory item with id: " + requestBody.getItemId());
+        if(requestBody.getState() == null) return ResponseEntity.badRequest().body("Item state cannot be null");
+
         Item newItem = itemMapper.toItem(requestBody);
 
         Household household = householdService.findHouseholdByHouseholdId(householdId);
