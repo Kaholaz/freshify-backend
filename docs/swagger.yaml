@@ -119,7 +119,7 @@ paths:
         - account
       summary: Get user by id
       description: Returns a single user
-      operationId: getUserById
+      operationId: getLoggedInUser
       parameters:
         - name: id
           in: path
