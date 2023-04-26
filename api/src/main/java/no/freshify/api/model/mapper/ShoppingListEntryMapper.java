@@ -14,4 +14,6 @@ public abstract class ShoppingListEntryMapper {
     public abstract List<ShoppingListEntryResponse> toShoppingListEntryResponse(List<ShoppingListEntry> shoppingListEntries);
 
     public abstract ShoppingListEntry fromShoppingListEntryRequest(ShoppingListEntryRequest shoppingListEntryRequest);
+
+    public abstract ShoppingListEntry fromShoppingListEntryEditRequest(ShoppingListEntryEditRequest shoppingListEntryEditRequest);
 }
