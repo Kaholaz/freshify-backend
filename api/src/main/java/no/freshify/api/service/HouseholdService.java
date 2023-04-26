@@ -71,16 +71,6 @@ public class HouseholdService {
         return household;
     }
 
-    public Household getHousehold(long householdId) throws HouseholdNotFoundException {
-        Household household = householdRepository.findHouseholdById(householdId);
-        if (household == null) {
-            logger.warn("Household not found");
-            throw new HouseholdNotFoundException();
-        } else {
-            return household;
-        }
-    }
-
     public Household addHousehold(Household household) {
         logger.info("Creating household");
         Household savedHousehold = householdRepository.save(household);
@@ -98,9 +88,9 @@ public class HouseholdService {
         return ResponseEntity.noContent().build();
     }
 
-    public void updateHousehold(Household household) {
+    public Household updateHousehold(Household household) {
         logger.info("Updating household");
-        householdRepository.save(household);
+        return householdRepository.saveAndFlush(household);
     }
 
     public boolean householdExists(long householdId) {

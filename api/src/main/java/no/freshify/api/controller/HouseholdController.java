@@ -83,7 +83,7 @@ public class HouseholdController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<HouseholdDTO> getHouseholdById(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
-        return ResponseEntity.ok(householdMapper.toHouseholdDTO(householdService.getHousehold(householdId)));
+        return ResponseEntity.ok(householdMapper.toHouseholdDTO(householdService.findHouseholdByHouseholdId(householdId)));
     }
 
     //TODO Remember to add authentication logic and verify/enforce access privileges before processing request
