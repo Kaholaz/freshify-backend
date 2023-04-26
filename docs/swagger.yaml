@@ -97,6 +97,22 @@ paths:
                 $ref: '#/components/schemas/UserFull'
         '404':
           description: User not found
+  /user/loggedin:
+    get:
+      tags:
+        - account
+      summary: Get the user details from the jwt token cookie
+      description: Returns the details of the logged in user, the details are extracted from the jwt token cookie.
+      operationId: getUserById
+      responses:
+        '200':
+          description: Returns the details of the logged in user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserFull'
+        '404':
+          description: User not found
   /user/{id}:
     get:
       tags:
