@@ -107,7 +107,7 @@ public class HouseholdMemberControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.user.id").value(user.getId()))
                 .andExpect(jsonPath("$.id.householdId").value(household.getId()))
-                .andExpect(jsonPath("$.role").value(householdMember.getRole().toString()));
+                .andExpect(jsonPath("$.userType").value(householdMember.getRole().toString()));
 
         verify(householdService, times(1)).findHouseholdByHouseholdId(anyLong());
         verify(userService, times(1)).getUserById(anyLong());

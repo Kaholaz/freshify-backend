@@ -10,5 +10,5 @@ import no.freshify.api.model.HouseholdMemberRole;
 public class HouseholdMemberDTO {
     private HouseholdMemberKey id;
     private UserFull user;
-    private HouseholdMemberRole role;
+    private HouseholdMemberRole userType;
 }
