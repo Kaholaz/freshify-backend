@@ -6,11 +6,9 @@ import no.freshify.api.model.*;
 import no.freshify.api.model.dto.CreateHousehold;
 import no.freshify.api.model.dto.HouseholdDTO;
 import no.freshify.api.model.dto.HouseholdMemberDTO;
-import no.freshify.api.model.dto.UserFull;
 import no.freshify.api.model.mapper.HouseholdMapper;
 import no.freshify.api.model.mapper.HouseholdMemberMapper;
 import no.freshify.api.security.AuthenticationService;
-import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.HouseholdService;
 
 import org.mapstruct.factory.Mappers;
@@ -30,14 +28,11 @@ import java.util.Set;
 @RestController
 public class HouseholdController {
     private final HouseholdService householdService;
-    private final HouseholdMemberService householdMemberService;
     private final AuthenticationService authenticationService;
 
     private final HouseholdMapper householdMapper = Mappers.getMapper(HouseholdMapper.class);
     private final HouseholdMemberMapper householdMemberMapper = Mappers.getMapper(HouseholdMemberMapper.class);
-
-    private final Logger logger = LoggerFactory.getLogger(HouseholdController.class);
-
+    private final Logger logger = LoggerFactory.getLogger(HouseholdMemberController.class);
 
     /**
      * Creates a new household. Sets the logged on user as a superuser in the new household.
@@ -73,9 +68,11 @@ public class HouseholdController {
      */
     @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteHousehold(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
+    public ResponseEntity<String> deleteHousehold(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
         long idToDelete = householdService.findHouseholdByHouseholdId(householdId).getId();
-        return householdService.removeHousehold(idToDelete);
+        householdService.removeHousehold(idToDelete);
+        logger.info("Removed household");
+        return ResponseEntity.ok("Operation successful");
     }
 
     /**
@@ -92,7 +89,7 @@ public class HouseholdController {
     //TODO Remember to add authentication logic and verify/enforce access privileges before processing request
     /**
      * Gets the users in a given household
-     * @param householdId The household to get usres from
+     * @param householdId The household to get users from
      * @return A list of users in the given household
      */
     @GetMapping("/{id}/users")

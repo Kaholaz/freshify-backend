@@ -136,9 +136,9 @@ public class HouseholdControllerTest {
     @Test
     public void deleteHouseholdTest() throws Exception {
         when(householdService.findHouseholdByHouseholdId(householdId)).thenReturn(household);
-        when(householdService.removeHousehold(anyLong())).thenReturn(ResponseEntity.noContent().build());
+        doNothing().when(householdService).removeHousehold(anyLong());
         mockMvc.perform(delete("/household/{id}", householdId))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         verify(householdService, VerificationModeFactory.times(1)).removeHousehold(anyLong());
         verify(householdService, VerificationModeFactory.times(1)).findHouseholdByHouseholdId(Mockito.any());

@@ -70,15 +70,13 @@ public class HouseholdService {
         return savedHousehold;
     }
 
-    public ResponseEntity<HttpStatus> removeHousehold(long householdId) throws HouseholdNotFoundException {
+    public void removeHousehold(long householdId) throws HouseholdNotFoundException {
         logger.info("Deleting household");
         if (!householdRepository.existsById(householdId)) {
             logger.warn("A household with given id does not exist");
             throw new HouseholdNotFoundException();
         }
-
         householdRepository.deleteById(householdId);
-        return ResponseEntity.noContent().build();
     }
 
     public Household updateHousehold(Household household) {

@@ -268,6 +268,8 @@ paths:
                 items:
                   type: object
                   properties:
+                    id:
+                      $ref: '#/components/schemas/HouseholdMemberKey'
                     user:
                       $ref: '#/components/schemas/UserFull'
                     userType:
@@ -550,7 +552,7 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        '204':
           description: Successful operation
         '404':
           description: Shopping list or shopping list entry not found.
