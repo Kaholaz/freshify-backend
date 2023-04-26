@@ -97,7 +97,9 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createUser)))
                 .andExpect(status().isCreated())
-                .andExpect(content().string("User created"));
+                .andExpect(jsonPath("$.id").value(user.getId()))
+                .andExpect(jsonPath("$.email").value(user.getEmail()))
+                .andExpect(jsonPath("$.firstName").value(user.getFirstName()));
 
         verify(userService, times(1)).getUserByEmail(anyString());
         verify(userService, times(1)).createUser(any(User.class));
