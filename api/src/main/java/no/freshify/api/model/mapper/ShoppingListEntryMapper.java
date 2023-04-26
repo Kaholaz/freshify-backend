@@ -1,8 +1,6 @@
 package no.freshify.api.model.mapper;
 
-import no.freshify.api.model.ItemType;
 import no.freshify.api.model.ShoppingListEntry;
-import no.freshify.api.model.dto.ShoppingListEntryEditRequest;
 import no.freshify.api.model.dto.ShoppingListEntryRequest;
 import no.freshify.api.model.dto.ShoppingListEntryResponse;
 import org.mapstruct.Mapper;
