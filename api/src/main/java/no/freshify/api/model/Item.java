@@ -19,7 +19,7 @@ public class Item {
     private Date lastChanged;
 
     @Column(nullable = false)
-    private Date addedDate;
+    private Date bought;
 
     @Column(nullable = false)
     private Double remaining = 1.0;
@@ -51,8 +51,8 @@ public class Item {
      */
     @PrePersist
     public void setAddedDate() {
-        this.addedDate = new Date();
-        this.lastChanged = this.addedDate;
+        this.bought = new Date();
+        this.lastChanged = this.bought;
     }
 
     /**
