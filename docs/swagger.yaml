@@ -252,6 +252,8 @@ paths:
                 items:
                   type: object
                   properties:
+                    id:
+                      $ref: '#/components/schemas/HouseholdMemberKey'
                     user:
                       $ref: '#/components/schemas/UserFull'
                     userType:
