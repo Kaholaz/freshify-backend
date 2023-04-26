@@ -17,4 +17,5 @@ public class ShoppingListEntryResponse {
     Boolean suggested;
     Boolean checked;
     ItemType type;
+    UserFull addedBy;
 }
