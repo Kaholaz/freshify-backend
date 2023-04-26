@@ -106,22 +106,22 @@ public class ShoppingListController {
      * @throws HouseholdNotFoundException If the household is not found
      * @throws ItemTypeNotFoundException If the new item type is invalid
      */
+    @PreAuthorize("hasPermission(#householdId, 'household', 'SUPERUSER')")
     @PutMapping
-    public ResponseEntity<HttpStatus> updateShoppingListEntry(@PathVariable("id") long householdId,
+    public ResponseEntity<Object> updateShoppingListEntry(@PathVariable("id") long householdId,
                                                                 @RequestBody ShoppingListEntryEditRequest requestBody)
-            throws InvalidItemCountException, HouseholdNotFoundException, ItemTypeNotFoundException, ShoppingListEntryNotFoundException {
-        Household household = householdService.findHouseholdByHouseholdId(householdId);
+            throws InvalidItemCountException, ShoppingListEntryNotFoundException {
+        ShoppingListEntry entry = shoppingListEntryMapper.fromShoppingListEntryEditRequest(requestBody);
+        ShoppingListEntry oldEntry = shoppingListEntryService.findShoppingListEntryById(requestBody.getId());
 
-        ShoppingListEntry updatedEntry = new ShoppingListEntry();
-        updatedEntry.setId(shoppingListEntryService.findShoppingListEntryByItemType(householdId, requestBody.getId()).getId());
-        updatedEntry.setType(itemTypeService.getItemTypeById(requestBody.getId()));
-        updatedEntry.setCount(requestBody.getCount());
-        updatedEntry.setSuggested(requestBody.getSuggested());
-        updatedEntry.setChecked(requestBody.getChecked());
-        updatedEntry.setHousehold(household);
+        if (oldEntry.getHousehold().getId() != householdId)
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("The item does not belong to the household");
 
-        shoppingListEntryService.updateShoppingListEntry(updatedEntry);
+        entry.setHousehold(oldEntry.getHousehold());
+        entry.setAddedBy(oldEntry.getAddedBy());
+        entry.setType(oldEntry.getType());
 
+        shoppingListEntryService.updateShoppingListEntry(entry);
         return ResponseEntity.ok().build();
     }
 

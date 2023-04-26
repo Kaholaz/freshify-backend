@@ -80,7 +80,7 @@ public class ShoppingListEntryServiceTest {
     }
 
     @Test
-    public void testUpdateShoppingListEntry() throws InvalidItemCountException {
+    public void testUpdateShoppingListEntry() throws InvalidItemCountException, ShoppingListEntryNotFoundException {
         shoppingListEntry.setCount(2L);
         shoppingListEntryService.updateShoppingListEntry(shoppingListEntry);
 
