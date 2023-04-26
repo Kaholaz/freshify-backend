@@ -51,6 +51,7 @@ public class ShoppingListController {
      * @throws ItemTypeNotFoundException If the item type was not found
      * @throws ShoppingListEntryAlreadyExistsException If the shopping list entry already exists in the shopping list
      */
+    @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER')")
     @PostMapping
     public ResponseEntity<ShoppingListEntryResponse> addItem(@PathVariable("id") long householdId,
                                                      @RequestBody ShoppingListEntryRequest requestBody)
@@ -78,7 +79,7 @@ public class ShoppingListController {
      * in the given household's shopping list
      * @throws HouseholdNotFoundException If the given household was not found
      */
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER')")
     @DeleteMapping("/{listEntryId}")
     public ResponseEntity<HttpStatus> deleteShoppingListEntry(@PathVariable("id") long householdId,
                                                               @PathVariable("listEntryId") long listEntryId)
@@ -96,6 +97,7 @@ public class ShoppingListController {
      * @throws HouseholdNotFoundException If the household is not found
      * @throws ItemTypeNotFoundException If the new item type is invalid
      */
+    @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER')")
     @PutMapping
     public ResponseEntity<Object> updateShoppingListEntry(@PathVariable("id") long householdId,
                                                                 @RequestBody ShoppingListEntryEditRequest requestBody)
@@ -120,6 +122,7 @@ public class ShoppingListController {
      * @return A list of shopping list items belonging to the household
      * @throws HouseholdNotFoundException If the household is not found
      */
+    @PreAuthorize("hasPermission(#householdId, 'Household', '')")
     @GetMapping
     public ResponseEntity<List<ShoppingListEntryResponse>> getShoppingList(@PathVariable("id") long householdId)
             throws HouseholdNotFoundException {
