@@ -83,7 +83,7 @@ public class HouseholdMemberControllerTest {
         Map<String, Long> requestBody = new HashMap<>();
         requestBody.put("userId", 1L);
 
-        mockMvc.perform(post("/household/1/add")
+        mockMvc.perform(post("/household/1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestBody)))
                 .andExpect(status().isOk())
@@ -138,7 +138,7 @@ public class HouseholdMemberControllerTest {
         Map<String, Long> requestBody = new HashMap<>();
         requestBody.put("userId", 1L);
 
-        mockMvc.perform(post("/household/1/add")
+        mockMvc.perform(post("/household/1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestBody)))
                 .andExpect(status().isNotFound())
@@ -157,7 +157,7 @@ public class HouseholdMemberControllerTest {
         Map<String, Long> requestBody = new HashMap<>();
         requestBody.put("userId", 1L);
 
-        mockMvc.perform(post("/household/1/add")
+        mockMvc.perform(post("/household/1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestBody)))
                 .andExpect(status().isNotFound())
@@ -177,7 +177,7 @@ public class HouseholdMemberControllerTest {
         Map<String, Long> requestBody = new HashMap<>();
         requestBody.put("userId", 1L);
 
-        mockMvc.perform(post("/household/1/add")
+        mockMvc.perform(post("/household/1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestBody)))
                 .andExpect(status().isConflict())
