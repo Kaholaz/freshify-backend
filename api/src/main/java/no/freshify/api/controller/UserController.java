@@ -11,6 +11,7 @@ import no.freshify.api.model.mapper.UserMapper;
 import no.freshify.api.model.mapper.UserMapperImpl;
 import no.freshify.api.security.AuthenticationService;
 import no.freshify.api.security.CookieFactory;
+import no.freshify.api.security.UserAuthentication;
 import no.freshify.api.security.UserDetailsImpl;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.UserService;
@@ -44,16 +45,22 @@ public class UserController {
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping
-    public ResponseEntity<Object> createUser(@RequestBody CreateUser user) {
+    public ResponseEntity<Object> createUser(@RequestBody CreateUser user, HttpServletResponse response) {
         logger.info("Creating user: " + user.getEmail());
         if (userService.getUserByEmail(user.getEmail()) != null) {
             logger.warn("User already exists");
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
         }
 
-        userService.createUser(userMapper.fromCreateUser(user));
+        User userFromDatabase = userService.createUser(userMapper.fromCreateUser(user));
         logger.info("User created: " + user.getEmail());
-        return ResponseEntity.status(HttpStatus.CREATED).body("User created");
+
+        Authentication auth = new UserAuthentication(new UserDetailsImpl(userFromDatabase, List.of()));
+        String jwt = authenticationService.generateToken(auth);
+        Cookie cookie = CookieFactory.getAuthorizationCookie(jwt);
+
+        response.addCookie(cookie);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toUserFull(userFromDatabase));
     }
 
     @GetMapping
