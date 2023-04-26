@@ -171,13 +171,10 @@ public class ShoppingListControllerTest {
     public void testAddItem() throws Exception {
         when(authenticationService.getLoggedInUser()).thenReturn(user);
         when(householdService.findHouseholdByHouseholdId(anyLong())).thenReturn(household);
-        when(itemTypeService.getItemTypeById(anyLong())).thenReturn(itemType);
         when(shoppingListEntryMapper.toShoppingListEntryResponse(any(ShoppingListEntry.class)))
                 .thenReturn(shoppingListEntryResponse);
-        when(shoppingListEntryService.findShoppingListEntryByItemType(anyLong(), anyLong()))
-                .thenReturn(shoppingListEntry);
+        when(shoppingListEntryService.addItem(any(ShoppingListEntry.class))).thenReturn(shoppingListEntry);
 
-        doNothing().when(shoppingListEntryService).addItem(shoppingListEntry);
 
         mockMvc.perform(post("/household/1/shoppinglist")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -191,9 +188,6 @@ public class ShoppingListControllerTest {
 
         verify(householdService, VerificationModeFactory.times(1)).findHouseholdByHouseholdId(anyLong());
         verify(authenticationService, VerificationModeFactory.times(1)).getLoggedInUser();
-        verify(itemTypeService, VerificationModeFactory.times(1)).getItemTypeById(anyLong());
-        verify(shoppingListEntryService, VerificationModeFactory.times(1))
-                .findShoppingListEntryByItemType(anyLong(), anyLong());
     }
 
     @Test
@@ -233,11 +227,7 @@ public class ShoppingListControllerTest {
 
     @Test
     public void testUpdateShoppingListEntry() throws Exception {
-        //when(authenticationService.getLoggedInUser()).thenReturn(user);
-        when(householdService.findHouseholdByHouseholdId(anyLong())).thenReturn(household);
-        when(itemTypeService.getItemTypeById(anyLong())).thenReturn(itemType);
-        when(shoppingListEntryService.findShoppingListEntryByItemType(anyLong(), anyLong()))
-                .thenReturn(shoppingListEntry);
+        when(shoppingListEntryService.findShoppingListEntryById(any(Long.class))).thenReturn(shoppingListEntry);
         doNothing().when(shoppingListEntryService).updateShoppingListEntry(any(ShoppingListEntry.class));
 
         mockMvc.perform(put("/household/1/shoppinglist")
@@ -245,11 +235,6 @@ public class ShoppingListControllerTest {
                         .content(objectMapper.writeValueAsString(shoppingListEntryEditRequest)))
                 .andExpect(status().isOk());
 
-        verify(householdService, VerificationModeFactory.times(1)).findHouseholdByHouseholdId(anyLong());
-        // verify(authenticationService, VerificationModeFactory.times(1)).getLoggedInUser();
-        verify(itemTypeService, VerificationModeFactory.times(1)).getItemTypeById(anyLong());
-        verify(shoppingListEntryService, VerificationModeFactory.times(1))
-                .findShoppingListEntryByItemType(anyLong(), anyLong());
         verify(shoppingListEntryService, VerificationModeFactory.times(1))
                 .updateShoppingListEntry(any(ShoppingListEntry.class));
     }

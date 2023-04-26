@@ -58,27 +58,16 @@ public class ShoppingListController {
     @PostMapping
     public ResponseEntity<ShoppingListEntryResponse> addItem(@PathVariable("id") long householdId,
                                                      @RequestBody ShoppingListEntryRequest requestBody)
-            throws ItemTypeNotFoundException, ShoppingListEntryAlreadyExistsException, HouseholdNotFoundException, ShoppingListEntryNotFoundException {
+            throws ShoppingListEntryAlreadyExistsException, HouseholdNotFoundException {
         User loggedInUser = authenticationService.getLoggedInUser();
         Household household = householdService.findHouseholdByHouseholdId(householdId);
 
-        // Create a new ShoppingListEntry object
-        ShoppingListEntry shoppingListEntry = new ShoppingListEntry();
-        shoppingListEntry.setType(itemTypeService.getItemTypeById(requestBody.getItemTypeId()));
-        shoppingListEntry.setCount(requestBody.getCount());
-        shoppingListEntry.setSuggested(requestBody.getSuggested());
-
+        var shoppingListEntry = shoppingListEntryMapper.fromShoppingListEntryRequest(requestBody);
         shoppingListEntry.setHousehold(household);
         shoppingListEntry.setAddedBy(loggedInUser);
 
-        // Add the new ShoppingListEntry to the household's shopping list
-        shoppingListEntryService.addItem(shoppingListEntry);
-
-        Long id = shoppingListEntryService.findShoppingListEntryByItemType(householdId, shoppingListEntry.getType().getId()).getId();
-        shoppingListEntry.setId(id);
-
-        // Return the updated shopping list
-        return ResponseEntity.status(HttpStatus.CREATED).body(shoppingListEntryMapper.toShoppingListEntryResponse(shoppingListEntry));
+        var newShoppingListEntry = shoppingListEntryService.addItem(shoppingListEntry);
+        return ResponseEntity.status(HttpStatus.CREATED).body(shoppingListEntryMapper.toShoppingListEntryResponse(newShoppingListEntry));
     }
 
     /**
@@ -109,21 +98,20 @@ public class ShoppingListController {
      * @throws ItemTypeNotFoundException If the new item type is invalid
      */
     @PutMapping
-    public ResponseEntity<HttpStatus> updateShoppingListEntry(@PathVariable("id") long householdId,
+    public ResponseEntity<Object> updateShoppingListEntry(@PathVariable("id") long householdId,
                                                                 @RequestBody ShoppingListEntryEditRequest requestBody)
-            throws InvalidItemCountException, HouseholdNotFoundException, ItemTypeNotFoundException, ShoppingListEntryNotFoundException {
-        Household household = householdService.findHouseholdByHouseholdId(householdId);
+            throws InvalidItemCountException, ShoppingListEntryNotFoundException {
+        var oldEntry = shoppingListEntryService.findShoppingListEntryById(requestBody.getId());
 
-        ShoppingListEntry updatedEntry = new ShoppingListEntry();
-        updatedEntry.setId(shoppingListEntryService.findShoppingListEntryByItemType(householdId, requestBody.getId()).getId());
-        updatedEntry.setType(itemTypeService.getItemTypeById(requestBody.getId()));
-        updatedEntry.setCount(requestBody.getCount());
-        updatedEntry.setSuggested(requestBody.getSuggested());
-        updatedEntry.setChecked(requestBody.getChecked());
-        updatedEntry.setHousehold(household);
+        if (oldEntry.getHousehold().getId() != householdId)
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("The item is not part of the given household");
 
+        oldEntry.setChecked(requestBody.getChecked());
+        oldEntry.setSuggested(requestBody.getSuggested());
+        oldEntry.setCount(requestBody.getCount());
+
+        ShoppingListEntry updatedEntry = shoppingListEntryMapper.fromShoppingListEntryEditRequest(requestBody);
         shoppingListEntryService.updateShoppingListEntry(updatedEntry);
-
         return ResponseEntity.ok().build();
     }
 

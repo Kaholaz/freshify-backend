@@ -35,14 +35,14 @@ public class ShoppingListEntryService {
 
     private final HouseholdService householdService;
 
-    public void addItem(ShoppingListEntry shoppingListEntry) throws ShoppingListEntryAlreadyExistsException {
+    public ShoppingListEntry addItem(ShoppingListEntry shoppingListEntry) throws ShoppingListEntryAlreadyExistsException {
         logger.info("Adding item to shopping list");
         if (shoppingListEntry.getId() != null &&
                 shoppingListEntryRepository.existsById(shoppingListEntry.getId())) {
             logger.warn("Shopping list entry already exists in the shopping list");
             throw new ShoppingListEntryAlreadyExistsException();
         }
-        shoppingListEntryRepository.save(shoppingListEntry);
+        return shoppingListEntryRepository.save(shoppingListEntry);
     }
 
     public void updateShoppingListEntry(ShoppingListEntry updatedEntry) throws InvalidItemCountException, ShoppingListEntryNotFoundException {
@@ -150,14 +150,13 @@ public class ShoppingListEntryService {
             throw new ShoppingListEntryNotFoundException();
         }
 
-        Item item = new Item();
-        item.setType(shoppingListEntry.getType());
-        item.setHousehold(shoppingListEntry.getHousehold());
-        item.setAddedBy(shoppingListEntry.getAddedBy());
 
         for (int i = 0; i < shoppingListEntry.getCount(); i++) {
+            Item item = new Item();
+            item.setType(shoppingListEntry.getType());
+            item.setHousehold(shoppingListEntry.getHousehold());
+            item.setAddedBy(shoppingListEntry.getAddedBy());
             itemService.addItem(item);
-            item.setId(null);
         }
     }
 }
