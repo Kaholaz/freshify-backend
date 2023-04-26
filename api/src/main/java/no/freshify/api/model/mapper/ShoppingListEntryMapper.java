@@ -1,6 +1,5 @@
 package no.freshify.api.model.mapper;
 
-import no.freshify.api.model.ItemType;
 import no.freshify.api.model.ShoppingListEntry;
 import no.freshify.api.model.dto.ShoppingListEntryEditRequest;
 import no.freshify.api.model.dto.ShoppingListEntryRequest;
@@ -16,4 +15,6 @@ public abstract class ShoppingListEntryMapper {
     public abstract List<ShoppingListEntryResponse> toShoppingListEntryResponse(List<ShoppingListEntry> shoppingListEntries);
 
     public abstract ShoppingListEntry fromShoppingListEntryRequest(ShoppingListEntryRequest shoppingListEntryRequest);
+
+    public abstract ShoppingListEntry fromShoppingListEntryEditRequest(ShoppingListEntryEditRequest shoppingListEntryEditRequest);
 }

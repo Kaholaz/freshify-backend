@@ -6,7 +6,6 @@ import no.freshify.api.model.*;
 import no.freshify.api.model.dto.HouseholdMemberDTO;
 import no.freshify.api.model.dto.UserTypeRequest;
 import no.freshify.api.model.mapper.HouseholdMemberMapper;
-import no.freshify.api.repository.HouseholdMemberRepository;
 import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.UserService;
@@ -41,21 +40,15 @@ public class HouseholdMemberController {
      * @throws HouseholdMemberAlreadyExistsException If the user is already a member of the household
      */
     @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER')")
-    @PostMapping("{id}/add")
+    @PostMapping("{id}/users")
     public ResponseEntity<String> addUser(@PathVariable("id") Long householdId, @RequestBody Map<String, Long> requestBody) throws UserNotFoundException, HouseholdNotFoundException, HouseholdMemberAlreadyExistsException {
         Long userId = requestBody.get("userId");
-
         logger.info("Adding user with id: " + userId + " to household with id: " + householdId);
-
         User user = userService.getUserById(userId);
-
         Household household = householdService.findHouseholdByHouseholdId(householdId);
+        HouseholdMemberKey householdMemberKey = new HouseholdMemberKey(household.getId(), user.getId());
 
-        HouseholdMember householdMember = new HouseholdMember();
-        householdMember.setUser(user);
-        householdMember.setHousehold(household);
-        householdMember.setRole(HouseholdMemberRole.USER);
-        householdMember.setId(new HouseholdMemberKey(household.getId(), user.getId()));
+        HouseholdMember householdMember = new HouseholdMember(householdMemberKey, household, user, HouseholdMemberRole.USER);
 
         householdMemberService.addHouseholdMember(householdMember);
         logger.info("Added household member");
@@ -80,10 +73,7 @@ public class HouseholdMemberController {
         logger.info("Updating user type");
         Household household = householdService.findHouseholdByHouseholdId(householdId);
         User user = userService.getUserById(userTypeRequest.getUserId());
-
-        HouseholdMemberKey householdMemberKey = new HouseholdMemberKey();
-        householdMemberKey.setHouseholdId(household.getId());
-        householdMemberKey.setUserId(user.getId());
+        HouseholdMemberKey householdMemberKey = new HouseholdMemberKey(household.getId(), user.getId());
 
         HouseholdMember userInHousehold = householdMemberService.getHouseholdMemberByHouseholdMemberKey(householdMemberKey);
 
@@ -95,7 +85,7 @@ public class HouseholdMemberController {
         }
 
         householdMemberService.updateHouseholdMember(userInHousehold);
-
+        logger.info("Updated user type");
         return ResponseEntity.ok(householdMemberMapper.toHouseholdMemberDTO(userInHousehold));
     }
 
@@ -118,14 +108,12 @@ public class HouseholdMemberController {
         Household household = householdService.findHouseholdByHouseholdId(householdId);
         User user = userService.getUserById(userId);
 
-        HouseholdMemberKey householdMemberKey = new HouseholdMemberKey();
-        householdMemberKey.setHouseholdId(household.getId());
-        householdMemberKey.setUserId(user.getId());
+        HouseholdMemberKey householdMemberKey = new HouseholdMemberKey(household.getId(), user.getId());
 
         HouseholdMember userInHousehold = householdMemberService.getHouseholdMemberByHouseholdMemberKey(householdMemberKey);
 
         householdMemberService.removeHouseholdMember(userInHousehold);
-
+        logger.info("Removed household member");
         return ResponseEntity.ok("Operation successful");
     }
 }

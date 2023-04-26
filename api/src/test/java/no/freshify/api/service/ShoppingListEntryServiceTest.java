@@ -80,7 +80,8 @@ public class ShoppingListEntryServiceTest {
     }
 
     @Test
-    public void testUpdateShoppingListEntry() throws InvalidItemCountException {
+    public void testUpdateShoppingListEntry() throws InvalidItemCountException, ShoppingListEntryNotFoundException {
+        Mockito.when(shoppingListEntryRepository.findById(shoppingListEntry.getId())).thenReturn(Optional.of(shoppingListEntry));
         shoppingListEntry.setCount(2L);
         shoppingListEntryService.updateShoppingListEntry(shoppingListEntry);
 

@@ -7,29 +7,20 @@ import no.freshify.api.model.dto.CreateHousehold;
 import no.freshify.api.model.dto.HouseholdDTO;
 import no.freshify.api.model.dto.UserFull;
 import no.freshify.api.model.mapper.HouseholdMapper;
-import no.freshify.api.model.mapper.HouseholdMemberMapper;
 import no.freshify.api.security.AuthenticationService;
-import no.freshify.api.security.UserDetailsImpl;
 import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.HouseholdService;
 
-import no.freshify.api.service.UserService;
-import org.apache.coyote.Response;
-import org.hibernate.usertype.UserType;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.management.relation.InvalidRoleValueException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @RequestMapping("/household")

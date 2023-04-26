@@ -41,12 +41,22 @@ public class ShoppingListEntryService {
         shoppingListEntryRepository.save(shoppingListEntry);
     }
 
-    public void updateShoppingListEntry(ShoppingListEntry updatedEntry) throws InvalidItemCountException {
+    public void updateShoppingListEntry(ShoppingListEntry updatedEntry) throws InvalidItemCountException, ShoppingListEntryNotFoundException {
         logger.info("Updating shopping list entry");
         if (updatedEntry.getCount() <= 0) {
             logger.warn("Invalid operation. More items are removed than in shopping list.");
             throw new InvalidItemCountException();
         }
+        ShoppingListEntry oldEntry = shoppingListEntryRepository.findById(updatedEntry.getId()).orElse(null);
+        if (oldEntry == null) {
+            logger.warn("Shopping list entry not found");
+            throw new ShoppingListEntryNotFoundException();
+        }
+
+        if (updatedEntry.getHousehold() == null) updatedEntry.setHousehold(oldEntry.getHousehold());
+        if (updatedEntry.getType() == null) updatedEntry.setType(oldEntry.getType());
+        if (updatedEntry.getAddedBy() == null) updatedEntry.setAddedBy(oldEntry.getAddedBy());
+
         shoppingListEntryRepository.save(updatedEntry);
     }
 
