@@ -46,7 +46,7 @@ public class ShoppingListController {
      * Adds an item to the given household's shopping list
      * @param householdId The household whose shopping list we want to add an item to
      * @param requestBody The item to be added
-     * @return
+     * @return The item that was added
      * @throws HouseholdNotFoundException If the household was not found
      * @throws ItemTypeNotFoundException If the item type was not found
      * @throws ShoppingListEntryAlreadyExistsException If the shopping list entry already exists in the shopping list
@@ -73,7 +73,7 @@ public class ShoppingListController {
      * Deletes a shopping list entry from the shopping list of a given household.
      * @param householdId The household to delete an entry from
      * @param listEntryId The entry to delete from the shopping list
-     * @return
+     * @return 204 No Content
      * @throws ShoppingListEntryNotFoundException If the shopping list entry was not found
      * in the given household's shopping list
      * @throws HouseholdNotFoundException If the given household was not found
@@ -91,10 +91,9 @@ public class ShoppingListController {
      * Updates an entry in a shopping list which belongs to given household.
      * @param householdId The household whose shopping list to edit an item in
      * @param requestBody The new shopping list item
-     * @return
+     * @return 200 OK
      * @throws InvalidItemCountException If the new item count is invalid
-     * @throws HouseholdNotFoundException If the household is not found
-     * @throws ItemTypeNotFoundException If the new item type is invalid
+     * @throws ShoppingListEntryNotFoundException If the shopping list entry was not found
      */
     @PutMapping
     public ResponseEntity<Object> updateShoppingListEntry(@PathVariable("id") long householdId,
