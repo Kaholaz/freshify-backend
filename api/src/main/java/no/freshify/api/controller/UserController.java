@@ -60,7 +60,7 @@ public class UserController {
         Cookie cookie = CookieFactory.getAuthorizationCookie(jwt);
 
         response.addCookie(cookie);
-        return ResponseEntity.status(HttpStatus.CREATED).body("User created");
+        return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toUserFull(userFromDatabase));
     }
 
     @GetMapping
