@@ -16,19 +16,24 @@ import no.freshify.api.repository.UserRepository;
 
 import no.freshify.api.security.AuthenticationService;
 import no.freshify.api.security.PermissionEvaluatorImpl;
+import no.freshify.api.security.UserDetailsImpl;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.ItemTypeService;
 import no.freshify.api.service.ShoppingListEntryService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
+
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +50,7 @@ public class ShoppingListController {
 
     private final Logger logger = LoggerFactory.getLogger(InventoryController.class);
     private final ShoppingListEntryMapper shoppingListEntryMapper = Mappers.getMapper(ShoppingListEntryMapper.class);
+    private final PermissionEvaluator permissionEvaluator = new PermissionEvaluatorImpl();
 
     /**
      * Adds an item to the given household's shopping list
@@ -61,10 +67,7 @@ public class ShoppingListController {
                                                      @RequestBody ShoppingListEntryRequest requestBody)
             throws ShoppingListEntryAlreadyExistsException, HouseholdNotFoundException, ItemTypeNotFoundException {
         // Only allow non-suggested items to be added by superusers
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        PermissionEvaluatorImpl permissionEvaluator = new PermissionEvaluatorImpl();
-        boolean isSuperuser = permissionEvaluator.hasPermission(auth, householdId, "household", "SUPERUSER");
-        if (!requestBody.getSuggested() && !isSuperuser)
+        if (!requestBody.getSuggested() && !authenticationService.isSuperuser(householdId))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only superusers can add items to the shopping list");
 
         User loggedInUser = authenticationService.getLoggedInUser();
@@ -90,11 +93,21 @@ public class ShoppingListController {
      * in the given household's shopping list
      * @throws HouseholdNotFoundException If the given household was not found
      */
-    @PreAuthorize("hasPermission(#householdId, 'household', 'SUPERUSER')")
+    @PreAuthorize("hasPermission(#householdId, 'household', '')")
     @DeleteMapping("/{listEntryId}")
-    public ResponseEntity<HttpStatus> deleteShoppingListEntry(@PathVariable("id") long householdId,
-                                                              @PathVariable("listEntryId") long listEntryId)
+    public ResponseEntity<HttpStatus> deleteShoppingListEntry(
+            @PathVariable("id") long householdId,
+            @PathVariable("listEntryId") long listEntryId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    )
             throws ShoppingListEntryNotFoundException, HouseholdNotFoundException {
+        // Only allow non-suggested items to be deleted by superusers
+        var entry = shoppingListEntryService.findShoppingListEntryById(listEntryId);
+        if (
+                (!entry.getSuggested() || !Objects.equals(entry.getAddedBy().getId(), userDetails.getId()))
+                && !authenticationService.isSuperuser(householdId)
+        )
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         shoppingListEntryService.deleteShoppingListEntryById(householdId, listEntryId);
         return ResponseEntity.noContent().build();
     }

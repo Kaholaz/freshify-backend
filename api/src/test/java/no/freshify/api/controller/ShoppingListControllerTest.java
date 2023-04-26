@@ -171,7 +171,7 @@ public class ShoppingListControllerTest {
 
     @Test
     public void testAddItem() throws Exception {
-        when(authenticationService.getLoggedInUser()).thenReturn(user);
+        when(authenticationService.isSuperuser(anyLong())).thenReturn(true);
         when(householdService.findHouseholdByHouseholdId(anyLong())).thenReturn(household);
         when(shoppingListEntryMapper.toShoppingListEntryResponse(any(ShoppingListEntry.class)))
                 .thenReturn(shoppingListEntryResponse);
@@ -197,6 +197,9 @@ public class ShoppingListControllerTest {
         doNothing().when(shoppingListEntryService).deleteShoppingListEntryById(anyLong(), anyLong());
         when(shoppingListEntryService.getShoppingList(anyLong()))
                 .thenReturn(shoppingList);
+        shoppingListEntry.setSuggested(false);
+        when(shoppingListEntryService.findShoppingListEntryById(anyLong())).thenReturn(shoppingListEntry);
+        when(authenticationService.isSuperuser(anyLong())).thenReturn(true);
 
         mockMvc.perform(delete("/household/1/shoppinglist/1")
                 .contentType(MediaType.APPLICATION_JSON))
