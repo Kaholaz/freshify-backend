@@ -40,7 +40,7 @@ public class HouseholdMemberController {
      * @throws HouseholdMemberAlreadyExistsException If the user is already a member of the household
      */
     @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER')")
-    @PostMapping("{id}/user")
+    @PostMapping("{id}/users")
     public ResponseEntity<String> addUser(@PathVariable("id") Long householdId, @RequestBody Map<String, Long> requestBody) throws UserNotFoundException, HouseholdNotFoundException, HouseholdMemberAlreadyExistsException {
         Long userId = requestBody.get("userId");
         logger.info("Adding user with id: " + userId + " to household with id: " + householdId);
