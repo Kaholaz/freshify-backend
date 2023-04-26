@@ -29,6 +29,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -101,10 +102,6 @@ public class ShoppingListControllerTest {
 
         userFull = userMapper.toUserFull(user);
 
-        userDetails = new UserDetailsImpl(user.getId(), user.getEmail(), "password", user.getPassword(), Collections.emptyList());
-        authentication = new UserAuthentication(userDetails);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         // Setup household
         household = new Household();
         household.setId(householdId);
@@ -124,6 +121,11 @@ public class ShoppingListControllerTest {
 
         household.setHouseholdMembers(householdMembers);
         user.setHouseholdMembers(householdMembers);
+
+        userDetails = new UserDetailsImpl(user.getId(), user.getEmail(), "password", user.getPassword(),
+                List.of(householdMember));
+        authentication = new UserAuthentication(userDetails);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Setup users
         users = new ArrayList<>();
