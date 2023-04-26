@@ -22,6 +22,7 @@ import no.freshify.api.service.ShoppingListEntryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,6 +52,7 @@ public class ShoppingListController {
      * @throws ItemTypeNotFoundException If the item type was not found
      * @throws ShoppingListEntryAlreadyExistsException If the shopping list entry already exists in the shopping list
      */
+    @PreAuthorize("hasPermission(#householdId, 'household', 'SUPERUSER')")
     @PostMapping
     public ResponseEntity<ShoppingListEntryResponse> addItem(@PathVariable("id") long householdId,
                                                      @RequestBody ShoppingListEntryRequest requestBody)
@@ -78,7 +80,7 @@ public class ShoppingListController {
      * in the given household's shopping list
      * @throws HouseholdNotFoundException If the given household was not found
      */
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasPermission(#householdId, 'household', 'SUPERUSER')")
     @DeleteMapping("/{listEntryId}")
     public ResponseEntity<HttpStatus> deleteShoppingListEntry(@PathVariable("id") long householdId,
                                                               @PathVariable("listEntryId") long listEntryId)
@@ -95,6 +97,7 @@ public class ShoppingListController {
      * @throws InvalidItemCountException If the new item count is invalid
      * @throws ShoppingListEntryNotFoundException If the shopping list entry was not found
      */
+    @PreAuthorize("hasPermission(#householdId, 'household', 'SUPERUSER')")
     @PutMapping
     public ResponseEntity<Object> updateShoppingListEntry(@PathVariable("id") long householdId,
                                                                 @RequestBody ShoppingListEntryEditRequest requestBody)
@@ -119,6 +122,7 @@ public class ShoppingListController {
      * @return A list of shopping list items belonging to the household
      * @throws HouseholdNotFoundException If the household is not found
      */
+    @PreAuthorize("hasPermission(#householdId, 'household', '')")
     @GetMapping
     public ResponseEntity<List<ShoppingListEntryResponse>> getShoppingList(@PathVariable("id") long householdId)
             throws HouseholdNotFoundException {
