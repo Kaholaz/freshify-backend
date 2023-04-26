@@ -1,21 +1,34 @@
 package no.freshify.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import no.freshify.api.model.ShoppingListEntry;
+import no.freshify.api.model.*;
+import no.freshify.api.model.dto.HouseholdDTO;
 import no.freshify.api.model.dto.ShoppingListEntryEditRequest;
 import no.freshify.api.model.dto.ShoppingListEntryRequest;
+import no.freshify.api.model.dto.UserFull;
 import no.freshify.api.repository.HouseholdRepository;
 import no.freshify.api.repository.ShoppingListEntryRepository;
+import no.freshify.api.security.UserAuthentication;
+import no.freshify.api.security.UserDetailsImpl;
 import no.freshify.api.service.ShoppingListEntryService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.*;
+
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -23,8 +36,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.CoreMatchers.is;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
+@WebMvcTest(ShoppingListController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@ActiveProfiles("test")
 public class ShoppingListControllerIntegrationTest {
 
     @Autowired
@@ -36,14 +50,60 @@ public class ShoppingListControllerIntegrationTest {
     @MockBean
     ShoppingListEntryService shoppingListEntryService;
 
-    @Autowired
-    private ShoppingListEntryRepository shoppingListEntryRepository;
-    @Autowired
-    private HouseholdRepository householdRepository;
+    @MockBean
+    private UserDetailsImpl userDetails;
 
+    private User user;
+    private Authentication authentication;
+    private Long householdId = 1L;
+    private Household household;
+    private HouseholdDTO householdDTO;
+    private List<UserFull> users;
+
+    @BeforeEach
+    public void setup() {
+        // Setup user with auth
+        user = new User();
+        user.setId(1L);
+        user.setEmail("test@");
+
+        userDetails = new UserDetailsImpl(user.getId(), user.getEmail(), "password", user.getPassword(), Collections.emptyList());
+        authentication = new UserAuthentication(userDetails);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Setup household
+        household = new Household();
+        household.setId(householdId);
+        household.setName("Test Household");
+
+        householdDTO  = new HouseholdDTO();
+        householdDTO.setId(householdId);
+        householdDTO.setName("Test Household");
+
+        HouseholdMember householdMember = new HouseholdMember();
+        householdMember.setId(new HouseholdMemberKey(household.getId(), user.getId()));
+        householdMember.setHousehold(household);
+        householdMember.setRole(HouseholdMemberRole.SUPERUSER);
+        householdMember.setUser(user);
+
+        Set<HouseholdMember> householdMembers = new HashSet<>(Collections.singletonList(householdMember));
+
+        household.setHouseholdMembers(householdMembers);
+        user.setHouseholdMembers(householdMembers);
+
+        // Setup users
+        users = new ArrayList<>();
+        users.addAll(List.of(
+                new UserFull(1L, "user1", "user1@"),
+                new UserFull(2L, "user2", "user2@")
+        ));
+    }
 
     @Test
     public void testAddItem() throws Exception {
+        when(authenticationService.getLoggedInUser()).thenReturn(user);
+        when(householdService.addHousehold(any(Household.class))).thenReturn(household);
+
         ShoppingListEntryRequest request = new ShoppingListEntryRequest();
         request.setItemTypeId(1L);
         request.setCount(2L);
