@@ -79,11 +79,13 @@ public class ShoppingListControllerIntegrationTest {
 
     @Test
     public void testGetShoppingList() throws Exception {
+        /**
         ShoppingListEntry entry1 = new ShoppingListEntry();
         entry1.setHousehold(householdRepository.findHouseholdById(1L));
 
         ShoppingListEntry entry2 = new ShoppingListEntry();
         entry2.setHousehold(householdRepository.findHouseholdById(1L));
+         */
 
         ShoppingListEntryRequest entry1 = new ShoppingListEntryRequest();
         entry1.setItemTypeId(1L);
@@ -101,8 +103,6 @@ public class ShoppingListControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(entry1)))
                 .andExpect(status().isCreated());
-
-        shoppingListEntryRepository.save();
 
         mockMvc.perform(post("/household/1/shoppinglist")
                         .contentType(MediaType.APPLICATION_JSON)
