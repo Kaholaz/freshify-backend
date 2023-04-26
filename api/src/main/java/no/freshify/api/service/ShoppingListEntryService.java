@@ -136,8 +136,11 @@ public class ShoppingListEntryService {
                 .forEach(entry -> {
                     try {
                         moveEntryToInventory(entry.getId());
+                        deleteShoppingListEntryById(entry.getId(), householdId);
                     } catch (ShoppingListEntryNotFoundException e) {
                         logger.error("Shopping list entry not found while moving checked items to inventory");
+                    } catch (HouseholdNotFoundException e) {
+                        logger.error("Household not found while moving checked items to inventory");
                     }
                 });
     }
