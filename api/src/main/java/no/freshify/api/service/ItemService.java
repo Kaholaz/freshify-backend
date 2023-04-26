@@ -5,6 +5,7 @@ import no.freshify.api.exception.ItemDoesNotBelongToHouseholdException;
 import no.freshify.api.exception.ItemNotFoundException;
 import no.freshify.api.model.Household;
 import no.freshify.api.model.Item;
+import no.freshify.api.model.ItemStatus;
 import no.freshify.api.repository.ItemRepository;
 
 import org.slf4j.Logger;
@@ -22,6 +23,10 @@ public class ItemService {
 
     public List<Item> getHouseholdItems(Household household) {
         return itemRepository.findItemsByHousehold(household);
+    }
+
+    public List<Item> getInventoryItems(Household household) {
+        return itemRepository.findItemsByHouseholdAndStatus(household, ItemStatus.INVENTORY);
     }
 
     public Item getItemById(long id) throws ItemNotFoundException {

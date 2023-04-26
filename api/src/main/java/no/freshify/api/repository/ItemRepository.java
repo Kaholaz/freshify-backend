@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findItemsByHousehold(Household household);
-    List<Item> findItemsByHouseholdAndStatus(Long householdId, ItemStatus status);
+    List<Item> findItemsByHouseholdAndStatus(Household household, ItemStatus status);
     Item getItemById(Long id);
     Item findByIdAndHousehold(long id, Household household);
 }

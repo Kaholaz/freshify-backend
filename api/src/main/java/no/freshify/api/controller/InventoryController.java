@@ -7,6 +7,7 @@ import no.freshify.api.model.Item;
 import no.freshify.api.model.ItemStatus;
 import no.freshify.api.model.User;
 import no.freshify.api.model.dto.InventoryItem;
+import no.freshify.api.model.dto.UpdateInventoryItem;
 import no.freshify.api.model.mapper.ItemMapper;
 import no.freshify.api.model.mapper.ItemMapperImpl;
 import no.freshify.api.security.UserDetailsImpl;
@@ -14,10 +15,8 @@ import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.ItemService;
 import no.freshify.api.service.ItemTypeService;
 import no.freshify.api.service.UserService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -91,12 +90,9 @@ public class InventoryController {
         logger.info("Getting inventory items for household with id: " + householdId);
         Household household = householdService.findHouseholdByHouseholdId(householdId);
 
-        List<Item> items = itemService.getHouseholdItems(household);
+        List<Item> items = itemService.getInventoryItems(household);
+        List<InventoryItem> inventoryItems = itemMapper.toItemDtos(items);
 
-        ArrayList<InventoryItem> inventoryItems = new ArrayList<>();
-        for (Item item : items) {
-            inventoryItems.add(itemMapper.toItemDto(item));
-        }
         logger.info("Returning household inventory items");
         return ResponseEntity.ok(inventoryItems);
     }
@@ -136,27 +132,22 @@ public class InventoryController {
      */
     @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER')")
     @PutMapping("/{id}/inventory")
-    public ResponseEntity<String> updateInventoryItem(@PathVariable("id") long householdId, @RequestBody Map<String, Object> requestBody) throws HouseholdNotFoundException, IllegalItemStatusException, ItemDoesNotBelongToHouseholdException, IllegalItemParameterException, ItemNotFoundException {
-        logger.info("Updating inventory item with id: " + requestBody.get("id"));
-        long itemId = Long.parseLong(requestBody.get("itemId").toString());
-        double remaining = Float.parseFloat(requestBody.get("remaining").toString());
-        String state = requestBody.get("state").toString();
-
-        try {
-            ItemStatus.valueOf(state);
-        } catch (Exception e) {
-            throw new IllegalItemStatusException();
-        }
+    public ResponseEntity<String> updateInventoryItem(
+            @PathVariable("id") long householdId,
+            @RequestBody UpdateInventoryItem requestBody
+    ) throws HouseholdNotFoundException, ItemDoesNotBelongToHouseholdException, IllegalItemParameterException, ItemNotFoundException {
+        logger.info("Updating inventory item with id: " + requestBody.getItemId());
+        Item newItem = itemMapper.toItem(requestBody);
 
         Household household = householdService.findHouseholdByHouseholdId(householdId);
-        Item item = itemService.getItemByIdAndHousehold(itemId, household);
+        Item item = itemService.getItemByIdAndHousehold(newItem.getId(), household);
 
-        item.setRemaining(remaining);
-        item.setStatus(ItemStatus.valueOf(state));
+        item.setRemaining(newItem.getRemaining());
+        item.setStatus(newItem.getStatus());
         itemService.updateItem(item);
 
-        logger.info("Updated inventory item with id: " + itemId);
-        return ResponseEntity.ok("Updated inventory item with id: " + itemId);
+        logger.info("Updated inventory item with id: " + item.getId());
+        return ResponseEntity.ok("Updated inventory item with id: " + item.getId());
     }
 
     /**

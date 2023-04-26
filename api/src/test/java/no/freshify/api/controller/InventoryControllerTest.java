@@ -125,7 +125,7 @@ public class InventoryControllerTest {
     @Test
     public void testGetInventoryItems_Success() throws Exception {
         when(householdService.findHouseholdByHouseholdId(anyLong())).thenReturn(household);
-        when(itemService.getHouseholdItems(any(Household.class))).thenReturn(Collections.singletonList(item));
+        when(itemService.getInventoryItems(any(Household.class))).thenReturn(Collections.singletonList(item));
 
         mockMvc.perform(get("/household/1/inventory"))
                 .andExpect(status().isOk())
@@ -135,7 +135,7 @@ public class InventoryControllerTest {
                 .andExpect(jsonPath("$.[0].addedBy.id").value(user.getId()));
 
         verify(householdService, times(1)).findHouseholdByHouseholdId(anyLong());
-        verify(itemService, times(1)).getHouseholdItems(any(Household.class));
+        verify(itemService, times(1)).getInventoryItems(any(Household.class));
     }
 
     @Test
