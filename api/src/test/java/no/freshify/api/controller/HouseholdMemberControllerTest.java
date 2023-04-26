@@ -71,7 +71,7 @@ public class HouseholdMemberControllerTest {
 
         userTypeRequest = new UserTypeRequest();
         userTypeRequest.setUserId(1L);
-        userTypeRequest.setUserType("SUPERUSER");
+        userTypeRequest.setType("SUPERUSER");
     }
 
     @Test
@@ -229,7 +229,7 @@ public class HouseholdMemberControllerTest {
         HouseholdMemberKey householdMemberKey = new HouseholdMemberKey(household.getId() , user.getId());
         when(householdMemberService.getHouseholdMemberByHouseholdMemberKey(householdMemberKey)).thenReturn(householdMember);
 
-        userTypeRequest.setUserType("INVALIDROLE");
+        userTypeRequest.setType("INVALIDROLE");
 
         mockMvc.perform(put("/household/1/users")
                         .contentType(MediaType.APPLICATION_JSON)

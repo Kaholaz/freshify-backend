@@ -78,13 +78,13 @@ public class HouseholdMemberController {
         HouseholdMember userInHousehold = householdMemberService.getHouseholdMemberByHouseholdMemberKey(householdMemberKey);
 
         try {
-            HouseholdMemberRole.valueOf(userTypeRequest.getUserType());
-        } catch (IllegalArgumentException e) {
-            logger.warn("Invalid role: " + userTypeRequest.getUserType());
+            HouseholdMemberRole.valueOf(userTypeRequest.getType());
+        } catch (Exception e) {
+            logger.warn("Invalid role: " + userTypeRequest.getType());
             throw new InvalidHouseholdMemberRoleException();
         }
 
-        userInHousehold.setRole(HouseholdMemberRole.valueOf(userTypeRequest.getUserType()));
+        userInHousehold.setRole(HouseholdMemberRole.valueOf(userTypeRequest.getType()));
 
         householdMemberService.updateHouseholdMember(userInHousehold);
         logger.info("Updated user type");

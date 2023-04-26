@@ -144,7 +144,7 @@ public class InventoryController {
 
         try {
             ItemStatus.valueOf(state);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             throw new IllegalItemStatusException();
         }
 

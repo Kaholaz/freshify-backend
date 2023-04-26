@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class UserTypeRequest {
     private Long userId;
-    private String userType;
+    private String type;
 }
