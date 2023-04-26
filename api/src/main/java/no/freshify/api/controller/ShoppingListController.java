@@ -36,15 +36,10 @@ public class ShoppingListController {
 
     private final HouseholdService householdService;
     private final ShoppingListEntryService shoppingListEntryService;
-    private final ItemTypeService itemTypeService;
     private final AuthenticationService authenticationService;
 
     private final Logger logger = LoggerFactory.getLogger(InventoryController.class);
-    private final ShoppingListEntryRepository shoppingListEntryRepository;
     private final ShoppingListEntryMapper shoppingListEntryMapper = Mappers.getMapper(ShoppingListEntryMapper.class);
-
-    private final HouseholdRepository householdRepository;
-    private final UserRepository userRepository;
 
     /**
      * Adds an item to the given household's shopping list
