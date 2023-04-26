@@ -57,8 +57,9 @@ public class ShoppingListController {
     @PostMapping
     public ResponseEntity<ShoppingListEntryResponse> addItem(@PathVariable("id") long householdId,
                                                      @RequestBody ShoppingListEntryRequest requestBody)
-            throws ItemTypeNotFoundException, ShoppingListEntryAlreadyExistsException {
+            throws ItemTypeNotFoundException, ShoppingListEntryAlreadyExistsException, HouseholdNotFoundException {
         User loggedInUser = authenticationService.getLoggedInUser();
+        Household household = householdService.findHouseholdByHouseholdId(householdId);
 
         // Create a new ShoppingListEntry object
         ShoppingListEntry shoppingListEntry = new ShoppingListEntry();
@@ -66,17 +67,14 @@ public class ShoppingListController {
         shoppingListEntry.setCount(requestBody.getCount());
         shoppingListEntry.setSuggested(requestBody.getSuggested());
 
-        Household householdRef = householdRepository.getReferenceById(householdId);
-        User userRef = userRepository.getReferenceById(loggedInUser.getId());
-
-        shoppingListEntry.setHousehold(householdRef);
-        shoppingListEntry.setAddedBy(userRef);
+        shoppingListEntry.setHousehold(household);
+        shoppingListEntry.setAddedBy(loggedInUser);
 
         // Add the new ShoppingListEntry to the household's shopping list
         shoppingListEntryService.addItem(shoppingListEntry);
 
         // Return the updated shopping list
-        return ResponseEntity.ok(shoppingListEntryMapper.toShoppingListEntryResponse(shoppingListEntry));
+        return ResponseEntity.status(HttpStatus.CREATED).body(shoppingListEntryMapper.toShoppingListEntryResponse(shoppingListEntry));
     }
 
     /**
