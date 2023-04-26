@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import no.freshify.api.model.*;
 import no.freshify.api.model.dto.*;
 import no.freshify.api.model.mapper.ShoppingListEntryMapper;
+import no.freshify.api.model.mapper.UserMapper;
 import no.freshify.api.repository.HouseholdRepository;
 import no.freshify.api.repository.ShoppingListEntryRepository;
 import no.freshify.api.repository.UserRepository;
@@ -15,6 +16,7 @@ import no.freshify.api.service.ItemTypeService;
 import no.freshify.api.service.ShoppingListEntryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,17 +30,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.*;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.hamcrest.CoreMatchers.is;
 
 @WebMvcTest(ShoppingListController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -50,6 +48,8 @@ public class ShoppingListControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     @MockBean
     ShoppingListEntryService shoppingListEntryService;
@@ -79,6 +79,7 @@ public class ShoppingListControllerTest {
     private UserDetailsImpl userDetails;
 
     private User user;
+    private UserFull userFull;
     private Authentication authentication;
     private Long householdId = 1L;
     private Household household;
@@ -89,6 +90,7 @@ public class ShoppingListControllerTest {
     private ShoppingListEntryRequest shoppingListEntryRequest;
     private ShoppingListEntryResponse shoppingListEntryResponse;
     private ShoppingListEntryEditRequest shoppingListEntryEditRequest;
+    private List<ShoppingListEntry> shoppingList;
 
     @BeforeEach
     public void setup() {
@@ -96,6 +98,8 @@ public class ShoppingListControllerTest {
         user = new User();
         user.setId(1L);
         user.setEmail("test@");
+
+        userFull = userMapper.toUserFull(user);
 
         userDetails = new UserDetailsImpl(user.getId(), user.getEmail(), "password", user.getPassword(), Collections.emptyList());
         authentication = new UserAuthentication(userDetails);
@@ -143,6 +147,7 @@ public class ShoppingListControllerTest {
         shoppingListEntryResponse.setChecked(false);
         shoppingListEntryResponse.setSuggested(false);
         shoppingListEntryResponse.setCount(2L);
+        shoppingListEntryResponse.setAddedBy(userFull);
 
         shoppingListEntry = new ShoppingListEntry();
         shoppingListEntry.setId(1L);
@@ -158,6 +163,8 @@ public class ShoppingListControllerTest {
         shoppingListEntryEditRequest.setCount(3L);
         shoppingListEntryEditRequest.setChecked(true);
         shoppingListEntryEditRequest.setSuggested(true);
+
+        shoppingList = new ArrayList<>(List.of(shoppingListEntry));
     }
 
     @Test
@@ -187,6 +194,41 @@ public class ShoppingListControllerTest {
         verify(itemTypeService, VerificationModeFactory.times(1)).getItemTypeById(anyLong());
         verify(shoppingListEntryService, VerificationModeFactory.times(1))
                 .findShoppingListEntryByItemType(anyLong(), anyLong());
+    }
+
+    @Test
+    public void testDeleteShoppingListEntry() throws Exception {
+        doNothing().when(shoppingListEntryService).deleteShoppingListEntryById(anyLong(), anyLong());
+        when(shoppingListEntryService.getShoppingList(anyLong()))
+                .thenReturn(shoppingList);
+
+        mockMvc.perform(delete("/household/1/shoppinglist/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNoContent());
+
+        verify(shoppingListEntryService, VerificationModeFactory.times(1))
+                .deleteShoppingListEntryById(anyLong(), anyLong());
+    }
+
+    @Test
+    public void testGetShoppingList() throws Exception {
+        when(shoppingListEntryService.getShoppingList(anyLong()))
+                .thenReturn(shoppingList);
+        when(shoppingListEntryMapper.toShoppingListEntryResponse(anyList()))
+                .thenReturn(List.of(shoppingListEntryResponse));
+
+        mockMvc.perform(get("/household/1/shoppinglist")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].id").value(shoppingListEntryResponse.getId()))
+                .andExpect(jsonPath("$.[0].checked").value(shoppingListEntryResponse.getChecked()))
+                .andExpect(jsonPath("$.[0].count").value(shoppingListEntryResponse.getCount()))
+                .andExpect(jsonPath("$.[0].suggested").value(shoppingListEntryResponse.getSuggested()))
+                .andExpect(jsonPath("$.[0].type.id").value(shoppingListEntryResponse.getType().getId()))
+                .andExpect(jsonPath("$.[0].addedBy.id").value(shoppingListEntryResponse.getAddedBy().getId()));
+
+        verify(shoppingListEntryService, VerificationModeFactory.times(1))
+                .getShoppingList(anyLong());
     }
 
     @Test
