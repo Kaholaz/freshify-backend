@@ -143,4 +143,17 @@ public class ShoppingListController {
         return ResponseEntity.ok(responseObjects);
     }
 
+    /**
+     * Moves all checked items from the shopping list to the inventory of a given household
+     * @param householdId The household to move items from
+     * @return 200 OK
+     * @throws HouseholdNotFoundException If the household was not found
+     */
+    @PreAuthorize("hasPermission(#householdId, 'household', 'SUPERUSER')")
+    @PostMapping("/buy")
+    public ResponseEntity<HttpStatus> buyItems(@PathVariable("id") long householdId)
+            throws HouseholdNotFoundException {
+        shoppingListEntryService.moveAllCheckedToInventory(householdId);
+        return ResponseEntity.ok().build();
+    }
 }

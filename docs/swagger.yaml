@@ -555,18 +555,6 @@ paths:
           schema:
             type: integer
             format: int64
-      requestBody:
-        description: Items to be marked as bought
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                listEntryIds:
-                  type: array
-                  items:
-                    type: integer
-                    format: int64
       responses:
         '200':
           description: Successful operation

@@ -28,7 +28,7 @@ public class Item {
     private Boolean suggested = false;
 
     @Enumerated(EnumType.STRING)
-    private ItemStatus status;
+    private ItemStatus status = ItemStatus.INVENTORY;
 
     @ManyToOne
     private ItemType type;

@@ -8,6 +8,7 @@ import no.freshify.api.exception.InvalidItemCountException;
 import no.freshify.api.exception.ShoppingListEntryAlreadyExistsException;
 import no.freshify.api.exception.ShoppingListEntryNotFoundException;
 import no.freshify.api.model.Household;
+import no.freshify.api.model.Item;
 import no.freshify.api.model.ItemType;
 import no.freshify.api.model.ShoppingListEntry;
 import no.freshify.api.repository.HouseholdRepository;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +28,8 @@ import java.util.Optional;
 public class ShoppingListEntryService {
 
     private final ShoppingListEntryRepository shoppingListEntryRepository;
+
+    private final ItemService itemService;
 
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -121,6 +125,39 @@ public class ShoppingListEntryService {
         } else {
             logger.warn("Shopping list entry not found");
             throw new ShoppingListEntryNotFoundException();
+        }
+    }
+
+    public void moveAllCheckedToInventory(long householdId) throws HouseholdNotFoundException {
+        logger.info("Moving checked items to inventory for household with id " + householdId);
+        List<ShoppingListEntry> shoppingListEntries = getShoppingList(householdId);
+
+        shoppingListEntries.stream().filter(ShoppingListEntry::getChecked)
+                .forEach(entry -> {
+                    try {
+                        moveEntryToInventory(entry.getId());
+                    } catch (ShoppingListEntryNotFoundException e) {
+                        logger.error("Shopping list entry not found while moving checked items to inventory");
+                    }
+                });
+    }
+
+    public void moveEntryToInventory(long shoppingListEntryId) throws ShoppingListEntryNotFoundException {
+        logger.info("Moving shopping list entry with id " + shoppingListEntryId + " to inventory");
+        ShoppingListEntry shoppingListEntry = shoppingListEntryRepository.findById(shoppingListEntryId).orElse(null);
+        if (shoppingListEntry == null) {
+            logger.warn("Shopping list entry not found");
+            throw new ShoppingListEntryNotFoundException();
+        }
+
+        Item item = new Item();
+        item.setType(shoppingListEntry.getType());
+        item.setHousehold(shoppingListEntry.getHousehold());
+        item.setAddedBy(shoppingListEntry.getAddedBy());
+
+        for (int i = 0; i < shoppingListEntry.getCount(); i++) {
+            itemService.addItem(item);
+            item.setId(null);
         }
     }
 }
