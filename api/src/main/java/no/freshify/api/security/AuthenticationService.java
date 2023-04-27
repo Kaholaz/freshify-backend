@@ -135,6 +135,6 @@ public class AuthenticationService {
     public boolean isSuperuser(long householdId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         PermissionEvaluator permissionEvaluator = new PermissionEvaluatorImpl();
-        return permissionEvaluator.hasPermission(auth, householdId, "SUPERUSER");
+        return permissionEvaluator.hasPermission(auth, householdId, "household", "SUPERUSER");
     }
 }
