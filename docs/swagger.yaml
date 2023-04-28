@@ -397,12 +397,18 @@ paths:
           schema:
             type: integer
             maximum: 50
-        - name: time_period
+        - name: start_date
           in: query
-          description: Time period for the waste data (WEEK, MONTH, YEAR, ALL)
+          description: Start date for the time interval (YYYY-MM-DD)
           required: false
           schema:
-            $ref: "#/components/schemas/TimePeriod"
+            type: string
+        - name: end_date
+          in: query
+          description: End date for the time interval (YYYY-MM-DD)
+          required: false
+          schema:
+            type: string  
       responses:
         "200":
           description: successful operation
