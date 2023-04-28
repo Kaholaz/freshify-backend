@@ -90,7 +90,6 @@ public class HouseholdControllerTest {
         household.setName("Test Household");
 
         householdDTO  = new HouseholdDTO();
-        householdDTO.setId(householdId);
         householdDTO.setName("Test Household");
 
         HouseholdMember householdMember = new HouseholdMember();
@@ -138,7 +137,7 @@ public class HouseholdControllerTest {
         when(householdService.findHouseholdByHouseholdId(householdId)).thenReturn(household);
         doNothing().when(householdService).removeHousehold(anyLong());
         mockMvc.perform(delete("/household/{id}", householdId))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         verify(householdService, VerificationModeFactory.times(1)).removeHousehold(anyLong());
         verify(householdService, VerificationModeFactory.times(1)).findHouseholdByHouseholdId(Mockito.any());
@@ -151,7 +150,6 @@ public class HouseholdControllerTest {
 
         mockMvc.perform(get("/household/{id}", householdId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(householdId.intValue())))
                 .andExpect(jsonPath("$.name", is(household.getName())));
 
         verify(householdService, VerificationModeFactory.times(1)).findHouseholdByHouseholdId(anyLong());
@@ -171,7 +169,6 @@ public class HouseholdControllerTest {
     public void updateHouseholdTest() throws Exception {
         HouseholdDTO household = new HouseholdDTO();
         household.setName("New Household Name");
-        household.setId(1L);
 
         when(householdService.findHouseholdByHouseholdId(anyLong())).thenReturn(this.household);
         when(householdService.updateHousehold(any(Household.class))).thenReturn(this.household);

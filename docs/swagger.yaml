@@ -241,8 +241,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Household'
-        '409':
-          description: Household already exists
   /household/{id}/users:
     get:
       tags:
