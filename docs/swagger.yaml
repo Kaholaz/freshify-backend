@@ -523,7 +523,7 @@ paths:
            schema:
             $ref: '#/components/schemas/UpdateShoppingListEntry'
       responses:
-        '200':
+        '204':
           description: Successful operation
         '400':
           description: Invalid operation. More items are removed than in shopping list.
