@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -68,7 +69,8 @@ public class ItemTypeControllerTest {
         mockMvc.perform(get("/itemtype")
                         .param("name", "Unknown Item Type")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(jsonPath("$", hasSize(0)))
+                .andExpect(status().isOk());
 
         verify(itemTypeService, times(1)).searchItemTypes(anyString());
     }

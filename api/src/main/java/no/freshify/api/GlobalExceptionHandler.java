@@ -9,6 +9,8 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.List;
+
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -34,7 +36,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ItemTypesNotFoundException.class)
     public ResponseEntity<Object> handleItemTypesNotFoundException(ItemTypesNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        return ResponseEntity.ok().body(List.of());
     }
 
     @ExceptionHandler(ItemNotFoundException.class)

@@ -135,21 +135,22 @@ public class ShoppingListEntryService {
         shoppingListEntries.stream().filter(ShoppingListEntry::getChecked)
                 .forEach(entry -> {
                     try {
-                        moveEntryToInventory(entry.getId());
+                        moveEntryToInventory(entry.getId(), householdId);
                     } catch (ShoppingListEntryNotFoundException e) {
                         logger.error("Shopping list entry not found while moving checked items to inventory");
+                    } catch (HouseholdNotFoundException e) {
+                        logger.error("Household not found while moving checked items to inventory");
                     }
                 });
     }
 
-    public void moveEntryToInventory(long shoppingListEntryId) throws ShoppingListEntryNotFoundException {
+    public void moveEntryToInventory(long shoppingListEntryId, long householdId) throws ShoppingListEntryNotFoundException, HouseholdNotFoundException {
         logger.info("Moving shopping list entry with id " + shoppingListEntryId + " to inventory");
         ShoppingListEntry shoppingListEntry = shoppingListEntryRepository.findById(shoppingListEntryId).orElse(null);
         if (shoppingListEntry == null) {
             logger.warn("Shopping list entry not found");
             throw new ShoppingListEntryNotFoundException();
         }
-
 
         for (int i = 0; i < shoppingListEntry.getCount(); i++) {
             Item item = new Item();
@@ -158,5 +159,6 @@ public class ShoppingListEntryService {
             item.setAddedBy(shoppingListEntry.getAddedBy());
             itemService.addItem(item);
         }
+        deleteShoppingListEntryById(householdId, shoppingListEntry.getId());
     }
 }
