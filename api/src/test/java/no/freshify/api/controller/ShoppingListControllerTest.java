@@ -108,6 +108,7 @@ public class ShoppingListControllerTest {
         household.setName("Test Household");
 
         householdDTO  = new HouseholdDTO();
+        householdDTO.setId(householdId);
         householdDTO.setName("Test Household");
 
         HouseholdMember householdMember = new HouseholdMember();
