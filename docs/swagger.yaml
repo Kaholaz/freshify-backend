@@ -469,6 +469,8 @@ paths:
                   $ref: '#/components/schemas/ShoppingListEntry'
         '401':
           description: Unauthorized
+        '404':
+          description: Household not found
     post: 
       tags:
         - shopping list
