@@ -7,12 +7,12 @@ info:
     MySQL database. The API is documented using Swagger. The API is hosted using
     Apache.
     Some useful links:
-    - [The GitLab repository](https://gitlab.stud.idi.ntnu.no/idatt2106-v23-10/smartmat-backend) 
+    - [The GitLab repository](https://gitlab.stud.idi.ntnu.no/idatt2106-v23-10/smartmat-backend)
   contact:
     email: vkbugge@hotmail.com
   license:
     name: MIT License
-    url: 'https://opensource.org/licenses/MIT'
+    url: "https://opensource.org/licenses/MIT"
   version: 1.0.0
 servers:
   - url: http://localhost:8080
@@ -41,7 +41,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
@@ -51,9 +51,9 @@ paths:
                   userId:
                     type: integer
                     format: int64
-        '400':
+        "400":
           description: No email provided
-        '404':
+        "404":
           description: User not found
     post:
       tags:
@@ -66,15 +66,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateUser'
+              $ref: "#/components/schemas/CreateUser"
       responses:
-        '201':
+        "201":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFull'
-        '409':
+                $ref: "#/components/schemas/UserFull"
+        "409":
           description: User already exists
     put:
       tags:
@@ -87,15 +87,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateUser'
+              $ref: "#/components/schemas/UpdateUser"
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFull'
-        '404':
+                $ref: "#/components/schemas/UserFull"
+        "404":
           description: User not found
   /user/loggedin:
     get:
@@ -105,13 +105,13 @@ paths:
       description: Returns the details of the logged in user, the details are extracted from the jwt token cookie.
       operationId: getUserById
       responses:
-        '200':
+        "200":
           description: Returns the details of the logged in user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFull'
-        '404':
+                $ref: "#/components/schemas/UserFull"
+        "404":
           description: User not found
   /user/{id}:
     get:
@@ -129,13 +129,13 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFull'
-        '404':
+                $ref: "#/components/schemas/UserFull"
+        "404":
           description: User not found
     delete:
       tags:
@@ -152,11 +152,11 @@ paths:
             type: integer
             format: int64
       responses:
-        '204':
+        "204":
           description: successful operation
-        '401':
+        "401":
           description: Access denied
-        '404':
+        "404":
           description: User not found
   /user/{id}/households:
     get:
@@ -175,18 +175,18 @@ paths:
             type: integer
             format: int64
       responses:
-          '200':
-            description: successful operation
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Household'
-          '401':
-            description: Access denied
-          '404':
-            description: User not found
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Household"
+        "401":
+          description: Access denied
+        "404":
+          description: User not found
   /user/login:
     post:
       tags:
@@ -199,15 +199,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginUser'
+              $ref: "#/components/schemas/LoginUser"
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFull'
-        '401':
+                $ref: "#/components/schemas/UserFull"
+        "401":
           description: User could not be logged in
   /user/logout:
     post:
@@ -217,9 +217,9 @@ paths:
       description: Logs out a user
       operationId: logoutUser
       responses:
-        '200':
+        "200":
           description: successful operation
-        '401':
+        "401":
           description: User could not be logged out
   /household:
     post:
@@ -233,14 +233,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateHousehold'
+              $ref: "#/components/schemas/CreateHousehold"
       responses:
-        '201':
+        "201":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Household'
+                $ref: "#/components/schemas/Household"
   /household/{id}/users:
     get:
       tags:
@@ -257,7 +257,7 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
@@ -267,15 +267,15 @@ paths:
                   type: object
                   properties:
                     id:
-                      $ref: '#/components/schemas/HouseholdMemberKey'
+                      $ref: "#/components/schemas/HouseholdMemberKey"
                     user:
-                      $ref: '#/components/schemas/UserFull'
+                      $ref: "#/components/schemas/UserFull"
                     userType:
-                      $ref: '#/components/schemas/HouseholdUserType'
-        '401':
+                      $ref: "#/components/schemas/HouseholdUserType"
+        "401":
           description: Access denied
-        '404':
-            description: Household not found
+        "404":
+          description: Household not found
     put:
       tags:
         - household
@@ -297,18 +297,18 @@ paths:
             schema:
               $ref: "#/components/schemas/UpdateHouseholdUserType"
       responses:
-        '200':
+        "200":
           description: The updated household member
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HouseholdMember'
-        '400':
+                $ref: "#/components/schemas/HouseholdMember"
+        "400":
           description: Illegal household member role/User does not belong to household
-        '401':
+        "401":
           description: Access denied
-        '404':
-            description: Household not found/user not found
+        "404":
+          description: Household not found/user not found
     post:
       tags:
         - household
@@ -334,14 +334,14 @@ paths:
                   type: integer
                   format: int64
       responses:
-        '201':
+        "201":
           description: successful operation
-        '409':
+        "409":
           description: User already exists in the household
-        '401':
+        "401":
           description: Access denied
-        '404':
-            description: Household not found
+        "404":
+          description: Household not found
   /household/{id}/users/{userId}:
     delete:
       tags:
@@ -365,12 +365,49 @@ paths:
             type: integer
             format: int64
       responses:
-        '204':
+        "204":
           description: successful operation
-        '404':
+        "404":
           description: User not found/Household not found/User does not belong to household
-        '401':
+        "401":
           description: Access denied
+  /household/{id}/waste:
+    get:
+      tags:
+        - household
+      summary: Returns a list of household waste
+      description: Returns a list of household waste sorted by either number of items wasted or percentage of items wasted. The list is sorted in descending order.
+      parameters:
+        - name: id
+          in: path
+          description: ID of household to get waste from
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: sort_by
+          in: query
+          description: Sort by either number of items wasted or percentage of items wasted
+          required: true
+          schema:
+            $ref: "#/components/schemas/ItemSortMethod"
+        - name: limit
+          in: query
+          description: The number of items to return (maximum 50)
+          schema:
+            type: integer
+            maximum: 50
+        - name: time_period
+          in: query
+          description: Time period for the waste data (WEEK, MONTH, YEAR, ALL)
+          required: false
+          schema:
+            $ref: "#/components/schemas/TimePeriod"
+      responses:
+        "200":
+          description: successful operation
+        "404":
+          description: Household not found
   /household/{id}:
     delete:
       tags:
@@ -387,11 +424,11 @@ paths:
             type: integer
             format: int64
       responses:
-        '204':
+        "204":
           description: successful operation
-        '404':
+        "404":
           description: Household not found
-        '401':
+        "401":
           description: Access denied
     get:
       tags:
@@ -408,17 +445,17 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Household'
-        '404':
+                $ref: "#/components/schemas/Household"
+        "404":
           description: Household not found
     put:
       tags:
-          - household
+        - household
       summary: Update household
       description: Updates the household's attributes. Can only be done by a superuser
       operationId: updateHousehold
@@ -435,18 +472,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Household'
+              $ref: "#/components/schemas/Household"
       responses:
-          '200':
-            description: successful operation
-          '404':
-            description: Household not found
-          '401':
-            description: Access denied
+        "200":
+          description: successful operation
+        "404":
+          description: Household not found
+        "401":
+          description: Access denied
   /household/{id}/shoppinglist:
     get:
       tags:
-       - shopping list
+        - shopping list
       summary: Get the shopping list of a household
       description: Gets a shopping list with item id from shopping list
       operationId: getShoppingList
@@ -459,19 +496,19 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: household ShoppingList items
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ShoppingListEntry'
-        '401':
+                  $ref: "#/components/schemas/ShoppingListEntry"
+        "401":
           description: Unauthorized
-        '404':
+        "404":
           description: Household not found
-    post: 
+    post:
       tags:
         - shopping list
       summary: Add item to shopping list
@@ -490,19 +527,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateShoppingListEntry'
+              $ref: "#/components/schemas/CreateShoppingListEntry"
       responses:
-        '201':
+        "201":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ShoppingListEntry'
-        '401':
+                $ref: "#/components/schemas/ShoppingListEntry"
+        "401":
           description: Unauthorized response
-        '409':
+        "409":
           description: Item already exists in shopping list
-        '404':
+        "404":
           description: Item type or household does not exist
     put:
       tags:
@@ -522,16 +559,16 @@ paths:
         description: ItemType and count to change in shopping list
         content:
           application/json:
-           schema:
-            $ref: '#/components/schemas/UpdateShoppingListEntry'
+            schema:
+              $ref: "#/components/schemas/UpdateShoppingListEntry"
       responses:
-        '204':
+        "204":
           description: Successful operation
-        '400':
+        "400":
           description: Invalid operation. More items are removed than in shopping list.
-        '401':
+        "401":
           description: Unauthorized response, user is not validated or does not have access
-        '404':
+        "404":
           description: Shopping list entry not found
   /household/{id}/shoppinglist/{listEntryId}:
     delete:
@@ -556,11 +593,11 @@ paths:
             type: integer
             format: int64
       responses:
-        '204':
+        "204":
           description: Successful operation
-        '404':
+        "404":
           description: Shopping list or shopping list entry not found.
-        '401':
+        "401":
           description: Unauthorized response, user is not validated or does not have access
   /household/{id}/shoppinglist/buy:
     post:
@@ -578,13 +615,13 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: Successful operation
-        '400':
+        "400":
           description: Invalid operation. More items are removed than in shopping list.
-        '401':
+        "401":
           description: Unauthorized response, user is not validated or does not have access
-        '404':
+        "404":
           description: Item not found in shopping list
   /household/{id}/inventory:
     post:
@@ -617,19 +654,19 @@ paths:
                     type: integer
                     format: int64
       responses:
-        '201':
+        "201":
           description: Returns a list of the newly added items.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InventoryItems'
-        '401':
+                $ref: "#/components/schemas/InventoryItems"
+        "401":
           description: Unauthorized response, user is not validated or does not have access
-        '404':
+        "404":
           description: Household not found/User not found/Item type not found
     get:
       tags:
-       - inventory
+        - inventory
       summary: Gets all items from inventory
       description: Gets all items of a specific inventory
       operationId: getInventoryItems
@@ -642,17 +679,17 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: item found
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Item'
-        '401':
+                  $ref: "#/components/schemas/Item"
+        "401":
           description: Unauthorized
-        '404':
+        "404":
           description: Household not found
     put:
       tags:
@@ -675,13 +712,13 @@ paths:
             schema:
               $ref: "#/components/schemas/UpdateItem"
       responses:
-        '200':
+        "200":
           description: Successful operation
-        '400':
+        "400":
           description: The given item status is not a valid status for item/item does not belong to household
-        '401':
+        "401":
           description: Unauthorized response, user is not validated or does not have access
-        '404':
+        "404":
           description: Item not found/household not found
   /household/{id}/inventory/{itemId}:
     delete:
@@ -693,7 +730,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of household's inventory to delete the item from 
+          description: ID of household's inventory to delete the item from
           required: true
           schema:
             type: integer
@@ -706,11 +743,11 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: Successful operation
-        '401':
+        "401":
           description: Unauthorized response, user is not validated or does not have access
-        '404':
+        "404":
           description: Item not found/household not found
   /household/{id}/inventory/suggest:
     post:
@@ -743,15 +780,15 @@ paths:
                     type: integer
                     format: int64
       responses:
-        '201':
+        "201":
           description: Returns a list of the newly added suggestions.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InventoryItems'
-        '401':
+                $ref: "#/components/schemas/InventoryItems"
+        "401":
           description: Unauthorized response, user is not validated or does not have access
-        '404':
+        "404":
           description: Household not found/User not found/Item type not found
   /itemtype:
     get:
@@ -774,7 +811,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ItemType'
+                  $ref: "#/components/schemas/ItemType"
         404:
           description: No item types found
 components:
@@ -882,19 +919,31 @@ components:
           format: int32
           example: 1
         type:
-          $ref: '#/components/schemas/ItemType'
+          $ref: "#/components/schemas/ItemType"
         suggested:
           type: boolean
         checked:
           example: false
           type: boolean
         addedBy:
-          $ref: '#/components/schemas/UserFull'
+          $ref: "#/components/schemas/UserFull"
     ItemState:
       type: string
       enum:
         - INVENTORY
         - USED
+    ItemSortMethod:
+      type: string
+      enum:
+        - COUNT
+        - PERCENTAGE
+    TimePeriod:
+      type: string
+      enum:
+        - WEEK
+        - MONTH
+        - YEAR
+        - ALL 
     UpdateItem:
       type: object
       properties:
@@ -916,7 +965,7 @@ components:
           type: integer
           example: 123
         state:
-          $ref: '#/components/schemas/ItemState' 
+          $ref: "#/components/schemas/ItemState"
         remaining:
           type: number
           format: double
@@ -928,36 +977,36 @@ components:
         suggested:
           type: boolean
         type:
-          $ref: '#/components/schemas/ItemType'
+          $ref: "#/components/schemas/ItemType"
         addedBy:
-          $ref: '#/components/schemas/UserFull'
+          $ref: "#/components/schemas/UserFull"
     InventoryItems:
       type: array
       items:
-          properties:
-            id:
-              type: integer
-              example: 123
-            state:
-              $ref: '#/components/schemas/ItemState' 
-            remaining:
-              type: number
-              format: double
-              example: 1
-            lastChanged:
-              type: string
-              format: date
-              example: "2020-01-01"
-            addedDate:
-              type: string
-              format: date
-              example: "2020-01-01"
-            suggested:
-              type: boolean
-            type:
-              $ref: '#/components/schemas/ItemType'
-            addedBy:
-              $ref: '#/components/schemas/UserFull'
+        properties:
+          id:
+            type: integer
+            example: 123
+          state:
+            $ref: "#/components/schemas/ItemState"
+          remaining:
+            type: number
+            format: double
+            example: 1
+          lastChanged:
+            type: string
+            format: date
+            example: "2020-01-01"
+          addedDate:
+            type: string
+            format: date
+            example: "2020-01-01"
+          suggested:
+            type: boolean
+          type:
+            $ref: "#/components/schemas/ItemType"
+          addedBy:
+            $ref: "#/components/schemas/UserFull"
     HouseholdUserType:
       type: string
       enum:
@@ -970,7 +1019,7 @@ components:
           type: integer
           example: 123
         type:
-          $ref: '#/components/schemas/HouseholdUserType'
+          $ref: "#/components/schemas/HouseholdUserType"
     HouseholdMemberKey:
       type: object
       properties:
@@ -984,11 +1033,11 @@ components:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/HouseholdMemberKey'
+          $ref: "#/components/schemas/HouseholdMemberKey"
         user:
-          $ref: '#/components/schemas/UserFull'
+          $ref: "#/components/schemas/UserFull"
         type:
-          $ref: '#/components/schemas/HouseholdUserType'
+          $ref: "#/components/schemas/HouseholdUserType"
     Household:
       type: object
       properties:
