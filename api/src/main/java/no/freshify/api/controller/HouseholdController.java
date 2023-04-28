@@ -72,7 +72,7 @@ public class HouseholdController {
         long idToDelete = householdService.findHouseholdByHouseholdId(householdId).getId();
         householdService.removeHousehold(idToDelete);
         logger.info("Removed household");
-        return ResponseEntity.ok("Operation successful");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Operation successful");
     }
 
     /**
