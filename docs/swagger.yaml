@@ -529,6 +529,8 @@ paths:
           description: Invalid operation. More items are removed than in shopping list.
         '401':
           description: Unauthorized response, user is not validated or does not have access
+        '404':
+          description: Shopping list entry not found
   /household/{id}/shoppinglist/{listEntryId}:
     delete:
       tags:
