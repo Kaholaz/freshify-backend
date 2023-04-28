@@ -138,7 +138,7 @@ public class HouseholdControllerTest {
         when(householdService.findHouseholdByHouseholdId(householdId)).thenReturn(household);
         doNothing().when(householdService).removeHousehold(anyLong());
         mockMvc.perform(delete("/household/{id}", householdId))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         verify(householdService, VerificationModeFactory.times(1)).removeHousehold(anyLong());
         verify(householdService, VerificationModeFactory.times(1)).findHouseholdByHouseholdId(Mockito.any());

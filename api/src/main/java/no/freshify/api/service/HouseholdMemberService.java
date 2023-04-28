@@ -3,14 +3,18 @@ package no.freshify.api.service;
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.HouseholdMemberAlreadyExistsException;
 import no.freshify.api.exception.UserDoesNotBelongToHouseholdException;
+import no.freshify.api.model.Household;
 import no.freshify.api.model.HouseholdMember;
 import no.freshify.api.model.HouseholdMemberKey;
+import no.freshify.api.model.User;
 import no.freshify.api.repository.HouseholdMemberRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -51,5 +55,11 @@ public class HouseholdMemberService {
 
     public void removeHouseholdMember(HouseholdMember householdMember) {
         householdMemberRepository.delete(householdMember);
+    }
+
+    public boolean userExistsInHousehold(User loggedInUser, Household household) {
+        Set<HouseholdMember> members = loggedInUser.getHouseholdMembers();
+        return members.stream()
+                .anyMatch(o -> o.getHousehold().getId().equals(household.getId()));
     }
 }
