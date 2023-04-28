@@ -500,6 +500,8 @@ paths:
           description: Unauthorized response
         '409':
           description: Item already exists in shopping list
+        '404':
+          description: Item type or household does not exist
     put:
       tags:
         - shopping list
