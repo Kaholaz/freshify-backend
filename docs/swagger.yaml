@@ -205,6 +205,48 @@ paths:
           description: User already exists in the household
         '401':
           description: Access denied
+<<<<<<< Updated upstream
+=======
+        '404':
+            description: Household not found
+  /household/{id}/waste:
+    get:
+      tags:
+        - household
+      summary: Returns a list of household waste
+      description: Returns a list of household waste sorted by either number of items wasted or percentage of items wasted
+      parameters:
+        - name: id
+          in: path
+          description: ID of household to get waste from
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: sort_by
+          in: query
+          description: Sort by either number of items wasted or percentage of items wasted
+          required: false
+          schema:
+            type: string
+            enum:
+              - number_of_items_wasted
+              - percentage_of_items_wasted
+        - name: limit
+          in: query
+          description: The number of items to return
+          schema:
+            type: integer
+            maximum: 50
+      responses:
+        '200':
+          description: A list of household waste sorted by either number of items wasted or percentage of items wasted
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Household waste not found
+  /household/{id}/users/{userId}:
+>>>>>>> Stashed changes
     delete:
       tags:
         - household

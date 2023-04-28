@@ -1,0 +1,163 @@
+2023-04-20 13:36:10 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (1, 1, 'OWNER') [42102-214]
+2023-04-20 13:36:10 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (1, 2, 'MEMBER') [42102-214]
+2023-04-20 13:36:10 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (2, 3, 'OWNER') [42102-214]
+2023-04-20 13:36:10 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (2, 4, 'MEMBER') [42102-214]
+2023-04-20 13:36:10 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (3, 5, 'OWNER') [42102-214]
+2023-04-20 13:36:10 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (3, 6, 'MEMBER') [42102-214]
+2023-04-20 13:36:10 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (4, 7, 'OWNER') [42102-214]
+2023-04-20 13:36:10 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (4, 8, 'MEMBER') [42102-214]
+2023-04-20 13:36:10 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (5, 9, 'OWNER') [42102-214]
+2023-04-20 13:36:10 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (5, 10, 'MEMBER') [42102-214]
+2023-04-20 13:37:12 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]HOUSEHOLD_MEMBER ITEM HOUSEHOLD_MEMBER HOUSEHOLD"; expected "HELP"; SQL statement:
+HOUSEHOLD_MEMBER ITEM HOUSEHOLD_MEMBER HOUSEHOLD [42001-214]
+2023-04-20 13:46:14 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (1, 1, 'SUPERUSER') [42102-214]
+2023-04-20 13:46:14 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (1, 2, 'USER') [42102-214]
+2023-04-20 13:46:14 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (2, 3, 'SUPERUSER') [42102-214]
+2023-04-20 13:46:14 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (2, 4, 'USER') [42102-214]
+2023-04-20 13:46:14 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (3, 5, 'SUPERUSER') [42102-214]
+2023-04-20 13:46:14 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (3, 6, 'USER') [42102-214]
+2023-04-20 13:46:14 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (4, 7, 'SUPERUSER') [42102-214]
+2023-04-20 13:46:14 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (4, 8, 'USER') [42102-214]
+2023-04-20 13:46:14 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (5, 9, 'SUPERUSER') [42102-214]
+2023-04-20 13:46:14 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HOUSEHOLDMEMBER" not found; SQL statement:
+INSERT INTO HouseholdMember (household_id, user_id, role) VALUES (5, 10, 'USER') [42102-214]
+2023-04-21 14:24:07 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "type test" not found; SQL statement:
+INSERT INTO ITEM_TYPE VALUES(1, "type test") [42122-214]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:502)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:477)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.get(DbException.java:199)
+	at org.h2.expression.ExpressionColumn.getColumnException(ExpressionColumn.java:244)
+	at org.h2.expression.ExpressionColumn.optimizeOther(ExpressionColumn.java:226)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:213)
+	at org.h2.command.dml.Insert.doPrepare(Insert.java:300)
+	at org.h2.command.dml.DataChangeStatement.prepare(DataChangeStatement.java:37)
+	at org.h2.command.Parser.prepareCommand(Parser.java:575)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:631)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:554)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:237)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:223)
+	at org.h2.server.web.WebApp.getResult(WebApp.java:1339)
+	at org.h2.server.web.WebApp.query(WebApp.java:1137)
+	at org.h2.server.web.WebApp.query(WebApp.java:1113)
+	at org.h2.server.web.WebApp.process(WebApp.java:244)
+	at org.h2.server.web.WebApp.processRequest(WebApp.java:176)
+	at org.h2.server.web.JakartaWebServlet.doGet(JakartaWebServlet.java:129)
+	at org.h2.server.web.JakartaWebServlet.doPost(JakartaWebServlet.java:166)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:563)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:631)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at no.freshify.api.security.JwtTokenFilter.doFilterInternal(JwtTokenFilter.java:66)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:219)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:166)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:493)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:390)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:894)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+2023-04-21 14:25:36 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ITEMTYPE" not found; SQL statement:
+INSERT INTO ItemType (name) VALUES ('Shirt') [42102-214]
+2023-04-21 14:25:36 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ITEMTYPE" not found; SQL statement:
+INSERT INTO ItemType (name) VALUES ('Pants') [42102-214]
+2023-04-21 14:25:36 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ITEMTYPE" not found; SQL statement:
+INSERT INTO ItemType (name) VALUES ('Dress') [42102-214]
+2023-04-21 14:25:36 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ITEMTYPE" not found; SQL statement:
+INSERT INTO ItemType (name) VALUES ('Jacket') [42102-214]
+2023-04-21 14:25:36 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ITEMTYPE" not found; SQL statement:
+INSERT INTO ItemType (name) VALUES ('Hat') [42102-214]
+2023-04-21 14:25:36 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ITEMTYPE" not found; SQL statement:
+INSERT INTO ItemType (name) VALUES ('Shoes') [42102-214]
+2023-04-21 14:25:36 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ITEMTYPE" not found; SQL statement:
+INSERT INTO ItemType (name) VALUES ('Socks') [42102-214]
+2023-04-21 14:25:36 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ITEMTYPE" not found; SQL statement:
+INSERT INTO ItemType (name) VALUES ('Sweater') [42102-214]
+2023-04-21 14:25:36 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ITEMTYPE" not found; SQL statement:
+INSERT INTO ItemType (name) VALUES ('Shorts') [42102-214]
+2023-04-21 14:25:36 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ITEMTYPE" not found; SQL statement:
+INSERT INTO ItemType (name) VALUES ('Skirt') [42102-214]
