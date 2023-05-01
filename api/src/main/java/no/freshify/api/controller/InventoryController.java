@@ -158,6 +158,7 @@ public class InventoryController {
      * @return A list of inventory items with their waste
      * @throws HouseholdNotFoundException If the household is not found
      */
+    @PreAuthorize("hasPermission(#householdId, 'Household', '')")
     @GetMapping("/{id}/inventory/waste")
     public ResponseEntity<WasteSortedListsResponse> getSortedInventoryWaste(@PathVariable("id") long householdId,
                                                                             @RequestParam(value = "limit") Integer limit,
