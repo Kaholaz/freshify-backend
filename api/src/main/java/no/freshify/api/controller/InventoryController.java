@@ -2,12 +2,8 @@ package no.freshify.api.controller;
 
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.*;
-import no.freshify.api.model.Household;
-import no.freshify.api.model.Item;
-import no.freshify.api.model.ItemStatus;
-import no.freshify.api.model.User;
-import no.freshify.api.model.dto.InventoryItem;
-import no.freshify.api.model.dto.UpdateInventoryItem;
+import no.freshify.api.model.*;
+import no.freshify.api.model.dto.*;
 import no.freshify.api.model.mapper.ItemMapper;
 import no.freshify.api.model.mapper.ItemMapperImpl;
 import no.freshify.api.security.UserDetailsImpl;
@@ -22,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -150,6 +147,37 @@ public class InventoryController {
 
         logger.info("Updated inventory item with id: " + item.getId());
         return ResponseEntity.ok("Updated inventory item with id: " + item.getId());
+    }
+
+    /**
+     * Gets the item waste for a household as a sorted list.
+     * @param householdId The id of the household to get the item waste from
+     * @param limit The maximum number of items to return
+     * @param startDate The start date of the period to get the item waste from, format yyyy-MM-dd
+     * @param endDate The end date of the period to get the item waste from, format yyyy-MM-dd
+     * @return A list of inventory items with their waste
+     * @throws HouseholdNotFoundException If the household is not found
+     */
+    @PreAuthorize("hasPermission(#householdId, 'Household', '')")
+    @GetMapping("/{id}/inventory/waste")
+    public ResponseEntity<WasteSortedListsResponse> getSortedInventoryWaste(@PathVariable("id") long householdId,
+                                                                            @RequestParam(value = "limit") Integer limit,
+                                                                            @RequestParam(value = "start_date", required = false) String startDate,
+                                                                            @RequestParam(value = "end_date", required = false) String endDate)
+            throws HouseholdNotFoundException {
+        logger.info("Getting inventory item waste for household with id: " + householdId);
+        Household household = householdService.findHouseholdByHouseholdId(householdId);
+
+        List<Item> wastedItems = itemService.findWastedItemsInTimeInterval(household, Date.valueOf(startDate), Date.valueOf(endDate));
+
+        List<WastedItemDTO> sortedItemsByCount = itemService.getSortedItemsByWaste(wastedItems, ItemSortMethod.COUNT);
+        sortedItemsByCount = sortedItemsByCount.subList(0, Math.min(limit, sortedItemsByCount.size()));
+
+        List<WastedItemDTO> sortedItemsByAverageAmount = itemService.getSortedItemsByWaste(wastedItems, ItemSortMethod.PERCENTAGE);
+        sortedItemsByAverageAmount = sortedItemsByAverageAmount.subList(0, Math.min(limit, sortedItemsByAverageAmount.size()));
+
+        WasteSortedListsResponse response = new WasteSortedListsResponse(sortedItemsByCount, sortedItemsByAverageAmount);
+        return ResponseEntity.ok(response);
     }
 
     /**

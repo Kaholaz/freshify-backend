@@ -1,7 +1,11 @@
 package no.freshify.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.freshify.api.exception.IllegalItemParameterException;
 import no.freshify.api.model.*;
+import no.freshify.api.model.dto.WastedItemDTO;
+import no.freshify.api.model.mapper.ItemMapper;
+import no.freshify.api.model.mapper.ItemMapperImpl;
 import no.freshify.api.security.UserAuthentication;
 import no.freshify.api.security.UserDetailsImpl;
 import no.freshify.api.service.HouseholdService;
@@ -41,6 +45,8 @@ public class InventoryControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private final ItemMapper itemMapper = new ItemMapperImpl();
+
     @MockBean
     private HouseholdService householdService;
 
@@ -60,13 +66,20 @@ public class InventoryControllerTest {
     private User user;
     private ItemType itemType;
     private Item item;
+    private List<Item> wastedItems;
+    private List<WastedItemDTO> wastedItemDTOS;
+    private Date startDate;
+    private Date lastChanged;
     private Map<String, Object> requestBody;
     private List<Map<String, Object>> requestBodyList;
 
     private Authentication authentication;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws IllegalItemParameterException {
+        startDate = new java.sql.Date(System.currentTimeMillis());
+        lastChanged = new java.sql.Date(System.currentTimeMillis() + 10L);
+
         household = new Household();
         household.setId(1L);
         household.setName("Test Household");
@@ -85,6 +98,27 @@ public class InventoryControllerTest {
         item.setStatus(ItemStatus.INVENTORY);
         item.setHousehold(household);
         item.setAddedBy(user);
+
+        Item item2 = new Item();
+        item2.setId(2L);
+        item2.setType(itemType);
+        item2.setHousehold(household);
+        item2.setRemaining(0.6D);
+        item2.setStatus(ItemStatus.USED);
+        item2.setLastChanged(lastChanged);
+
+        Item item3 = new Item();
+        item3.setId(3L);
+        item3.setType(itemType);
+        item3.setHousehold(household);
+        item3.setRemaining(0.1D);
+        item3.setStatus(ItemStatus.USED);
+        item3.setLastChanged(lastChanged);
+
+        wastedItems = List.of(item2, item3);
+        wastedItemDTOS = new ArrayList<>();
+        wastedItemDTOS.add(new WastedItemDTO(itemMapper.toItemTypeDTO(item2.getType()), item2.getRemaining()));
+        wastedItemDTOS.add(new WastedItemDTO(itemMapper.toItemTypeDTO(item3.getType()), item3.getRemaining()));
 
         userDetails = new UserDetailsImpl(user.getId(), user.getEmail(), "password", user.getPassword(), Collections.emptyList());
 
@@ -194,5 +228,25 @@ public class InventoryControllerTest {
         verify(householdService, times(1)).findHouseholdByHouseholdId(anyLong());
         verify(itemTypeService, times(1)).getItemTypeById(anyLong());
         verify(itemService, times(1)).addItem(any(Item.class));
+    }
+
+    @Test
+    public void testGetSortedInventoryWaste_Success() throws Exception {
+        when(householdService.findHouseholdByHouseholdId(anyLong())).thenReturn(household);
+        when(itemService.findWastedItemsInTimeInterval
+                (any(Household.class), any(Date.class), any(Date.class)))
+                .thenReturn(wastedItems);
+        when(itemService.getSortedItemsByWaste(anyList(), any(ItemSortMethod.class)))
+                .thenReturn(wastedItemDTOS);
+
+        mockMvc.perform(get("/household/1/inventory/waste?limit=10&start_date=2000-1-1&end_date=2040-1-1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.wastedItemsByCount.[0].itemType.id").value(wastedItems.get(1).getType().getId()))
+                .andExpect(jsonPath("$.wastedItemsByAverageAmount.[0].itemType.id").value(wastedItems.get(1).getType().getId()));
+
+        verify(householdService, times(1)).findHouseholdByHouseholdId(anyLong());
+        verify(itemService, times(1)).findWastedItemsInTimeInterval
+                (any(Household.class), any(Date.class), any(Date.class));
+        verify(itemService, times(2)).getSortedItemsByWaste(anyList(), any(ItemSortMethod.class));
     }
 }
