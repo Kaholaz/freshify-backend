@@ -371,12 +371,13 @@ paths:
           description: User not found/Household not found/User does not belong to household
         "401":
           description: Access denied
-  /household/{id}/waste:
+  /household/{id}/inventory/waste:
     get:
       tags:
         - household
+        - inventory
       summary: Returns a list of household waste
-      description: Returns a list of household waste sorted by either number of items wasted or percentage of items wasted. The list is sorted in descending order.
+      description: Returns lists of household waste sorted by number of items wasted and percentage of items wasted. The lists are sorted in descending order.
       parameters:
         - name: id
           in: path
@@ -385,12 +386,6 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: sort_by
-          in: query
-          description: Sort by either number of items wasted or percentage of items wasted
-          required: true
-          schema:
-            $ref: "#/components/schemas/ItemSortMethod"
         - name: limit
           in: query
           description: The number of items to return (maximum 50)
@@ -412,6 +407,10 @@ paths:
       responses:
         "200":
           description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WasteSortedListsResponse"
         "404":
           description: Household not found
   /household/{id}:
@@ -938,18 +937,6 @@ components:
       enum:
         - INVENTORY
         - USED
-    ItemSortMethod:
-      type: string
-      enum:
-        - COUNT
-        - PERCENTAGE
-    TimePeriod:
-      type: string
-      enum:
-        - WEEK
-        - MONTH
-        - YEAR
-        - ALL 
     UpdateItem:
       type: object
       properties:
@@ -1026,6 +1013,25 @@ components:
           example: 123
         type:
           $ref: "#/components/schemas/HouseholdUserType"
+    WasteSortedListsResponse:
+      type: object
+      properties:
+        wastedItemsByCount:
+          type: array
+          items:
+            $ref: "#/components/schemas/WastedItemDTO"
+        wastedItemsByAverageAmount:
+          type: array
+          items:
+            $ref: "#/components/schemas/WastedItemDTO"
+    WastedItemDTO:
+      type: object
+      properties:
+        itemType:
+          $ref: "#/components/schemas/ItemType"
+        amountWasted:
+          type: number
+          example: 3
     HouseholdMemberKey:
       type: object
       properties:
