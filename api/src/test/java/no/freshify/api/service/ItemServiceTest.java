@@ -1,9 +1,9 @@
 package no.freshify.api.service;
 
+import no.freshify.api.exception.IllegalItemParameterException;
 import no.freshify.api.exception.ItemDoesNotBelongToHouseholdException;
 import no.freshify.api.exception.ItemNotFoundException;
-import no.freshify.api.model.Household;
-import no.freshify.api.model.Item;
+import no.freshify.api.model.*;
 import no.freshify.api.repository.ItemRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,11 +12,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.sql.Date;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 public class ItemServiceTest {
     @Mock
@@ -29,18 +32,51 @@ public class ItemServiceTest {
     private final Long householdId = 1L;
 
     private Item item;
+    private List<Item> items;
+    private ItemType itemType1;
+    private ItemType itemType2;
+    private Date startDate;
+    private Date lastChanged;
     private Household household;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws IllegalItemParameterException {
         MockitoAnnotations.openMocks(this);
+
+        startDate = new Date(System.currentTimeMillis());
+        lastChanged = new Date(System.currentTimeMillis() + 10L);
 
         household = new Household();
         household.setId(householdId);
 
+        itemType1 = new ItemType();
+        itemType2 = new ItemType();
+
         item = new Item();
         item.setId(itemId);
+        item.setType(itemType1);
         item.setHousehold(household);
+        item.setRemaining(0.4D);
+        item.setStatus(ItemStatus.USED);
+        item.setLastChanged(lastChanged);
+
+        Item item2 = new Item();
+        item2.setId(itemId);
+        item2.setType(itemType1);
+        item2.setHousehold(household);
+        item2.setRemaining(0.6D);
+        item2.setStatus(ItemStatus.USED);
+        item2.setLastChanged(lastChanged);
+
+        Item item3 = new Item();
+        item3.setId(itemId);
+        item3.setType(itemType2);
+        item3.setHousehold(household);
+        item3.setRemaining(0.1D);
+        item3.setStatus(ItemStatus.USED);
+        item3.setLastChanged(lastChanged);
+
+        items = List.of(item, item2, item3);
     }
 
     @Test
@@ -118,5 +154,46 @@ public class ItemServiceTest {
         itemService.addItem(item);
 
         Mockito.verify(itemRepository, Mockito.times(1)).save(item);
+    }
+
+    @Test
+    public void testGetSortedItemsByWaste_UsingCount() {
+        List<Map.Entry<ItemType, Number>> result = itemService.getSortedItemsByWaste(items, ItemSortMethod.COUNT);
+
+        assertEquals(2, result.size());
+        assertEquals(itemType1, result.get(0).getKey());
+        assertEquals(itemType2, result.get(1).getKey());
+        assertEquals(2, result.get(0).getValue());
+        assertEquals(1, result.get(1).getValue());
+    }
+
+    @Test
+    public void testGetSortedItemsByWaste_UsingAverageAmount() {
+        List<Map.Entry<ItemType, Number>> result = itemService.getSortedItemsByWaste(items, ItemSortMethod.PERCENTAGE);
+
+        assertEquals(2, result.size());
+        assertEquals(itemType1, result.get(0).getKey());
+        assertEquals(itemType2, result.get(1).getKey());
+        assertEquals(0.5D, result.get(0).getValue());
+        assertEquals(0.1D, result.get(1).getValue());
+    }
+
+    @Test
+    public void testFindWastedItemsInTimeInterval() {
+        Mockito.when(itemRepository.findItemsByHouseholdAndStatusAndLastChangedBetweenAndRemainingGreaterThan
+                (any(Household.class), any(ItemStatus.class), any(Date.class), any(Date.class), any(Double.class)))
+                .thenReturn(items);
+
+        Date endDate = new Date(System.currentTimeMillis() + 1000000L);
+        List<Item> result = itemService.findWastedItemsInTimeInterval(household, startDate, endDate);
+
+        assertEquals(3, result.size());
+        result.forEach(item -> {
+            assertEquals(household, item.getHousehold());
+            assertTrue(item.getRemaining() > 0D);
+            assertTrue(item.getLastChanged().getTime() > startDate.getTime()
+                    && item.getLastChanged().getTime() < endDate.getTime());
+            assertEquals(ItemStatus.USED, item.getStatus());
+        });
     }
 }

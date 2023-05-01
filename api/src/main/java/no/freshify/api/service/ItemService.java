@@ -116,7 +116,7 @@ public class ItemService {
         return result;
     }
 
-    public List<Map.Entry<ItemType, Number>> sortItems(List<Item> items, ItemSortMethod sortBy) {
+    public List<Map.Entry<ItemType, Number>> getSortedItemsByWaste(List<Item> items, ItemSortMethod sortBy) {
         Map<ItemType, Integer> occurrences = countOccurrences(items);
 
         return switch (sortBy) {
