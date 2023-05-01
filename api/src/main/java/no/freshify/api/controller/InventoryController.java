@@ -170,23 +170,13 @@ public class InventoryController {
 
         List<Item> wastedItems = itemService.findWastedItemsInTimeInterval(household, Date.valueOf(startDate), Date.valueOf(endDate));
 
-        List<Map.Entry<ItemType, Number>> sortedItemsByCount = itemService.getSortedItemsByWaste(wastedItems, ItemSortMethod.COUNT);
+        List<WastedItemDTO> sortedItemsByCount = itemService.getSortedItemsByWaste(wastedItems, ItemSortMethod.COUNT);
         sortedItemsByCount = sortedItemsByCount.subList(0, Math.min(limit, sortedItemsByCount.size()));
 
-        List<Map.Entry<ItemType, Number>> sortedItemsByAverageAmount = itemService.getSortedItemsByWaste(wastedItems, ItemSortMethod.PERCENTAGE);
+        List<WastedItemDTO> sortedItemsByAverageAmount = itemService.getSortedItemsByWaste(wastedItems, ItemSortMethod.PERCENTAGE);
         sortedItemsByAverageAmount = sortedItemsByAverageAmount.subList(0, Math.min(limit, sortedItemsByAverageAmount.size()));
 
-        List<WastedItemDTO> wastedItemsByCountDTOs = sortedItemsByCount
-                .stream()
-                .map(e -> new WastedItemDTO(itemMapper.toItemTypeDTO(e.getKey()), e.getValue()))
-                .toList();
-
-        List<WastedItemDTO> wastedItemsByAverageAmountDTOs = sortedItemsByAverageAmount
-                .stream()
-                .map(e -> new WastedItemDTO(itemMapper.toItemTypeDTO(e.getKey()), e.getValue()))
-                .toList();
-
-        WasteSortedListsResponse response = new WasteSortedListsResponse(wastedItemsByCountDTOs, wastedItemsByAverageAmountDTOs);
+        WasteSortedListsResponse response = new WasteSortedListsResponse(sortedItemsByCount, sortedItemsByAverageAmount);
         return ResponseEntity.ok(response);
     }
 

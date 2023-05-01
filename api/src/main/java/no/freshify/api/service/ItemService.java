@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.ItemDoesNotBelongToHouseholdException;
 import no.freshify.api.exception.ItemNotFoundException;
 import no.freshify.api.model.*;
+import no.freshify.api.model.dto.WastedItemDTO;
+import no.freshify.api.model.mapper.ItemMapper;
+import no.freshify.api.model.mapper.ItemMapperImpl;
 import no.freshify.api.repository.ItemRepository;
 
 import org.slf4j.Logger;
@@ -16,6 +19,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ItemService {
     private final ItemRepository itemRepository;
+    private final ItemMapper itemMapper = new ItemMapperImpl();
 
     Logger logger = LoggerFactory.getLogger(ItemService.class);
 
@@ -116,12 +120,16 @@ public class ItemService {
         return result;
     }
 
-    public List<Map.Entry<ItemType, Number>> getSortedItemsByWaste(List<Item> items, ItemSortMethod sortBy) {
+    public List<WastedItemDTO> getSortedItemsByWaste(List<Item> items, ItemSortMethod sortBy) {
         Map<ItemType, Integer> occurrences = countOccurrences(items);
 
-        return switch (sortBy) {
+        List<Map.Entry<ItemType, Number>> result = switch (sortBy) {
             case COUNT -> sortMapByNumberValueDescending(occurrences, Integer.class);
             case PERCENTAGE -> sortMapByNumberValueDescending(toAverageRemaining(items, occurrences), Double.class);
         };
+        return result
+                .stream()
+                .map(e -> new WastedItemDTO(itemMapper.toItemTypeDTO(e.getKey()), e.getValue()))
+                .toList();
     }
 }

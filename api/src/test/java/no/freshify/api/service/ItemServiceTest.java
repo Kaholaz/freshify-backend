@@ -4,6 +4,7 @@ import no.freshify.api.exception.IllegalItemParameterException;
 import no.freshify.api.exception.ItemDoesNotBelongToHouseholdException;
 import no.freshify.api.exception.ItemNotFoundException;
 import no.freshify.api.model.*;
+import no.freshify.api.model.dto.WastedItemDTO;
 import no.freshify.api.repository.ItemRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ public class ItemServiceTest {
     private final Long householdId = 1L;
 
     private Item item;
-    private List<Item> items;
+    private List<Item> wastedItems;
     private ItemType itemType1;
     private ItemType itemType2;
     private Date startDate;
@@ -76,7 +77,7 @@ public class ItemServiceTest {
         item3.setStatus(ItemStatus.USED);
         item3.setLastChanged(lastChanged);
 
-        items = List.of(item, item2, item3);
+        wastedItems = List.of(item, item2, item3);
     }
 
     @Test
@@ -158,31 +159,31 @@ public class ItemServiceTest {
 
     @Test
     public void testGetSortedItemsByWaste_UsingCount() {
-        List<Map.Entry<ItemType, Number>> result = itemService.getSortedItemsByWaste(items, ItemSortMethod.COUNT);
+        List<WastedItemDTO> result = itemService.getSortedItemsByWaste(wastedItems, ItemSortMethod.COUNT);
 
         assertEquals(2, result.size());
-        assertEquals(itemType1, result.get(0).getKey());
-        assertEquals(itemType2, result.get(1).getKey());
-        assertEquals(2, result.get(0).getValue());
-        assertEquals(1, result.get(1).getValue());
+        assertEquals(itemType1.getId(), result.get(0).getItemType().getId());
+        assertEquals(itemType2.getId(), result.get(1).getItemType().getId());
+        assertEquals(2, result.get(0).getAmountWasted());
+        assertEquals(1, result.get(1).getAmountWasted());
     }
 
     @Test
     public void testGetSortedItemsByWaste_UsingAverageAmount() {
-        List<Map.Entry<ItemType, Number>> result = itemService.getSortedItemsByWaste(items, ItemSortMethod.PERCENTAGE);
+        List<WastedItemDTO> result = itemService.getSortedItemsByWaste(wastedItems, ItemSortMethod.PERCENTAGE);
 
         assertEquals(2, result.size());
-        assertEquals(itemType1, result.get(0).getKey());
-        assertEquals(itemType2, result.get(1).getKey());
-        assertEquals(0.5D, result.get(0).getValue());
-        assertEquals(0.1D, result.get(1).getValue());
+        assertEquals(itemType1.getId(), result.get(0).getItemType().getId());
+        assertEquals(itemType2.getId(), result.get(1).getItemType().getId());
+        assertEquals(0.5D, result.get(0).getAmountWasted());
+        assertEquals(0.1D, result.get(1).getAmountWasted());
     }
 
     @Test
     public void testFindWastedItemsInTimeInterval() {
         Mockito.when(itemRepository.findItemsByHouseholdAndStatusAndLastChangedBetweenAndRemainingGreaterThan
                 (any(Household.class), any(ItemStatus.class), any(Date.class), any(Date.class), any(Double.class)))
-                .thenReturn(items);
+                .thenReturn(wastedItems);
 
         Date endDate = new Date(System.currentTimeMillis() + 1000000L);
         List<Item> result = itemService.findWastedItemsInTimeInterval(household, startDate, endDate);
