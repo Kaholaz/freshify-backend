@@ -43,17 +43,22 @@ image: maven:3.8.3-openjdk-17
 
 variables:
   SSH_PRIVATE_KEY: $(cat $id_rsa)
+  SSH_PUBLIC_KEY: $(cat $id_rsa.pub)
 
 deploy:
   stage: deploy
   script:
     - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 700 ~/.ssh
+
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - echo "$SSH_PUBLIC_KEY" > ~/.ssh/id_rsa
     - chmod 400 ~/.ssh/id_rsa
+
     - eval `ssh-agent -s`
     - ssh-add
     - ssh-add ~/.ssh/id_rsa
+    
     - apt-get update
     - apt-get install -y rsync
     - cd api
