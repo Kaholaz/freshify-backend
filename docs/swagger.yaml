@@ -1118,6 +1118,11 @@ components:
           items:
             $ref: '#/components/schemas/RecipeCategoryRequest'
           example: [{ "id": 1, "name": "Italian" }, { "id": 2, "name": "Meat Dish" }]
+        allergens:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllergenRequest'
+          example: [ { "id": 1, "name": "Gluten" }, { "id": 2, "name": "Lactose" } ]
         image:
           type: string
           example: "https://images.matprat.no/nten4ykzxh-jumbotron/large/pastacarbonara0904_1.jpg"
@@ -1169,6 +1174,11 @@ components:
           items:
             $ref: '#/components/schemas/RecipeCategory'
           example: [{ "id": 1, "name": "Italian" }]
+        allergens:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllergenRequest'
+          example: [ { "id": 1, "name": "Gluten" }, { "id": 2, "name": "Lactose" } ]
         image:
           type: string
           example: "https://images.matprat.no/nten4ykzxh-jumbotron/large/pastacarbonara0904_1.jpg"
@@ -1188,3 +1198,13 @@ components:
         unit:
           type: string
           example: "pounds"
+    AllergenRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Lactose"
