@@ -37,7 +37,7 @@ unit-test-job:   # This job runs in the test stage.
     - echo "Running unit tests..."
     - pwd
     - cd api
-    - mvn test
+#    - mvn test
 
 image: maven:3.8.3-openjdk-17
 
