@@ -34,8 +34,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
-    @ExceptionHandler(ItemTypesNotFoundException.class)
-    public ResponseEntity<Object> handleItemTypesNotFoundException(ItemTypesNotFoundException ex) {
+    @ExceptionHandler(RecipeCategoryNotFoundException.class)
+    public ResponseEntity<Object> handleItemTypesNotFoundException(RecipeCategoryNotFoundException ex) {
         return ResponseEntity.ok().body(List.of());
     }
 
@@ -82,6 +82,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SignatureException.class)
     public ResponseEntity<Object> handleSignatureException(SignatureException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The provided token's signature could not be verified");
+    }
+
+    @ExceptionHandler(RecipeCategoryNotFoundException.class)
+    public ResponseEntity<Object> handleRecipeCategoryNotFoundException(RecipeCategoryNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
