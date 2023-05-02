@@ -72,4 +72,8 @@ public class ItemService {
     public Item addItem(Item item) {
         return itemRepository.save(item);
     }
+
+    public Double getAverageWaste(List<Item> wastedItems) {
+        return wastedItems.stream().mapToDouble(Item::getRemaining).average().orElse(0D);
+    }
 }

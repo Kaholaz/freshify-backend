@@ -432,10 +432,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  $ref: "#/components/schemas/WastedItemDTO"
+                $ref: "#/components/schemas/InventoryWasteResponse"
         "404":
           description: Household not found
   /household/{id}:
@@ -1081,6 +1078,20 @@ components:
         amountWasted:
           type: number
           example: 0.2
+    InventoryWasteResponse:
+      type: object
+      properties:
+        wastedItems:
+          type: array
+          items:
+            type: object
+            $ref: "#/components/schemas/WastedItemDTO"
+        total:
+          type: number
+          example: 23
+        average:
+          type: number
+          example: 0.32
     HouseholdMemberKey:
       type: object
       properties:

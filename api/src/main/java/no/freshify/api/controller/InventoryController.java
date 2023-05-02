@@ -163,7 +163,7 @@ public class InventoryController {
      */
     @PreAuthorize("hasPermission(#householdId, 'Household', '')")
     @GetMapping("/{id}/inventory/waste")
-    public ResponseEntity<List<WastedItemDTO>> getInventoryWaste(@PathVariable("id") long householdId,
+    public ResponseEntity<InventoryWasteResponse> getInventoryWaste(@PathVariable("id") long householdId,
                                                                  @RequestParam(value = "num_months", required = true) int numMonths)
             throws HouseholdNotFoundException {
         logger.info("Getting inventory item waste for household with id: " + householdId);
@@ -172,10 +172,18 @@ public class InventoryController {
         LocalDate startDate = LocalDate.now().minusMonths(numMonths);
 
         List<Item> wastedItems = itemService.findWastedItemsInTimeInterval(household, Date.valueOf(startDate), Date.valueOf(LocalDate.now().plusDays(1)));
+        for (Item item : wastedItems) {
+            System.out.println(item.getType().getName());
+            System.out.println(item.getRemaining());
+        }
+
+        Double average = itemService.getAverageWaste(wastedItems);
 
         List<WastedItemDTO> wastedItemDTOS = itemMapper.toWastedItemDTO(wastedItems);
 
-        return ResponseEntity.ok(wastedItemDTOS);
+        InventoryWasteResponse response = new InventoryWasteResponse(wastedItemDTOS, wastedItems.size(), average);
+
+        return ResponseEntity.ok(response);
     }
 
     /**
