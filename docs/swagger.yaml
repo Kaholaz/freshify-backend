@@ -824,9 +824,16 @@ paths:
       tags:
         - recipes
       summary: Gets a page of recipes that can also be filtered
-      description: Returns a paginated list of recipes, can optionally be filtered by category and/or allergens. For each ingredient in the recipe it also checks whether or not the household has the specified ingredient item type in the fridge.
+      description: Retrieves a paginated list of recipes that can optionally be filtered by recipe category and/or allergens. For each ingredient in the recipe, it checks whether the household has the specified ingredient item type in the fridge.
       operationId: getRecipesPaginated
       parameters:
+        - name: householdId
+          in: path
+          description: ID of the household to check for ingredients
+          required: true
+          schema:
+            type: integer
+            format: int64
         - name: categoryId
           in: query
           description: ID of the recipe category to filter by
@@ -834,6 +841,15 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: allergenIds
+          in: query
+          description: Array of IDs of the allergens to filter by
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
         - name: pageNo
           in: query
           description: Page number to retrieve
@@ -852,13 +868,13 @@ paths:
             default: 10
       responses:
         "200":
-          description: Successful operation
+          description: A page of recipes were sucessfully retrieved
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/RecipeDTOPage"
         "404":
-          description: Recipe category not found
+          description: The specified household or recipe category was not found
   /recipes/{householdId}/recipe/{id}:
     get:
       tags:
