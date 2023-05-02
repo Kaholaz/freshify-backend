@@ -57,7 +57,6 @@ deploy:
 
     - eval `ssh-agent -s`
     - ssh-add
-    - ssh-add ~/.ssh/id_rsa
     
     - apt-get update
     - apt-get install -y rsync
