@@ -967,6 +967,10 @@ components:
           type: string
           format: date
           example: "2020-01-01"
+        lastChanged:
+          type: string
+          format: date
+          example: "2020-01-01"
         suggested:
           type: boolean
         type:
@@ -990,7 +994,7 @@ components:
             type: string
             format: date
             example: "2020-01-01"
-          addedDate:
+          bought:
             type: string
             format: date
             example: "2020-01-01"
