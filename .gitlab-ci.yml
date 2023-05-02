@@ -45,5 +45,6 @@ deploy:
     
     - cd api
     - cp $APPLICATION_PROPERTIES src/main/resources/application-prod.properties
-    - mvn clean package -DskipTests -Pprod
+    - echo "spring.profiles.active=prod" > src/main/resources/application.properties
+    - mvn clean package -DskipTests
     - scp -v -o StrictHostKeyChecking=no -o PasswordAuthentication=no target/*.jar freshify@navi.samfundet.no:/var/www/api.freshify.no/application.jar
