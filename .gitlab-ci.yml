@@ -52,6 +52,7 @@ deploy:
     - eval `ssh-agent -s`
     - chmod 400 $SSH_PRIVATE_KEY
     - ssh-add $SSH_PRIVATE_KEY
+    - echo 'PasswordAuthentication no' >> /etc/ssh/ssh_config
     
     - cd api
     - scp -v target/*.jar freshify@navi.samfundet.no:/var/www/api.freshify.no/application.jar
