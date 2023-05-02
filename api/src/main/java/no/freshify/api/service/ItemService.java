@@ -61,6 +61,11 @@ public class ItemService {
         return itemRepository.findItemsByHouseholdAndStatusAndRemainingGreaterThan(household, ItemStatus.USED, 0D);
     }
 
+
+    public List<Item> findAllUsedItems(Household household) {
+        return itemRepository.findItemsByHouseholdAndStatus(household, ItemStatus.USED);
+    }
+
     public void deleteItemById(long id) {
         itemRepository.deleteById(id);
     }

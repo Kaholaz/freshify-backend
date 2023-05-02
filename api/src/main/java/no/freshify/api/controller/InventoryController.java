@@ -164,7 +164,7 @@ public class InventoryController {
     @PreAuthorize("hasPermission(#householdId, 'Household', '')")
     @GetMapping("/{id}/inventory/waste")
     public ResponseEntity<InventoryWasteResponse> getInventoryWaste(@PathVariable("id") long householdId,
-                                                                 @RequestParam(value = "num_months", required = true) int numMonths)
+                                                                    @RequestParam(value = "num_months", required = true) int numMonths)
             throws HouseholdNotFoundException {
         logger.info("Getting inventory item waste for household with id: " + householdId);
         Household household = householdService.findHouseholdByHouseholdId(householdId);
@@ -172,10 +172,6 @@ public class InventoryController {
         LocalDate startDate = LocalDate.now().minusMonths(numMonths);
 
         List<Item> wastedItems = itemService.findWastedItemsInTimeInterval(household, Date.valueOf(startDate), Date.valueOf(LocalDate.now().plusDays(1)));
-        for (Item item : wastedItems) {
-            System.out.println(item.getType().getName());
-            System.out.println(item.getRemaining());
-        }
 
         Double average = itemService.getAverageWaste(wastedItems);
 
@@ -195,16 +191,16 @@ public class InventoryController {
      */
     @GetMapping("/{id}/inventory/waste-per-month")
     public ResponseEntity<List<Double>> getInventoryWastePerMonth(@PathVariable("id") long householdId,
-                                                                 @RequestParam(value = "num_months", required = true) Integer numMonths)
+                                                                  @RequestParam(value = "num_months", required = true) Integer numMonths)
             throws HouseholdNotFoundException {
         logger.info("Getting inventory item waste for household with id: " + householdId);
         Household household = householdService.findHouseholdByHouseholdId(householdId);
 
-        List<Item> wastedItems = itemService.findAllWastedItems(household);
+        List<Item> usedItems = itemService.findAllUsedItems(household);
 
         int currentMonth = LocalDate.now().getMonthValue();
         double[] result = new double[12];
-        Map<Integer, Double> map = wastedItems.stream()
+        Map<Integer, Double> map = usedItems.stream()
                 .filter(wastedItem -> wastedItem.getLastChanged().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isAfter(LocalDate.now().minusMonths(numMonths)))
                 .collect(Collectors.groupingBy(wastedItem -> wastedItem.getLastChanged().getMonth(), Collectors.averagingDouble(Item::getRemaining)));
         for (int i = 0; i < 12; i++) {
