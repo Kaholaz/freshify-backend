@@ -39,6 +39,7 @@ variables:
 build:
   stage: build
   script:
+    - cd api
     - mvn clean package -DskipTests=true
   artifacts:
     paths:
