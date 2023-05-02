@@ -32,6 +32,6 @@ public class Recipe {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
     private Set<RecipeIngredient> recipeIngredients;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private RecipeImage image;
+    @Column
+    private String image;
 }
