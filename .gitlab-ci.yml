@@ -54,4 +54,5 @@ deploy:
     - ssh-add ~/.ssh/id_rsa
     - apt-get update
     - apt-get install -y rsync
+    - cd api
     - rsync -avz --delete target/*.jar freshify@navi.samfundet.no:/var/www/api.letno.no/application.jar
