@@ -819,6 +819,46 @@ paths:
                   $ref: "#/components/schemas/ItemType"
         404:
           description: No item types found
+  /recipes/category:
+    get:
+      tags:
+        - recipes
+      summary: Gets a page of items
+      description: Returns a paginated list of all recipes, can optionally be filtered by category
+      operationId: getRecipesPaginated
+      parameters:
+        - name: categoryId
+          in: query
+          description: ID of the recipe category to filter by
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: pageNo
+          in: query
+          description: Page number to retrieve
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: pageSize
+          in: query
+          description: Number of recipes per page
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeDTOPage"
+        "404":
+          description: Recipe category not found
   /recipes:
     post:
       tags:
@@ -840,12 +880,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Recipe'
-        '400':
-          description: Invalid input parameters.
-        '401':
-          description: Unauthorized request.
-        '500':
-          description: Internal server error.
+        '404':
+          description: Item type not found/Recipe category not found/Allergen not found
 components:
   schemas:
     CreateUser:
@@ -1226,3 +1262,65 @@ components:
         name:
           type: string
           example: "Italian"
+    RecipeDTOPage:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/Recipe"
+        pageable:
+          type: object
+          properties:
+            sort:
+              type: object
+              properties:
+                empty:
+                  type: boolean
+                sorted:
+                  type: boolean
+                unsorted:
+                  type: boolean
+            offset:
+              type: integer
+              format: int64
+            pageSize:
+              type: integer
+              format: int32
+            pageNumber:
+              type: integer
+              format: int32
+            paged:
+              type: boolean
+            unpaged:
+              type: boolean
+        last:
+          type: boolean
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        number:
+          type: integer
+          format: int32
+        sort:
+          type: object
+          properties:
+            empty:
+              type: boolean
+            sorted:
+              type: boolean
+            unsorted:
+              type: boolean
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
