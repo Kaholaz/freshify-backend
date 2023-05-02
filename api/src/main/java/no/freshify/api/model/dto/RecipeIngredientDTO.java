@@ -11,4 +11,5 @@ public class RecipeIngredientDTO {
     private ItemType itemType;
     private double amount;
     private String unit;
+    private boolean householdHasIngredient;
 }
