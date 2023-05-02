@@ -17,18 +17,8 @@
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
 stages:          # List of stages for jobs, and their order of execution
-  - build
   - test
   - deploy
-
-build:
-  stage: build
-  script:
-    - cd api
-    - mvn clean package -DskipTests=true
-  artifacts:
-    paths:
-      - target/*.jar
 
 unit-test-job:   # This job runs in the test stage.
   image: maven:3.8.3-openjdk-17
@@ -37,7 +27,7 @@ unit-test-job:   # This job runs in the test stage.
     - echo "Running unit tests..."
     - pwd
     - cd api
-#    - mvn test
+#    - mvn clean test
 
 image: maven:3.8.3-openjdk-17
 
@@ -54,4 +44,5 @@ deploy:
     - ssh-add $SSH_PRIVATE_KEY
     
     - cd api
+    - mvn clean package -DskipTests
     - scp -v -o StrictHostKeyChecking=no -o PasswordAuthentication=no target/*.jar freshify@navi.samfundet.no:/var/www/api.freshify.no/application.jar
