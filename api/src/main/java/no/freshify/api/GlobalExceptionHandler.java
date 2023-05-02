@@ -93,4 +93,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleAllergenNotFoundException(AllergenNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
+
+    @ExceptionHandler(RecipeNotFoundException.class)
+    public ResponseEntity<Object> handleRecipeNotFoundException(RecipeNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 }
