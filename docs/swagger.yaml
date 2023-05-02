@@ -1108,6 +1108,10 @@ components:
         steps:
           type: string
           example: "1. Cook spaghetti by package instructions. 2. Brown ground beef in a large pan. 3. Add tomatoes. 4. Simmer for 20 minutes."
+        estimatedTime:
+          type: integer
+          format: int64
+          example: 30
         recipeIngredients:
           type: array
           items:
@@ -1161,6 +1165,10 @@ components:
         description:
           type: string
           example: "Classic Italian dish made with ground beef, tomatoes, and herbs"
+        estimatedTime:
+          type: integer
+          format: int64
+          example: 30
         steps:
           type: string
           example: "1. Cook spaghetti according to package instructions. 2. Brown ground beef in a large pan. 3. Add tomatoes, herbs, and seasoning. 4. Simmer for 20 minutes. 5. Serve over cooked spaghetti."
