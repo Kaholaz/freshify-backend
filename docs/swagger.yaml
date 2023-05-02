@@ -377,7 +377,7 @@ paths:
         - household
         - inventory
       summary: Returns a list of household waste
-      description: Returns lists of household waste sorted by number of items wasted and percentage of items wasted. The lists are sorted in descending order.
+      description: Returns lists of household waste
       parameters:
         - name: id
           in: path
@@ -386,12 +386,6 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: limit
-          in: query
-          description: The number of items to return (maximum 50)
-          schema:
-            type: integer
-            maximum: 50
         - name: start_date
           in: query
           description: Start date for the time interval (YYYY-MM-DD)
@@ -410,7 +404,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WasteSortedListsResponse"
+                type: array
+                items:
+                  type: object
+                  $ref: "#/components/schemas/WastedItemDTO"
         "404":
           description: Household not found
   /household/{id}:
@@ -1013,25 +1010,18 @@ components:
           example: 123
         type:
           $ref: "#/components/schemas/HouseholdUserType"
-    WasteSortedListsResponse:
-      type: object
-      properties:
-        wastedItemsByCount:
-          type: array
-          items:
-            $ref: "#/components/schemas/WastedItemDTO"
-        wastedItemsByAverageAmount:
-          type: array
-          items:
-            $ref: "#/components/schemas/WastedItemDTO"
     WastedItemDTO:
       type: object
       properties:
-        itemType:
-          $ref: "#/components/schemas/ItemType"
-        amountWasted:
+        name:
+          type: string
+          example: "Milk"
+        countWasted:
           type: number
           example: 3
+        amountWasted:
+          type: number
+          example: 0.2
     HouseholdMemberKey:
       type: object
       properties:
