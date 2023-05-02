@@ -1,4 +1,4 @@
-openapi: 3.0.4
+openapi: 3.1.4
 info:
   title: Freshify API Documentation
   description: |-
@@ -819,12 +819,12 @@ paths:
                   $ref: "#/components/schemas/ItemType"
         404:
           description: No item types found
-  /recipes/category:
+  /recipes/{householdId}:
     get:
       tags:
         - recipes
-      summary: Gets a page of items
-      description: Returns a paginated list of all recipes, can optionally be filtered by category
+      summary: Gets a page of recipes that can also be filtered
+      description: Returns a paginated list of recipes, can optionally be filtered by category and/or allergens. For each ingredient in the recipe it also checks whether or not the household has the specified ingredient item type in the fridge.
       operationId: getRecipesPaginated
       parameters:
         - name: categoryId
@@ -879,7 +879,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Recipe'
+                $ref: '#/components/schemas/RecipeDTO'
         '404':
           description: Item type not found/Recipe category not found/Allergen not found
 components:
@@ -1268,7 +1268,7 @@ components:
         content:
           type: array
           items:
-            $ref: "#/components/schemas/Recipe"
+            $ref: "#/components/schemas/RecipeDTO"
         pageable:
           type: object
           properties:
@@ -1324,3 +1324,64 @@ components:
           format: int32
         empty:
           type: boolean
+    RecipeDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Spaghetti Bolognese"
+        description:
+          type: string
+          example: "Classic Italian dish made with ground beef, tomatoes, and herbs"
+        estimatedTime:
+          type: integer
+          format: int64
+          example: 30
+        steps:
+          type: string
+          example: "1. Cook spaghetti according to package instructions. 2. Brown ground beef in a large pan. 3. Add tomatoes, herbs, and seasoning. 4. Simmer for 20 minutes. 5. Serve over cooked spaghetti."
+        totalIngredientsInFridge:
+          type: integer
+          format: int32
+          example: 3
+        recipeIngredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeIngredientResponse'
+          example: [ { "id": 1, "itemType": { "id": 1, "name": "Ground Beef" }, "amount": 1.5, "unit": "pounds", "householdHasIngredient": true } ]
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeCategory'
+          example: [ { "id": 1, "name": "Italian" } ]
+        allergens:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllergenRequest'
+          example: [ { "id": 1, "name": "Gluten" }, { "id": 2, "name": "Lactose" } ]
+        image:
+          type: string
+          example: "https://images.matprat.no/nten4ykzxh-jumbotron/large/pastacarbonara0904_1.jpg"
+    RecipeIngredientResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        itemType:
+          $ref: '#/components/schemas/ItemType'
+        amount:
+          type: number
+          format: double
+          example: 1.5
+        unit:
+          type: string
+          example: "pounds"
+        householdHasIngredient:
+          type: boolean
+          example: true
