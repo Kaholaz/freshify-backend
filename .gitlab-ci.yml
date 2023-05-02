@@ -41,23 +41,14 @@ unit-test-job:   # This job runs in the test stage.
 
 image: maven:3.8.3-openjdk-17
 
-variables:
-  SSH_PRIVATE_KEY: $(cat $id_ed25519)
-  SSH_PUBLIC_KEY: $(cat $id_ed25519.pub)
-
 deploy:
   stage: deploy
   script:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
 
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-    - echo "$SSH_PUBLIC_KEY" > ~/.ssh/id_ed25519.pub
-    - echo "Set public key $(cat ~/.ssh/id_ed25519.pub)"
-    - chmod 400 ~/.ssh/id_ed25519
-
     - eval `ssh-agent -s`
-    - ssh-add
+    - ssh-add $SSH_PRIVATE_KEY
     
     - apt-get update
     - apt-get install -y rsync
