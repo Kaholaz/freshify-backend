@@ -54,4 +54,4 @@ deploy:
     - ssh-add $SSH_PRIVATE_KEY
     
     - cd api
-    - scp target/*.jar freshify@navi.samfundet.no:/var/www/api.freshify.no/application.jar -v
+    - scp -v target/*.jar freshify@navi.samfundet.no:/var/www/api.freshify.no/application.jar
