@@ -150,9 +150,8 @@ public class InventoryController {
     }
 
     /**
-     * Gets the item waste for a household as a sorted list.
+     * Gets the item waste for a household as a list.
      * @param householdId The id of the household to get the item waste from
-     * @param limit The maximum number of items to return
      * @param startDate The start date of the period to get the item waste from, format yyyy-MM-dd
      * @param endDate The end date of the period to get the item waste from, format yyyy-MM-dd
      * @return A list of inventory items with their waste
@@ -160,8 +159,7 @@ public class InventoryController {
      */
     @PreAuthorize("hasPermission(#householdId, 'Household', '')")
     @GetMapping("/{id}/inventory/waste")
-    public ResponseEntity<WasteSortedListsResponse> getSortedInventoryWaste(@PathVariable("id") long householdId,
-                                                                            @RequestParam(value = "limit") Integer limit,
+    public ResponseEntity<List<WastedItemDTO>> getInventoryWaste(@PathVariable("id") long householdId,
                                                                             @RequestParam(value = "start_date", required = false) String startDate,
                                                                             @RequestParam(value = "end_date", required = false) String endDate)
             throws HouseholdNotFoundException {
@@ -169,15 +167,9 @@ public class InventoryController {
         Household household = householdService.findHouseholdByHouseholdId(householdId);
 
         List<Item> wastedItems = itemService.findWastedItemsInTimeInterval(household, Date.valueOf(startDate), Date.valueOf(endDate));
+        List<WastedItemDTO> wastedItemDTOS = itemMapper.toWastedItemDTO(wastedItems);
 
-        List<WastedItemDTO> sortedItemsByCount = itemService.getSortedItemsByWaste(wastedItems, ItemSortMethod.COUNT);
-        sortedItemsByCount = sortedItemsByCount.subList(0, Math.min(limit, sortedItemsByCount.size()));
-
-        List<WastedItemDTO> sortedItemsByAverageAmount = itemService.getSortedItemsByWaste(wastedItems, ItemSortMethod.PERCENTAGE);
-        sortedItemsByAverageAmount = sortedItemsByAverageAmount.subList(0, Math.min(limit, sortedItemsByAverageAmount.size()));
-
-        WasteSortedListsResponse response = new WasteSortedListsResponse(sortedItemsByCount, sortedItemsByAverageAmount);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(wastedItemDTOS);
     }
 
     /**

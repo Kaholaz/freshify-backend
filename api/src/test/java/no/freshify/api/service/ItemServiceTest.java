@@ -158,28 +158,6 @@ public class ItemServiceTest {
     }
 
     @Test
-    public void testGetSortedItemsByWaste_UsingCount() {
-        List<WastedItemDTO> result = itemService.getSortedItemsByWaste(wastedItems, ItemSortMethod.COUNT);
-
-        assertEquals(2, result.size());
-        assertEquals(itemType1.getId(), result.get(0).getItemType().getId());
-        assertEquals(itemType2.getId(), result.get(1).getItemType().getId());
-        assertEquals(2, result.get(0).getAmountWasted());
-        assertEquals(1, result.get(1).getAmountWasted());
-    }
-
-    @Test
-    public void testGetSortedItemsByWaste_UsingAverageAmount() {
-        List<WastedItemDTO> result = itemService.getSortedItemsByWaste(wastedItems, ItemSortMethod.PERCENTAGE);
-
-        assertEquals(2, result.size());
-        assertEquals(itemType1.getId(), result.get(0).getItemType().getId());
-        assertEquals(itemType2.getId(), result.get(1).getItemType().getId());
-        assertEquals(0.5D, result.get(0).getAmountWasted());
-        assertEquals(0.1D, result.get(1).getAmountWasted());
-    }
-
-    @Test
     public void testFindWastedItemsInTimeInterval() {
         Mockito.when(itemRepository.findItemsByHouseholdAndStatusAndLastChangedBetweenAndRemainingGreaterThan
                 (any(Household.class), any(ItemStatus.class), any(Date.class), any(Date.class), any(Double.class)))

@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WastedItemDTO {
-    private ItemTypeDTO itemType;
-    private Number amountWasted;
+    private String name;
+    private Integer countWasted;
+    private Double amountWasted;
 }
