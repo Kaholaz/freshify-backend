@@ -42,8 +42,8 @@ unit-test-job:   # This job runs in the test stage.
 image: maven:3.8.3-openjdk-17
 
 variables:
-  SSH_PRIVATE_KEY: $(cat $id_rsa)
-  SSH_PUBLIC_KEY: $(cat $id_rsa.pub)
+  SSH_PRIVATE_KEY: $(cat $id_ed25519)
+  SSH_PUBLIC_KEY: $(cat $id_ed25519.pub)
 
 deploy:
   stage: deploy
@@ -51,9 +51,10 @@ deploy:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
 
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-    - echo "$SSH_PUBLIC_KEY" > ~/.ssh/id_rsa
-    - chmod 400 ~/.ssh/id_rsa
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+    - echo "$SSH_PUBLIC_KEY" > ~/.ssh/id_ed25519.pub
+    - echo "Set public key $(cat ~/.ssh/id_ed25519.pub)"
+    - chmod 400 ~/.ssh/id_ed25519
 
     - eval `ssh-agent -s`
     - ssh-add
