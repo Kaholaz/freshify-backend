@@ -53,7 +53,5 @@ deploy:
     - chmod 400 $SSH_PRIVATE_KEY
     - ssh-add $SSH_PRIVATE_KEY
     
-    - apt-get update
-    - apt-get install -y rsync
     - cd api
-    - rsync -avz --delete target/*.jar freshify@navi.samfundet.no:/var/www/api.freshify.no/application.jar
+    - scp target/*.jar freshify@navi.samfundet.no:/var/www/api.freshify.no/application.jar
