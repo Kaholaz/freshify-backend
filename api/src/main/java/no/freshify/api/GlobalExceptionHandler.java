@@ -34,8 +34,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
-    @ExceptionHandler(RecipeCategoryNotFoundException.class)
-    public ResponseEntity<Object> handleItemTypesNotFoundException(RecipeCategoryNotFoundException ex) {
+    @ExceptionHandler(ItemTypesNotFoundException.class)
+    public ResponseEntity<Object> handleItemTypesNotFoundException(ItemTypesNotFoundException ex) {
         return ResponseEntity.ok().body(List.of());
     }
 
@@ -87,10 +87,5 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RecipeCategoryNotFoundException.class)
     public ResponseEntity<Object> handleRecipeCategoryNotFoundException(RecipeCategoryNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleException(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
     }
 }
