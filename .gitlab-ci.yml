@@ -44,6 +44,8 @@ image: maven:3.8.3-openjdk-17
 deploy:
   stage: deploy
   script:
+    - cat $SSH_PUBLIC_KEY
+
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
 
@@ -55,4 +57,3 @@ deploy:
     - apt-get install -y rsync
     - cd api
     - rsync -avz --delete target/*.jar freshify@navi.samfundet.no:/var/www/api.freshify.no/application.jar
-
