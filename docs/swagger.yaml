@@ -420,18 +420,12 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: start_date
+        - name: num_months
           in: query
-          description: Start date for the time interval (YYYY-MM-DD)
-          required: false
+          description: The number of months back to get wasted items from
+          required: true
           schema:
-            type: string
-        - name: end_date
-          in: query
-          description: End date for the time interval (YYYY-MM-DD)
-          required: false
-          schema:
-            type: string  
+            type: number
       responses:
         "200":
           description: successful operation

@@ -22,7 +22,9 @@ import java.sql.Array;
 import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -155,21 +157,22 @@ public class InventoryController {
     /**
      * Gets the item waste for a household as a list.
      * @param householdId The id of the household to get the item waste from
-     * @param startDate The start date of the period to get the item waste from, format yyyy-MM-dd
-     * @param endDate The end date of the period to get the item waste from, format yyyy-MM-dd
+     * @param numMonths The number of months to get the item waste from
      * @return A list of inventory items with their waste
      * @throws HouseholdNotFoundException If the household is not found
      */
     @PreAuthorize("hasPermission(#householdId, 'Household', '')")
     @GetMapping("/{id}/inventory/waste")
     public ResponseEntity<List<WastedItemDTO>> getInventoryWaste(@PathVariable("id") long householdId,
-                                                                            @RequestParam(value = "start_date", required = false) String startDate,
-                                                                            @RequestParam(value = "end_date", required = false) String endDate)
+                                                                 @RequestParam(value = "num_months", required = true) int numMonths)
             throws HouseholdNotFoundException {
         logger.info("Getting inventory item waste for household with id: " + householdId);
         Household household = householdService.findHouseholdByHouseholdId(householdId);
 
-        List<Item> wastedItems = itemService.findWastedItemsInTimeInterval(household, Date.valueOf(startDate), Date.valueOf(endDate));
+        LocalDate startDate = LocalDate.now().minusMonths(numMonths);
+
+        List<Item> wastedItems = itemService.findWastedItemsInTimeInterval(household, Date.valueOf(startDate), Date.valueOf(LocalDate.now().plusDays(1)));
+
         List<WastedItemDTO> wastedItemDTOS = itemMapper.toWastedItemDTO(wastedItems);
 
         return ResponseEntity.ok(wastedItemDTOS);
