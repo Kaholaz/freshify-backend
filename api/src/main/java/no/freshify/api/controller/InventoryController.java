@@ -18,10 +18,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Array;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/household")
@@ -170,6 +173,43 @@ public class InventoryController {
         List<WastedItemDTO> wastedItemDTOS = itemMapper.toWastedItemDTO(wastedItems);
 
         return ResponseEntity.ok(wastedItemDTOS);
+    }
+
+    /**
+     * Gets the average item waste per amount for a household as a list.
+     * @param householdId The id of the household to get the item waste from
+     * @param numMonths The number of months back to get the item waste from
+     * @return A list of doubles with the average item waste per amount
+     * @throws HouseholdNotFoundException If the household is not found
+     */
+    @GetMapping("/{id}/inventory/waste-per-month")
+    public ResponseEntity<List<Double>> getInventoryWastePerMonth(@PathVariable("id") long householdId,
+                                                                 @RequestParam(value = "num_months", required = true) Integer numMonths)
+            throws HouseholdNotFoundException {
+        logger.info("Getting inventory item waste for household with id: " + householdId);
+        Household household = householdService.findHouseholdByHouseholdId(householdId);
+
+        List<Item> wastedItems = itemService.findAllWastedItems(household);
+
+        int currentMonth = LocalDate.now().getMonthValue();
+        double[] result = new double[12];
+        Map<Integer, Double> map = wastedItems.stream()
+                .filter(wastedItem -> wastedItem.getLastChanged().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isAfter(LocalDate.now().minusMonths(numMonths)))
+                .collect(Collectors.groupingBy(wastedItem -> wastedItem.getLastChanged().getMonth(), Collectors.averagingDouble(Item::getRemaining)));
+        for (int i = 0; i < 12; i++) {
+            if (map.containsKey((currentMonth + i - 1) % 12 + 1)) {
+                result[i] = map.get((currentMonth + i - 1) % 12 + 1).floatValue();
+            } else {
+                result[i] = 0;
+            }
+        }
+
+        ArrayList<Double> reversedResult = new ArrayList<>(result.length);
+        for (int i = result.length - 1; i >= 0; i--) {
+            reversedResult.add(result[i]);
+        }
+
+        return ResponseEntity.ok(reversedResult.subList(0, numMonths));
     }
 
     /**

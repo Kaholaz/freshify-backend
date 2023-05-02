@@ -15,4 +15,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     Item findByIdAndHousehold(long id, Household household);
     List<Item> findItemsByHouseholdAndStatusAndLastChangedBetweenAndRemainingGreaterThan
             (Household household, ItemStatus status, Date startDate, Date endDate, Double remaining);
+
+    List<Item> findItemsByHouseholdAndStatusAndRemainingGreaterThan(Household household, ItemStatus used, double v);
 }
