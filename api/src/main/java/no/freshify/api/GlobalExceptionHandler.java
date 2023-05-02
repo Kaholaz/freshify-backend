@@ -83,4 +83,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleSignatureException(SignatureException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The provided token's signature could not be verified");
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
 }
