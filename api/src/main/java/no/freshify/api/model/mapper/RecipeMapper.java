@@ -6,6 +6,8 @@ import no.freshify.api.model.recipe.Recipe;
 import no.freshify.api.model.recipe.RecipeCategory;
 import no.freshify.api.model.recipe.RecipeIngredient;
 import org.mapstruct.Mapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
@@ -36,4 +38,9 @@ public abstract class RecipeMapper {
 
     public abstract AllergenDTO allergenDTO(Allergen allergen);
     public abstract List<AllergenDTO> allergenDTO(List<Allergen> allergens);
+
+    public Page<RecipeDTO> toRecipeDTOPage(Page<Recipe> recipePage) {
+        List<RecipeDTO> recipeDTOList = toRecipeDTO(recipePage.getContent());
+        return new PageImpl<>(recipeDTOList, recipePage.getPageable(), recipePage.getTotalElements());
+    }
 }
