@@ -83,4 +83,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleSignatureException(SignatureException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The provided token's signature could not be verified");
     }
+
+    @ExceptionHandler(RecipeCategoryNotFoundException.class)
+    public ResponseEntity<Object> handleRecipeCategoryNotFoundException(RecipeCategoryNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 }
