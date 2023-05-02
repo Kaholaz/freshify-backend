@@ -21,21 +21,6 @@ stages:          # List of stages for jobs, and their order of execution
   - test
   - deploy
 
-unit-test-job:   # This job runs in the test stage.
-  image: maven:3.8.3-openjdk-17
-  stage: test
-  script:
-    - echo "Running unit tests..."
-    - pwd
-    - cd api
-    - mvn clean test
-    - cd ..
-
-image: maven:3.8.3-openjdk-17
-
-variables:
-  SSH_PRIVATE_KEY: $(cat $id_rsa)
-
 build:
   stage: build
   script:
@@ -45,14 +30,30 @@ build:
     paths:
       - target/*.jar
 
+unit-test-job:   # This job runs in the test stage.
+  image: maven:3.8.3-openjdk-17
+  stage: test
+  script:
+    - echo "Running unit tests..."
+    - pwd
+    - cd api
+    - mvn test
+
+image: maven:3.8.3-openjdk-17
+
+variables:
+  SSH_PRIVATE_KEY: $(cat $id_rsa)
+
 deploy:
   stage: deploy
   script:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - eval `ssh-agent -s`
+    - ssh-add
     - ssh-add ~/.ssh/id_rsa
     - apt-get update
     - apt-get install -y rsync
     - cd api
-    - rsync -avz --delete target/*.jar freshify@navi.samfundet.no:/var/www/api.letno.no/application.jar
+    - rsync -avz --delete target/*.jar freshify@navi.samfundet.no:/var/www/api.freshify.no/application.jar
