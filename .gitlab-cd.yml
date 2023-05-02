@@ -1,0 +1,32 @@
+image: maven:3-jdk-17
+
+stages:
+  - build
+  - deploy
+
+variables:
+  SSH_PRIVATE_KEY: $(cat $id_rsa)
+
+before_script:
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+  - chmod 600 ~/.ssh/id_rsa
+  - ssh-keyscan remote_server >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+  - eval "$(ssh-agent -s)"
+  - ssh-add ~/.ssh/id_rsa
+build:
+  stage: build
+  script:
+    - mvn clean package -DskipTests=true
+  artifacts:
+    paths:
+      - target/*.jar
+
+deploy:
+  stage: deploy
+  script:
+    - apt-get update
+    - apt-get install -y rsync
+    - rsync -avz --delete target/*.jar freshify@navi.samfundet.no:/var/www/api.letno.no/application.jar
