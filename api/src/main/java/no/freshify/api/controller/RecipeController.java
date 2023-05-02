@@ -1,22 +1,26 @@
 package no.freshify.api.controller;
 
 
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.AllergenNotFoundException;
+import no.freshify.api.exception.HouseholdNotFoundException;
 import no.freshify.api.exception.ItemTypeNotFoundException;
 import no.freshify.api.exception.RecipeCategoryNotFoundException;
+import no.freshify.api.model.Household;
+import no.freshify.api.model.Item;
+import no.freshify.api.model.ItemType;
 import no.freshify.api.model.dto.AllergenDTO;
 import no.freshify.api.model.dto.RecipeDTO;
+import no.freshify.api.model.dto.RecipeIngredientDTO;
 import no.freshify.api.model.dto.RecipeRequest;
 import no.freshify.api.model.mapper.RecipeMapper;
 import no.freshify.api.model.recipe.Allergen;
 import no.freshify.api.model.recipe.Recipe;
 import no.freshify.api.model.recipe.RecipeCategory;
 import no.freshify.api.model.recipe.RecipeIngredient;
-import no.freshify.api.service.AllergenService;
-import no.freshify.api.service.ItemTypeService;
-import no.freshify.api.service.RecipeCategoryService;
-import no.freshify.api.service.RecipeService;
+import no.freshify.api.security.UserDetailsImpl;
+import no.freshify.api.service.*;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +29,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -40,6 +45,8 @@ public class RecipeController {
     private final ItemTypeService itemTypeService;
     private final AllergenService allergenService;
     private final RecipeCategoryService recipeCategoryService;
+    private final ItemService itemService;
+    private final HouseholdService householdService;
 
     private final RecipeMapper recipeMapper = Mappers.getMapper(RecipeMapper.class);
 
@@ -52,12 +59,15 @@ public class RecipeController {
      * @param pageSize The page size
      * @return A page of recipes
      */
-    @GetMapping("/category")
-    public Page<RecipeDTO> getRecipesPaginated(@RequestParam(required = false) Long categoryId,
+    @PreAuthorize("hasPermission(#householdId, 'HOUSEHOLD', '')")
+    @GetMapping("/{householdId}")
+    public Page<RecipeDTO> getRecipesPaginated(@PathVariable("householdId") Long householdId,
+                                               @RequestParam(required = false) Long categoryId,
                                                @RequestParam(required = false) List<Long> allergenIds,
                                                @RequestParam(defaultValue = "0") int pageNo,
-                                               @RequestParam(defaultValue = "10") int pageSize) {
+                                               @RequestParam(defaultValue = "10") int pageSize) throws HouseholdNotFoundException {
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("name"));
+        Household household = householdService.findHouseholdByHouseholdId(householdId);
 
         Page<Recipe> recipePage;
 
@@ -73,7 +83,24 @@ public class RecipeController {
             recipePage = recipeService.getRecipesPageable(pageable);
         }
 
-        return recipeMapper.toRecipeDTOPage(recipePage);
+        Page<RecipeDTO> recipeDTOPage = recipeMapper.toRecipeDTOPage(recipePage);
+
+        for (RecipeDTO recipe : recipeDTOPage.getContent()) {
+            for (RecipeIngredientDTO recipeIngredient : recipe.getRecipeIngredients()) {
+                ItemType itemType = recipeIngredient.getItemType();
+                if (itemType != null) {
+                    Item item = itemService.findByTypeAndHousehold(itemType, household);
+                    if (item == null) {
+                        recipeIngredient.setHouseholdHasIngredient(false);
+                    } else {
+                        recipeIngredient.setHouseholdHasIngredient(true);
+                        recipe.setTotalIngredientsInFridge(recipe.getTotalIngredientsInFridge() + 1);
+                    }
+                }
+            }
+        }
+
+        return recipeDTOPage;
     }
 
     /**
