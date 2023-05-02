@@ -1,4 +1,4 @@
-openapi: 3.1.4
+openapi: 3.0.4
 info:
   title: Freshify API Documentation
   description: |-
@@ -859,6 +859,37 @@ paths:
                 $ref: "#/components/schemas/RecipeDTOPage"
         "404":
           description: Recipe category not found
+  /recipes/{householdId}/recipe/{id}:
+    get:
+      tags:
+        - recipes
+      summary: Gets a recipe by ID
+      description: Retrieves the recipe with the specified ID and each ingredient is also checked against the specified household's fridge.
+      operationId: getRecipeById
+      parameters:
+        - name: householdId
+          in: path
+          description: ID of the household to check for ingredients
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: id
+          in: path
+          description: ID of the recipe to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Success - the requested recipe was found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeDTO"
+        "404":
+          description: The specified recipe or household was not found
   /recipes:
     post:
       tags:
