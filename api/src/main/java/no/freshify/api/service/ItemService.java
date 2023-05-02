@@ -132,4 +132,8 @@ public class ItemService {
                 .map(e -> new WastedItemDTO(itemMapper.toItemTypeDTO(e.getKey()), e.getValue()))
                 .toList();
     }
+
+    public Item findByTypeAndHousehold(ItemType type, Household household) {
+        return itemRepository.findByTypeAndHousehold(type, household);
+    }
 }
