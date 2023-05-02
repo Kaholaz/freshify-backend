@@ -3,10 +3,7 @@ package no.freshify.api.controller;
 
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
-import no.freshify.api.exception.AllergenNotFoundException;
-import no.freshify.api.exception.HouseholdNotFoundException;
-import no.freshify.api.exception.ItemTypeNotFoundException;
-import no.freshify.api.exception.RecipeCategoryNotFoundException;
+import no.freshify.api.exception.*;
 import no.freshify.api.model.Household;
 import no.freshify.api.model.Item;
 import no.freshify.api.model.ItemType;
@@ -86,21 +83,48 @@ public class RecipeController {
         Page<RecipeDTO> recipeDTOPage = recipeMapper.toRecipeDTOPage(recipePage);
 
         for (RecipeDTO recipe : recipeDTOPage.getContent()) {
-            for (RecipeIngredientDTO recipeIngredient : recipe.getRecipeIngredients()) {
-                ItemType itemType = recipeIngredient.getItemType();
-                if (itemType != null) {
-                    Item item = itemService.findByTypeAndHousehold(itemType, household);
-                    if (item == null) {
-                        recipeIngredient.setHouseholdHasIngredient(false);
-                    } else {
-                        recipeIngredient.setHouseholdHasIngredient(true);
-                        recipe.setTotalIngredientsInFridge(recipe.getTotalIngredientsInFridge() + 1);
-                    }
-                }
-            }
+            checkIngredientsInHousehold(household , recipe);
         }
 
         return recipeDTOPage;
+    }
+
+    /**
+     * API endpoint for getting a single recipe by id.
+     * @param id The id of the recipe to get.
+     * @return The recipe object.
+     */
+    @GetMapping("/{householdId}/recipe/{id}")
+    public ResponseEntity<RecipeDTO> getRecipeById(@PathVariable("householdId") Long householdId, @PathVariable("id") Long id) throws RecipeNotFoundException, HouseholdNotFoundException {
+        Recipe recipe = recipeService.getRecipeById(id);
+
+        Household household = householdService.findHouseholdByHouseholdId(householdId);
+
+        RecipeDTO recipeDTO = recipeMapper.toRecipeDTO(recipe);
+
+        checkIngredientsInHousehold(household, recipeDTO);
+
+        return ResponseEntity.ok(recipeDTO);
+    }
+
+    /**
+     * Helper method for checking and setting if a household's fridge has given ingredients.
+     * @param household The household to check against.
+     * @param recipeDTO The recipe to check.
+     */
+    private void checkIngredientsInHousehold(Household household , RecipeDTO recipeDTO) {
+        for (RecipeIngredientDTO recipeIngredient : recipeDTO.getRecipeIngredients()) {
+            ItemType itemType = recipeIngredient.getItemType();
+            if (itemType != null) {
+                Item item = itemService.findByTypeAndHousehold(itemType, household);
+                if (item == null) {
+                    recipeIngredient.setHouseholdHasIngredient(false);
+                } else {
+                    recipeIngredient.setHouseholdHasIngredient(true);
+                    recipeDTO.setTotalIngredientsInFridge(recipeDTO.getTotalIngredientsInFridge() + 1);
+                }
+            }
+        }
     }
 
     /**
