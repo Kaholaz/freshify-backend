@@ -15,6 +15,9 @@ public class Recipe {
     private Long id;
 
     @Column
+    private Integer estimatedTime;
+
+    @Column
     private String name;
 
     @Column
@@ -31,6 +34,12 @@ public class Recipe {
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
     private Set<RecipeIngredient> recipeIngredients;
+
+    @ManyToMany
+    @JoinTable(name = "recipe_allergen_association",
+            joinColumns = @JoinColumn(name = "recipe_id"),
+            inverseJoinColumns = @JoinColumn(name = "allergen_id"))
+    private Set<Allergen> allergens;
 
     @Column
     private String image;

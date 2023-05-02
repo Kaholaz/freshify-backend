@@ -1132,6 +1132,10 @@ components:
         steps:
           type: string
           example: "1. Cook spaghetti by package instructions. 2. Brown ground beef in a large pan. 3. Add tomatoes. 4. Simmer for 20 minutes."
+        estimatedTime:
+          type: integer
+          format: int64
+          example: 30
         recipeIngredients:
           type: array
           items:
@@ -1140,8 +1144,13 @@ components:
         categories:
           type: array
           items:
-            $ref: '#/components/schemas/RecipeCategoryRequest'
+            $ref: '#/components/schemas/RecipeCategory'
           example: [{ "id": 1, "name": "Italian" }, { "id": 2, "name": "Meat Dish" }]
+        allergens:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllergenRequest'
+          example: [ { "id": 1, "name": "Gluten" }, { "id": 2, "name": "Lactose" } ]
         image:
           type: string
           example: "https://images.matprat.no/nten4ykzxh-jumbotron/large/pastacarbonara0904_1.jpg"
@@ -1180,6 +1189,10 @@ components:
         description:
           type: string
           example: "Classic Italian dish made with ground beef, tomatoes, and herbs"
+        estimatedTime:
+          type: integer
+          format: int64
+          example: 30
         steps:
           type: string
           example: "1. Cook spaghetti according to package instructions. 2. Brown ground beef in a large pan. 3. Add tomatoes, herbs, and seasoning. 4. Simmer for 20 minutes. 5. Serve over cooked spaghetti."
@@ -1193,6 +1206,11 @@ components:
           items:
             $ref: '#/components/schemas/RecipeCategory'
           example: [{ "id": 1, "name": "Italian" }]
+        allergens:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllergenRequest'
+          example: [ { "id": 1, "name": "Gluten" }, { "id": 2, "name": "Lactose" } ]
         image:
           type: string
           example: "https://images.matprat.no/nten4ykzxh-jumbotron/large/pastacarbonara0904_1.jpg"
@@ -1212,3 +1230,23 @@ components:
         unit:
           type: string
           example: "pounds"
+    AllergenRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Lactose"
+    RecipeCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Italian"
