@@ -88,4 +88,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleRecipeCategoryNotFoundException(RecipeCategoryNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
+
+    @ExceptionHandler(AllergenNotFoundException.class)
+    public ResponseEntity<Object> handleAllergenNotFoundException(AllergenNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 }
