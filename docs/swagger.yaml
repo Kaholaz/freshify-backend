@@ -819,6 +819,33 @@ paths:
                   $ref: "#/components/schemas/ItemType"
         404:
           description: No item types found
+  /recipes:
+    post:
+      tags:
+        - recipes
+      summary: Create a new recipe
+      description: Creates a new recipe and saves to backend.
+      operationId: createRecipe
+      requestBody:
+        description: Recipe object to be created and saved.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipeRequest'
+      responses:
+        '200':
+          description: The newly created recipe.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+        '400':
+          description: Invalid input parameters.
+        '401':
+          description: Unauthorized request.
+        '500':
+          description: Internal server error.
 components:
   schemas:
     CreateUser:
@@ -1069,3 +1096,95 @@ components:
         name:
           type: string
           example: "My family"
+    RecipeRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Spaghetti Bolognese"
+        description:
+          type: string
+          example: "Italian dish made with ground beef and tomatoes"
+        steps:
+          type: string
+          example: "1. Cook spaghetti by package instructions. 2. Brown ground beef in a large pan. 3. Add tomatoes. 4. Simmer for 20 minutes."
+        recipeIngredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeIngredientRequest'
+          example: [{ "itemType": { "id": 1, "name": "Ground Beef" }, "amount": 1.5, "unit": "kg" }, { "itemType": { "id": 2, "name": "Tomatoes" }, "amount": 1, "unit": "can"}]
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeCategoryRequest'
+          example: [{ "id": 1, "name": "Italian" }, { "id": 2, "name": "Meat Dish" }]
+        image:
+          type: string
+          example: "https://images.matprat.no/nten4ykzxh-jumbotron/large/pastacarbonara0904_1.jpg"
+    RecipeIngredientRequest:
+      type: object
+      properties:
+        itemType:
+          $ref: '#/components/schemas/ItemType'
+        amount:
+          type: number
+          format: double
+          example: 1.5
+        unit:
+          type: string
+          example: "pounds"
+    ItemTypeDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Ground Beef"
+    Recipe:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Spaghetti Bolognese"
+        description:
+          type: string
+          example: "Classic Italian dish made with ground beef, tomatoes, and herbs"
+        steps:
+          type: string
+          example: "1. Cook spaghetti according to package instructions. 2. Brown ground beef in a large pan. 3. Add tomatoes, herbs, and seasoning. 4. Simmer for 20 minutes. 5. Serve over cooked spaghetti."
+        recipeIngredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeIngredient'
+          example: [{ "id": 1, "itemType": { "id": 1, "name": "Ground Beef" }, "amount": 1.5, "unit": "pounds" }]
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeCategory'
+          example: [{ "id": 1, "name": "Italian" }]
+        image:
+          type: string
+          example: "https://images.matprat.no/nten4ykzxh-jumbotron/large/pastacarbonara0904_1.jpg"
+    RecipeIngredient:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        itemType:
+          $ref: '#/components/schemas/ItemType'
+        amount:
+          type: number
+          format: double
+          example: 1.5
+        unit:
+          type: string
+          example: "pounds"
