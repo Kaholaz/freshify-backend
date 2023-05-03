@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface HouseholdRecipeRepository extends JpaRepository<HouseholdRecipe, Long> {
     List<HouseholdRecipe> findAllByHouseholdId(Long householdId);
+
+    HouseholdRecipe findByHouseholdIdAndRecipeId(Long householdId, Long id);
 }

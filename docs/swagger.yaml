@@ -930,6 +930,32 @@ paths:
         '404':
           description: Item type not found/Recipe category not found/Allergen not found
   /householdrecipe/{householdId}/recipe/{id}:
+    delete:
+        tags:
+          - household recipe
+        summary: Removes a recipe from a household
+        description: Removes a recipe from a household. It will no longer be bookmarked in that household.
+        operationId: deleteHouseholdRecipe
+        parameters:
+            - name: householdId
+              in: path
+              description: ID of the household to add the recipe to
+              required: true
+              schema:
+                type: integer
+                format: int64
+            - name: id
+              in: path
+              description: ID of the recipe to add
+              required: true
+              schema:
+                type: integer
+                format: int64
+        responses:
+            "204":
+              description: Success - the recipe was removed from the household
+            "404":
+              description: The specified recipe or household was not found
     post:
         tags:
           - household recipe
