@@ -935,7 +935,7 @@ paths:
           - household recipe
         summary: Removes a recipe from a household
         description: Removes a recipe from a household. It will no longer be bookmarked in that household.
-        operationId: deleteHouseholdRecipe
+        operationId: removeHouseholdRecipe
         parameters:
             - name: householdId
               in: path
