@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/recipes/{householdId}")
+@RequestMapping("/householdrecipe/{householdId}")
 @RequiredArgsConstructor
 @RestController
 public class HouseholdRecipeController {
