@@ -98,4 +98,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleRecipeNotFoundException(RecipeNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
+
+    @ExceptionHandler(HouseholdRecipeNotFoundException.class)
+    public ResponseEntity<Object> handleHouseholdRecipeNotFoundException(HouseholdRecipeNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 }

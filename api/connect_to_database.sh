@@ -1,1 +1,1 @@
-docker run --network="host" -it --rm mysql mysql --host 127.0.0.1 --port 56000 -u root --password=freshify
+docker exec -it freshify_dev_database mysql -uroot -pfreshify freshify_dev
