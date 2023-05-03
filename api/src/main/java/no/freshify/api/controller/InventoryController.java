@@ -6,6 +6,7 @@ import no.freshify.api.model.*;
 import no.freshify.api.model.dto.*;
 import no.freshify.api.model.mapper.ItemMapper;
 import no.freshify.api.model.mapper.ItemMapperImpl;
+import no.freshify.api.security.AuthenticationService;
 import no.freshify.api.security.UserDetailsImpl;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.ItemService;
@@ -13,12 +14,13 @@ import no.freshify.api.service.ItemTypeService;
 import no.freshify.api.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Array;
+import java.text.DateFormat;
 import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -35,6 +37,7 @@ public class InventoryController {
     private final HouseholdService householdService;
     private final UserService userService;
     private final ItemTypeService itemTypeService;
+    private final AuthenticationService authenticationService;
     private final ItemService itemService;
     private final ItemMapper itemMapper = new ItemMapperImpl();
 
@@ -164,14 +167,15 @@ public class InventoryController {
     @PreAuthorize("hasPermission(#householdId, 'Household', '')")
     @GetMapping("/{id}/inventory/waste")
     public ResponseEntity<InventoryWasteResponse> getInventoryWaste(@PathVariable("id") long householdId,
-                                                                    @RequestParam(value = "num_months", required = true) int numMonths)
+                                                                    @RequestParam(value = "limit", required = true) int numMonths)
             throws HouseholdNotFoundException {
         logger.info("Getting inventory item waste for household with id: " + householdId);
         Household household = householdService.findHouseholdByHouseholdId(householdId);
 
         LocalDate startDate = LocalDate.now().minusMonths(numMonths);
 
-        List<Item> wastedItems = itemService.findWastedItemsInTimeInterval(household, Date.valueOf(startDate), Date.valueOf(LocalDate.now().plusDays(1)));
+        List<Item> wastedItems = itemService.findWastedItemsInTimeInterval
+                (household, java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(LocalDate.now().plusDays(1)));
 
         Double average = itemService.getAverageWaste(wastedItems);
 
@@ -183,40 +187,59 @@ public class InventoryController {
     }
 
     /**
-     * Gets the average item waste per amount for a household as a list.
+     * Gets the average item waste per amount for a household per month for a given amount of months back in time.
+     * example output:
+     * {0.23, 0.12, 0.0, 0.7}
+     * means: average wastage this month: 0.23, previous month: 0.12, etc..
      * @param householdId The id of the household to get the item waste from
      * @param numMonths The number of months back to get the item waste from
      * @return A list of doubles with the average item waste per amount
      * @throws HouseholdNotFoundException If the household is not found
      */
+    @PreAuthorize("hasPermission(#householdId, 'Household', '')")
     @GetMapping("/{id}/inventory/waste-per-month")
     public ResponseEntity<List<Double>> getInventoryWastePerMonth(@PathVariable("id") long householdId,
-                                                                  @RequestParam(value = "num_months", required = true) Integer numMonths)
+                                                                  @RequestParam(value = "limit", required = true) Integer numMonths)
             throws HouseholdNotFoundException {
         logger.info("Getting inventory item waste for household with id: " + householdId);
+
         Household household = householdService.findHouseholdByHouseholdId(householdId);
 
+        // Items with state USED also include wasted items
         List<Item> usedItems = itemService.findAllUsedItems(household);
 
-        int currentMonth = LocalDate.now().getMonthValue();
-        double[] result = new double[12];
-        Map<Integer, Double> map = usedItems.stream()
-                .filter(wastedItem -> wastedItem.getLastChanged().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isAfter(LocalDate.now().minusMonths(numMonths)))
-                .collect(Collectors.groupingBy(wastedItem -> wastedItem.getLastChanged().getMonth(), Collectors.averagingDouble(Item::getRemaining)));
-        for (int i = 0; i < 12; i++) {
-            if (map.containsKey((currentMonth + i - 1) % 12 + 1)) {
-                result[i] = map.get((currentMonth + i - 1) % 12 + 1).floatValue();
-            } else {
-                result[i] = 0;
+        // Map<monthsFromNow, Pair<numItems, totalRemaining>>
+        Map<Integer, Pair<Integer, Double>> itemMap = new HashMap<>();
+
+        LocalDate now = LocalDate.now();
+        Calendar calendar = Calendar.getInstance();
+        for (Item item : usedItems) {
+            java.util.Date usedDate = item.getLastChanged();
+            calendar.setTime(usedDate);
+
+            double remaining = item.getRemaining();
+            int yearUsed = calendar.get(Calendar.YEAR);
+            int monthUsed = calendar.get(Calendar.MONTH) + 1;
+            int monthsFromNow = (now.getYear() - yearUsed) * 12 + (now.getMonthValue() - monthUsed);
+
+            if (monthsFromNow < numMonths) {
+                Pair<Integer, Double> pair = itemMap.get(monthsFromNow);
+                if (pair == null) {
+                    itemMap.put(monthsFromNow, Pair.of(1, remaining));
+                } else {
+                    itemMap.put(monthsFromNow, Pair.of(pair.getFirst() + 1, pair.getSecond() + remaining));
+                }
             }
         }
 
-        ArrayList<Double> reversedResult = new ArrayList<>(result.length);
-        for (int i = result.length - 1; i >= 0; i--) {
-            reversedResult.add(result[i]);
+        // Calculate averages for each month
+        List<Double> monthAverages = new ArrayList<>(Collections.nCopies(numMonths, 0D));
+
+        for (Map.Entry<Integer, Pair<Integer, Double>> entry : itemMap.entrySet()) {
+            monthAverages.set(entry.getKey(), entry.getValue().getSecond() / entry.getValue().getFirst());
         }
 
-        return ResponseEntity.ok(reversedResult.subList(0, numMonths));
+        return ResponseEntity.ok(monthAverages);
     }
 
     /**

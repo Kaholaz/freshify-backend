@@ -386,7 +386,7 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: num_months
+        - name: limit
           in: query
           description: The number of months backward to process. The returned list starts at the current month for index 0, the previous month for index 1 etc...
           required: true
@@ -420,7 +420,7 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: num_months
+        - name: limit
           in: query
           description: The number of months back to get wasted items from
           required: true
