@@ -21,4 +21,16 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     @Query("SELECT r FROM Recipe r JOIN r.categories c WHERE c.id = :categories_id AND (r.allergens IS EMPTY OR NOT EXISTS (SELECT a FROM r.allergens a WHERE a IN (:allergens)))")
     Page<Recipe> findByCategoriesIdAndAllergensNotInOrNoAllergens(Long categories_id, Set<Allergen> allergens, Pageable pageable);
+
+    @Query("SELECT r FROM Recipe r JOIN r.categories c WHERE c.id = :categories_id AND (r.allergens IS EMPTY OR NOT EXISTS (SELECT a FROM r.allergens a WHERE a IN (:allergens))) AND LOWER(r.name) LIKE LOWER(CONCAT('%', :recipe_name, '%'))")
+    Page<Recipe> findByCategoriesIdAndAllergensNotInOrNoAllergensAndNameLike(Long categories_id, Set<Allergen> allergens, String recipe_name, Pageable pageable);
+
+    @Query("SELECT r FROM Recipe r WHERE LOWER(r.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+    Page<Recipe> findByNameIgnoreCaseContaining(String name, Pageable pageable);
+
+    @Query("SELECT r FROM Recipe r JOIN r.categories c WHERE c.id = :categoryId AND LOWER(r.name) LIKE LOWER(CONCAT('%', :recipeName, '%'))")
+    Page<Recipe> findByCategoryIdAndNameContainingIgnoreCase(Long categoryId, String recipeName, Pageable pageable);
+
+    @Query("SELECT r FROM Recipe r WHERE LOWER(r.name) LIKE LOWER(CONCAT('%', :recipeName, '%')) AND (r.allergens IS EMPTY OR NOT EXISTS (SELECT a FROM r.allergens a WHERE a IN (:allergens)))")
+    Page<Recipe> findByNameContainingIgnoreCaseAndAllergensNotInOrNoAllergens(String recipeName, Set<Allergen> allergens, Pageable pageable);
 }

@@ -13,7 +13,7 @@ info:
   license:
     name: MIT License
     url: "https://opensource.org/licenses/MIT"
-  version: 1.0.0
+  version: 2.1.0
 servers:
   - url: http://localhost:8080
 tags:
@@ -824,7 +824,7 @@ paths:
       tags:
         - recipes
       summary: Gets a page of recipes that can also be filtered
-      description: Retrieves a paginated list of recipes that can optionally be filtered by recipe category and/or allergens. For each ingredient in the recipe, it checks whether the household has the specified ingredient item type in the fridge.
+      description: Retrieves a paginated list of recipes that can optionally be filtered by any combination of allergens,categoryId, and name. For each ingredient in the recipe, it also checks whether the household has the specified ingredient item type in the fridge.
       operationId: getRecipesPaginated
       parameters:
         - name: householdId
@@ -834,6 +834,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: name
+          in: query
+          description: Name of the recipe to search for, case insensitive and partial matches are allowed
+          required: false
+          schema:
+            type: string
         - name: categoryId
           in: query
           description: ID of the recipe category to filter by
