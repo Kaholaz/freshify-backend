@@ -51,4 +51,21 @@ public class RecipeService {
         return recipe;
     }
 
+    public Page<Recipe> getRecipesByNameAndCategoryAndNotContainingAllergensPageable(Long categoryId, List<Allergen> allergens, String recipeName,  Pageable pageable) {
+        Set<Allergen> allergensSet = new HashSet<>(allergens);
+        return recipeRepository.findByCategoriesIdAndAllergensNotInOrNoAllergensAndNameLike(categoryId, allergensSet, recipeName, pageable);
+    }
+
+    public Page<Recipe> getRecipesByNamePageable(String recipeName, Pageable pageable) {
+        return recipeRepository.findByNameIgnoreCaseContaining(recipeName, pageable);
+    }
+
+    public Page<Recipe> getRecipesByNameAndCategoryPageable(Long categoryId, String recipeName, Pageable pageable) {
+        return recipeRepository.findByCategoryIdAndNameContainingIgnoreCase(categoryId, recipeName, pageable);
+    }
+
+    public Page<Recipe> getRecipesByNameAndAllergensPageable(String recipeName, List<Allergen> allergens, Pageable pageable) {
+        Set<Allergen> allergensSet = new HashSet<>(allergens);
+        return recipeRepository.findByNameContainingIgnoreCaseAndAllergensNotInOrNoAllergens(recipeName, allergensSet, pageable);
+    }
 }
