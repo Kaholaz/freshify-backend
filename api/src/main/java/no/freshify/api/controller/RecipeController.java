@@ -59,6 +59,7 @@ public class RecipeController {
     @PreAuthorize("hasPermission(#householdId, 'HOUSEHOLD', '')")
     @GetMapping("/{householdId}")
     public Page<RecipeDTO> getRecipesPaginated(@PathVariable("householdId") Long householdId,
+                                               @RequestParam(required = false) boolean sortByIngredientsInFridge,
                                                @RequestParam(required = false) String name,
                                                @RequestParam(required = false) Long categoryId,
                                                @RequestParam(required = false) List<Long> allergenIds,
@@ -90,6 +91,8 @@ public class RecipeController {
             recipePage = recipeService.getRecipesNotContainingAllergensPageable(allergenList, pageable);
         } else if (name != null) {
             recipePage = recipeService.getRecipesByNamePageable(name, pageable);
+        } else if (sortByIngredientsInFridge) {
+            recipePage = recipeService.getRecipesSortedByIngredientsInFridge(household, pageable);
         } else {
             recipePage = recipeService.getRecipesPageable(pageable);
         }
@@ -131,7 +134,7 @@ public class RecipeController {
             ItemType itemType = recipeIngredient.getItemType();
             if (itemType != null) {
                 List<Item> items = itemService.findByTypeAndHousehold(itemType, household);
-                if (items == null) {
+                if (items == null || items.isEmpty()) {
                     recipeIngredient.setHouseholdHasIngredient(false);
                 } else {
                     recipeIngredient.setHouseholdHasIngredient(true);

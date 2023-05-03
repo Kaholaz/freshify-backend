@@ -2,6 +2,7 @@ package no.freshify.api.service;
 
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.RecipeNotFoundException;
+import no.freshify.api.model.Household;
 import no.freshify.api.model.recipe.Allergen;
 import no.freshify.api.model.recipe.Recipe;
 import no.freshify.api.repository.RecipeRepository;
@@ -67,5 +68,9 @@ public class RecipeService {
     public Page<Recipe> getRecipesByNameAndAllergensPageable(String recipeName, List<Allergen> allergens, Pageable pageable) {
         Set<Allergen> allergensSet = new HashSet<>(allergens);
         return recipeRepository.findByNameContainingIgnoreCaseAndAllergensNotInOrNoAllergens(recipeName, allergensSet, pageable);
+    }
+
+    public Page<Recipe> getRecipesSortedByIngredientsInFridge(Household household, Pageable pageable) {
+        return recipeRepository.findByCountInItemsDesc(household.getId(), pageable);
     }
 }

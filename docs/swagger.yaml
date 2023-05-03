@@ -13,7 +13,7 @@ info:
   license:
     name: MIT License
     url: "https://opensource.org/licenses/MIT"
-  version: 2.1.1
+  version: 2.1.2
 servers:
   - url: http://localhost:8080
 tags:
@@ -834,6 +834,13 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: sortByIngredientsInFridge
+          in: query
+          description: Decides whether or not to fetch and sort the recipes by the number of ingredients that exist in fridge in descending order.
+          required: false
+          schema:
+            type: boolean
+            default: false
         - name: categoryId
           in: query
           description: ID of the recipe category to filter by
