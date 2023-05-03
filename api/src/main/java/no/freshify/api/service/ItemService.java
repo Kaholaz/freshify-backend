@@ -133,7 +133,7 @@ public class ItemService {
                 .toList();
     }
 
-    public Item findByTypeAndHousehold(ItemType type, Household household) {
+    public List<Item> findByTypeAndHousehold(ItemType type, Household household) {
         return itemRepository.findByTypeAndHousehold(type, household);
     }
 }
