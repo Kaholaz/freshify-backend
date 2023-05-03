@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class HouseholdRecipeService {
@@ -24,5 +26,9 @@ public class HouseholdRecipeService {
 
     public HouseholdRecipe addRecipe(HouseholdRecipe householdRecipe) {
         return householdRecipeRepository.save(householdRecipe);
+    }
+
+    public List<HouseholdRecipe> getRecipes(Long householdId) {
+        return householdRecipeRepository.findAllByHouseholdId(householdId);
     }
 }

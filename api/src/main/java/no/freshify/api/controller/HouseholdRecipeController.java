@@ -23,7 +23,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/recipes/{householdId}/recipe/{id}")
+import java.util.List;
+
+@RequestMapping("/recipes/{householdId}")
 @RequiredArgsConstructor
 @RestController
 public class HouseholdRecipeController {
@@ -48,7 +50,7 @@ public class HouseholdRecipeController {
      * @throws RecipeNotFoundException If the recipe is not found
      */
     @PreAuthorize("hasPermission(#householdId, 'Household', '')")
-    @PostMapping
+    @PostMapping("/recipe/{id}")
     public ResponseEntity<HouseholdRecipeDTO> createHouseholdRecipe(@PathVariable("householdId") Long householdId,
                                                                     @PathVariable("id") Long id)
             throws HouseholdNotFoundException, RecipeNotFoundException {
@@ -62,5 +64,21 @@ public class HouseholdRecipeController {
         householdRecipeService.addRecipe(householdRecipe);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(householdRecipeMapper.toHouseholdRecipeDTO(householdRecipe));
+    }
+
+    /**
+     * Gets all bookmarked recipes in a household
+     * @param householdId The id of the household
+     * @return A list of all bookmarked recipes in the household
+     */
+    @PreAuthorize("hasPermission(#householdId, 'Household', '')")
+    @GetMapping("/recipe")
+    public ResponseEntity<List<HouseholdRecipeDTO>> getHouseholdRecipes(@PathVariable("householdId") Long householdId) {
+        logger.info("Getting all bookmarked recipes in household");
+
+        List<HouseholdRecipe> recipes = householdRecipeService.getRecipes(householdId);
+        List<HouseholdRecipeDTO> recipeDTOS = householdRecipeMapper.toHouseholdRecipeDTOs(recipes);
+
+        return ResponseEntity.ok(recipeDTOS);
     }
 }
