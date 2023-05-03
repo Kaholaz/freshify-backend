@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -33,4 +32,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     @Query("SELECT r FROM Recipe r WHERE LOWER(r.name) LIKE LOWER(CONCAT('%', :recipeName, '%')) AND (r.allergens IS EMPTY OR NOT EXISTS (SELECT a FROM r.allergens a WHERE a IN (:allergens)))")
     Page<Recipe> findByNameContainingIgnoreCaseAndAllergensNotInOrNoAllergens(String recipeName, Set<Allergen> allergens, Pageable pageable);
+
+    @Query("SELECT r FROM Recipe r LEFT JOIN r.recipeIngredients ri LEFT JOIN ItemType it ON ri.itemType.id = it.id LEFT JOIN Item i ON i.type.id = it.id AND i.household.id = :householdId GROUP BY r.id ORDER BY SUM(CASE WHEN i IS NULL THEN 0 ELSE 1 END) DESC")
+    Page<Recipe> findByCountInItemsDesc(Long householdId, Pageable pageable);
 }
