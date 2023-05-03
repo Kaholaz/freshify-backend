@@ -116,8 +116,8 @@ public class RecipeController {
         for (RecipeIngredientDTO recipeIngredient : recipeDTO.getRecipeIngredients()) {
             ItemType itemType = recipeIngredient.getItemType();
             if (itemType != null) {
-                Item item = itemService.findByTypeAndHousehold(itemType, household);
-                if (item == null) {
+                List<Item> items = itemService.findByTypeAndHousehold(itemType, household);
+                if (items == null) {
                     recipeIngredient.setHouseholdHasIngredient(false);
                 } else {
                     recipeIngredient.setHouseholdHasIngredient(true);
