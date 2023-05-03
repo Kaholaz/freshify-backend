@@ -17,7 +17,6 @@
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
 stages:          # List of stages for jobs, and their order of execution
-  - build
   - test
   - deploy
 
@@ -29,30 +28,23 @@ unit-test-job:   # This job runs in the test stage.
     - pwd
     - cd api
     - mvn clean test
-    - cd ..
 
 image: maven:3.8.3-openjdk-17
-
-variables:
-  SSH_PRIVATE_KEY: $(cat $id_rsa)
-
-build:
-  stage: build
-  script:
-    - cd api
-    - mvn clean package -DskipTests=true
-  artifacts:
-    paths:
-      - target/*.jar
 
 deploy:
   stage: deploy
   script:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-    - ssh-add ~/.ssh/id_rsa
-    - apt-get update
-    - apt-get install -y rsync
+
+    - eval `ssh-agent -s`
+    - chmod 400 $SSH_PRIVATE_KEY
+    - ssh-add $SSH_PRIVATE_KEY
+    
     - cd api
-    - rsync -avz --delete target/*.jar freshify@navi.samfundet.no:/var/www/api.letno.no/application.jar
+    - cp $APPLICATION_PROPERTIES src/main/resources/application-prod.properties
+    - echo "spring.profiles.active=prod" > src/main/resources/application.properties
+    - mvn clean package -DskipTests
+    - scp -o StrictHostKeyChecking=no -o PasswordAuthentication=no target/*.jar freshify@freshify.no:/var/www/api.freshify.no/application.jar
+  only:
+    - dev

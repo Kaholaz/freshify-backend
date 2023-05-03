@@ -17,6 +17,7 @@ public class RecipeDTO {
     private String description;
     private String steps;
     private Set<RecipeCategoryDTO> categories;
+    private Integer totalIngredientsInFridge = 0;
     private Set<RecipeIngredientDTO> recipeIngredients;
     private Set<AllergenDTO> allergens;
     private String image;

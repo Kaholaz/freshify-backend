@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -80,5 +81,15 @@ public class ItemService {
 
     public Double getAverageWaste(List<Item> wastedItems) {
         return wastedItems.stream().mapToDouble(Item::getRemaining).average().orElse(0D);
+    }
+
+    public List<Item> findByTypeAndHousehold(ItemType type, Household household) {
+        return itemRepository.findByTypeAndHousehold(type, household);
+    }
+
+    public HashSet<ItemType> getUniqueItemTypes(List<Item> items) {
+        return items.stream()
+                .map(Item::getType)
+                .collect(Collectors.toCollection(HashSet::new));
     }
 }

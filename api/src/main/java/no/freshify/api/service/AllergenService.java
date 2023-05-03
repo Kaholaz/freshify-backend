@@ -6,6 +6,8 @@ import no.freshify.api.model.recipe.Allergen;
 import no.freshify.api.repository.AllergenRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AllergenService {
@@ -13,5 +15,13 @@ public class AllergenService {
 
     public Allergen getAllergenById(Long id) throws AllergenNotFoundException {
         return allergenRepository.findById(id).orElseThrow(AllergenNotFoundException::new);
+    }
+
+    public List<Allergen> getAllergensByIds(List<Long> allergensIds) {
+        return allergenRepository.findAllById(allergensIds);
+    }
+
+    public List<Allergen> getAllergens() {
+        return allergenRepository.findAll();
     }
 }

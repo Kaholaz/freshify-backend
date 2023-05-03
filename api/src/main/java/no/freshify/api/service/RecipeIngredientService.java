@@ -1,6 +1,8 @@
 package no.freshify.api.service;
 
 import lombok.RequiredArgsConstructor;
+import no.freshify.api.model.Household;
+import no.freshify.api.model.ShoppingListEntry;
 import no.freshify.api.model.recipe.RecipeIngredient;
 import no.freshify.api.repository.RecipeIngredientRepository;
 import org.springframework.stereotype.Service;

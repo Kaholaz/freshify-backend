@@ -20,10 +20,10 @@ public class Recipe {
     @Column
     private String name;
 
-    @Column
+    @Column(length = 500)
     private String description;
 
-    @Column
+    @Column(length = 2000)
     private String steps;
 
     @ManyToMany

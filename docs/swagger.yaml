@@ -13,7 +13,7 @@ info:
   license:
     name: MIT License
     url: "https://opensource.org/licenses/MIT"
-  version: 1.0.0
+  version: 2.1.2
 servers:
   - url: http://localhost:8080
 tags:
@@ -841,6 +841,106 @@ paths:
                   $ref: "#/components/schemas/ItemType"
         404:
           description: No item types found
+  /recipes/{householdId}:
+    get:
+      tags:
+        - recipes
+      summary: Gets a page of recipes that can also be filtered
+      description: Retrieves a paginated list of recipes that can optionally be filtered by recipe category and/or allergens. For each ingredient in the recipe, it checks whether the household has the specified ingredient item type in the fridge.
+      operationId: getRecipesPaginated
+      parameters:
+        - name: householdId
+          in: path
+          description: ID of the household to check for ingredients
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: sortByIngredientsInFridge
+          in: query
+          description: Decides whether or not to fetch and sort the recipes by the number of ingredients that exist in fridge in descending order.
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: name
+          in: query
+          description: Search string to find recipe by name
+          required: false
+          schema:
+            type: string
+        - name: categoryId
+          in: query
+          description: ID of the recipe category to filter by
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: allergenIds
+          in: query
+          description: Array of IDs of the allergens to filter by
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: pageNo
+          in: query
+          description: Page number to retrieve
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: pageSize
+          in: query
+          description: Number of recipes per page
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        "200":
+          description: A page of recipes were sucessfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeDTOPage"
+        "404":
+          description: The specified household or recipe category was not found
+  /recipes/{householdId}/recipe/{id}:
+    get:
+      tags:
+        - recipes
+      summary: Gets a recipe by ID
+      description: Retrieves the recipe with the specified ID and each ingredient is also checked against the specified household's fridge.
+      operationId: getRecipeById
+      parameters:
+        - name: householdId
+          in: path
+          description: ID of the household to check for ingredients
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: id
+          in: path
+          description: ID of the recipe to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Success - the requested recipe was found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeDTO"
+        "404":
+          description: The specified recipe or household was not found
   /recipes:
     post:
       tags:
@@ -861,13 +961,157 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Recipe'
-        '400':
-          description: Invalid input parameters.
-        '401':
-          description: Unauthorized request.
-        '500':
-          description: Internal server error.
+                $ref: '#/components/schemas/RecipeDTO'
+        '404':
+          description: Item type not found/Recipe category not found/Allergen not found
+  /householdrecipe/{householdId}/recipe/{id}:
+    delete:
+        tags:
+          - household recipe
+        summary: Removes a recipe from a household
+        description: Removes a recipe from a household. It will no longer be bookmarked in that household.
+        operationId: removeHouseholdRecipe
+        parameters:
+            - name: householdId
+              in: path
+              description: ID of the household to add the recipe to
+              required: true
+              schema:
+                type: integer
+                format: int64
+            - name: id
+              in: path
+              description: ID of the recipe to add
+              required: true
+              schema:
+                type: integer
+                format: int64
+        responses:
+            "204":
+              description: Success - the recipe was removed from the household
+            "404":
+              description: The specified recipe or household was not found
+    post:
+        tags:
+          - household recipe
+        summary: Adds a recipe to a household
+        description: Adds a recipe as bookmarked to the given household.
+        operationId: createHouseholdRecipe
+        parameters:
+          - name: householdId
+            in: path
+            description: ID of the household to add the recipe to
+            required: true
+            schema:
+              type: integer
+              format: int64
+          - name: id
+            in: path
+            description: ID of the recipe to add
+            required: true
+            schema:
+              type: integer
+              format: int64
+        responses:
+          "201":
+            description: Success - the recipe was added to household
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/HouseholdRecipeDTO"
+          "404":
+            description: The specified recipe or household was not found
+  /householdrecipe/{householdId}/recipe/{id}/add-to-shoppinglist:
+    post:
+      tags:
+        - household recipe
+      summary: Adds missing ingredients from the recipe to the shopping list
+      description: Adds all the missing ingredients of the given recipe to the given household's shopping list.
+      operationId: addRecipeToShoppingList
+      parameters:
+        - name: householdId
+          in: path
+          description: ID of the household to add the recipe to
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: id
+          in: path
+          description: ID of the recipe to add
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+          "200":
+            description: Success - the recipe's missing ingredients were added to the household's shopping list
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/RecipeIngredientDTO"
+          "404":
+            description: The specified recipe or household was not found
+  /householdrecipe/{householdId}/recipe:
+    get:
+        tags:
+          - household recipe
+        summary: Gets all the recipes added/bookmarked to a household
+        description: Gets a list of all the households that have been added/bookmarked to a given household
+        operationId: getHouseholdRecipes
+        parameters:
+          - name: householdId
+            in: path
+            description: ID of the household to check for ingredients
+            required: true
+            schema:
+              type: integer
+              format: int64
+        responses:
+          "200":
+            description: Operation successfull
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/HouseholdRecipeDTO"
+          "404":
+            description: The specified household was not found
+  /recipecategory:
+    get:
+      tags:
+        - recipe category
+      summary: Get all recipe categories
+      description: Returns a list of recipe categories containing all recipe categories from database
+      operationId: getAllRecipeCategories
+      responses:
+        200:
+          description: A list of all recipe categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecipeCategory"
+  /allergens:
+    get:
+      tags:
+        - allergen
+      summary: Get all allergens
+      description: Returns a list of allergens containing all allergens from database
+      operationId: getAllergens
+      responses:
+        200:
+          description: A list of all allergens
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AllergenRequest"
 components:
   schemas:
     CreateUser:
@@ -1255,3 +1499,154 @@ components:
         name:
           type: string
           example: "Italian"
+    RecipeIngredientDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        itemType:
+          $ref: "#/components/schemas/ItemType"
+        amount:
+          type: number
+          example: 2.3
+        unit:
+          type: string
+          example: "dairy"
+        householdHasIngredient:
+          type: boolean
+    RecipeDTOPage:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecipeDTO"
+        pageable:
+          type: object
+          properties:
+            sort:
+              type: object
+              properties:
+                empty:
+                  type: boolean
+                sorted:
+                  type: boolean
+                unsorted:
+                  type: boolean
+            offset:
+              type: integer
+              format: int64
+            pageSize:
+              type: integer
+              format: int32
+            pageNumber:
+              type: integer
+              format: int32
+            paged:
+              type: boolean
+            unpaged:
+              type: boolean
+        last:
+          type: boolean
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        number:
+          type: integer
+          format: int32
+        sort:
+          type: object
+          properties:
+            empty:
+              type: boolean
+            sorted:
+              type: boolean
+            unsorted:
+              type: boolean
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    RecipeDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Spaghetti Bolognese"
+        description:
+          type: string
+          example: "Classic Italian dish made with ground beef, tomatoes, and herbs"
+        estimatedTime:
+          type: integer
+          format: int64
+          example: 30
+        steps:
+          type: string
+          example: "1. Cook spaghetti according to package instructions. 2. Brown ground beef in a large pan. 3. Add tomatoes, herbs, and seasoning. 4. Simmer for 20 minutes. 5. Serve over cooked spaghetti."
+        totalIngredientsInFridge:
+          type: integer
+          format: int32
+          example: 3
+        recipeIngredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeIngredientResponse'
+          example: [ { "id": 1, "itemType": { "id": 1, "name": "Ground Beef" }, "amount": 1.5, "unit": "pounds", "householdHasIngredient": true } ]
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeCategory'
+          example: [ { "id": 1, "name": "Italian" } ]
+        allergens:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllergenRequest'
+          example: [ { "id": 1, "name": "Gluten" }, { "id": 2, "name": "Lactose" } ]
+        image:
+          type: string
+          example: "https://images.matprat.no/nten4ykzxh-jumbotron/large/pastacarbonara0904_1.jpg"
+    HouseholdRecipeDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        recipe:
+          $ref: '#/components/schemas/RecipeDTO'
+        household:
+          $ref: '#/components/schemas/Household'
+    RecipeIngredientResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        itemType:
+          $ref: '#/components/schemas/ItemType'
+        amount:
+          type: number
+          format: double
+          example: 1.5
+        unit:
+          type: string
+          example: "pounds"
+        householdHasIngredient:
+          type: boolean
+          example: true
