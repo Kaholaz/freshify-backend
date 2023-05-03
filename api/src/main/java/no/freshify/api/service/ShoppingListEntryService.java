@@ -19,8 +19,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Getter
@@ -160,5 +162,11 @@ public class ShoppingListEntryService {
             itemService.addItem(item);
         }
         deleteShoppingListEntryById(householdId, shoppingListEntry.getId());
+    }
+
+    public HashSet<ItemType> getUniqueItemTypes(List<ShoppingListEntry> items) {
+        return items.stream()
+                .map(ShoppingListEntry::getType)
+                .collect(Collectors.toCollection(HashSet::new));
     }
 }
