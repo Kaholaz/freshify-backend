@@ -986,6 +986,37 @@ paths:
                   $ref: "#/components/schemas/HouseholdRecipeDTO"
           "404":
             description: The specified recipe or household was not found
+  /householdrecipe/{householdId}/recipe/{id}/add-to-shoppinglist:
+    post:
+      tags:
+        - household recipe
+      summary: Adds missing ingredients from the recipe to the shopping list
+      description: Adds all the missing ingredients of the given recipe to the given household's shopping list.
+      operationId: addToShoppingList
+      parameters:
+        - name: householdId
+          in: path
+          description: ID of the household to add the recipe to
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: id
+          in: path
+          description: ID of the recipe to add
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+          "200":
+            description: Success - the recipe's missing ingredients was added to the household's shopping list
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/HouseholdRecipeDTO"
+          "404":
+            description: The specified recipe or household was not found
   /householdrecipe/{householdId}/recipe:
     get:
         tags:
