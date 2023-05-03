@@ -59,23 +59,37 @@ public class RecipeController {
     @PreAuthorize("hasPermission(#householdId, 'HOUSEHOLD', '')")
     @GetMapping("/{householdId}")
     public Page<RecipeDTO> getRecipesPaginated(@PathVariable("householdId") Long householdId,
+                                               @RequestParam(required = false) String name,
                                                @RequestParam(required = false) Long categoryId,
                                                @RequestParam(required = false) List<Long> allergenIds,
                                                @RequestParam(defaultValue = "0") int pageNo,
                                                @RequestParam(defaultValue = "10") int pageSize) throws HouseholdNotFoundException {
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("name"));
+
+        logger.info("Searching for recipes with name: " + name + ", category id: " + categoryId + ", allergen ids: " + allergenIds + ", page number: " + pageNo + ", page size: " + pageSize);
+
         Household household = householdService.findHouseholdByHouseholdId(householdId);
 
         Page<Recipe> recipePage;
 
-        if (categoryId != null && allergenIds != null) {
-            List<Allergen> allergens = allergenService.getAllergensByIds(allergenIds);
-            recipePage = recipeService.getRecipesByCategoryAndNotContainingAllergensPageable(categoryId, allergens, pageable);
+        if (categoryId != null && allergenIds != null && name != null) {
+            List<Allergen> allergenList = allergenService.getAllergensByIds(allergenIds);
+            recipePage = recipeService.getRecipesByNameAndCategoryAndNotContainingAllergensPageable(categoryId, allergenList, name, pageable);
+        } else if (categoryId != null && allergenIds != null) {
+            List<Allergen> allergenList = allergenService.getAllergensByIds(allergenIds);
+            recipePage = recipeService.getRecipesByCategoryAndNotContainingAllergensPageable(categoryId, allergenList, pageable);
+        } else if (categoryId != null && name != null) {
+            recipePage = recipeService.getRecipesByNameAndCategoryPageable(categoryId, name, pageable);
+        } else if (allergenIds != null && name != null) {
+            List<Allergen> allergenList = allergenService.getAllergensByIds(allergenIds);
+            recipePage = recipeService.getRecipesByNameAndAllergensPageable(name, allergenList, pageable);
         } else if (categoryId != null) {
             recipePage = recipeService.getRecipesByCategoryPageable(categoryId, pageable);
         } else if (allergenIds != null) {
             List<Allergen> allergenList = allergenService.getAllergensByIds(allergenIds);
             recipePage = recipeService.getRecipesNotContainingAllergensPageable(allergenList, pageable);
+        } else if (name != null) {
+            recipePage = recipeService.getRecipesByNamePageable(name, pageable);
         } else {
             recipePage = recipeService.getRecipesPageable(pageable);
         }
