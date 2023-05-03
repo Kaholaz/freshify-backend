@@ -5,13 +5,9 @@ import no.freshify.api.exception.HouseholdNotFoundException;
 import no.freshify.api.exception.RecipeNotFoundException;
 import no.freshify.api.model.Household;
 import no.freshify.api.model.dto.HouseholdRecipeDTO;
-import no.freshify.api.model.mapper.HouseholdMapper;
-import no.freshify.api.model.mapper.HouseholdMemberMapper;
 import no.freshify.api.model.mapper.HouseholdRecipeMapper;
 import no.freshify.api.model.recipe.HouseholdRecipe;
 import no.freshify.api.model.recipe.Recipe;
-import no.freshify.api.security.AuthenticationService;
-import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.HouseholdRecipeService;
 import no.freshify.api.service.HouseholdService;
 import no.freshify.api.service.RecipeService;
@@ -31,13 +27,9 @@ import java.util.List;
 public class HouseholdRecipeController {
     private final HouseholdService householdService;
     private final RecipeService recipeService;
-    private final AuthenticationService authenticationService;
-    private final HouseholdMemberService householdMemberService;
     private final HouseholdRecipeService householdRecipeService;
 
-    private final HouseholdMapper householdMapper = Mappers.getMapper(HouseholdMapper.class);
     private final HouseholdRecipeMapper householdRecipeMapper = Mappers.getMapper(HouseholdRecipeMapper.class);
-    private final HouseholdMemberMapper householdMemberMapper = Mappers.getMapper(HouseholdMemberMapper.class);
     private final Logger logger = LoggerFactory.getLogger(HouseholdMemberController.class);
 
 
