@@ -20,4 +20,8 @@ public class AllergenService {
     public List<Allergen> getAllergensByIds(List<Long> allergensIds) {
         return allergenRepository.findAllById(allergensIds);
     }
+
+    public List<Allergen> getAllergens() {
+        return allergenRepository.findAll();
+    }
 }
