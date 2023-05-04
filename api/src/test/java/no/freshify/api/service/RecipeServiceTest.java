@@ -9,6 +9,7 @@ import no.freshify.api.model.recipe.Allergen;
 import no.freshify.api.model.recipe.Recipe;
 import no.freshify.api.model.recipe.RecipeCategory;
 import no.freshify.api.model.recipe.RecipeIngredient;
+import no.freshify.api.repository.RecipeIngredientRepository;
 import no.freshify.api.repository.RecipeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ import static java.util.Optional.ofNullable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 public class RecipeServiceTest {
@@ -35,8 +37,14 @@ public class RecipeServiceTest {
     @Mock
     private RecipeRepository recipeRepository;
 
+    @Mock
+    private RecipeIngredientRepository recipeIngredientRepository;
+
     @InjectMocks
     private RecipeService recipeService;
+
+    @Mock
+    private RecipeIngredientService recipeIngredientService;
 
     private Recipe recipe;
     private Set<Recipe> recipes;
@@ -101,12 +109,12 @@ public class RecipeServiceTest {
 
     @Test
     public void testAddRecipe() {
-        //when(recipeRepository.existsById(listEntryId)).thenReturn(false);
         when(recipeRepository.save(any(Recipe.class))).thenReturn(recipe);
+        doNothing().when(recipeIngredientService).addRecipeIngredients(anySet());
 
-        // shoppingListEntryService.addItem(shoppingListEntry);
+        Recipe result = recipeService.addRecipe(recipe);
 
-        // verify(shoppingListEntryRepository,times(1)).save(shoppingListEntry);
+        assertEquals(recipe, result);
     }
 
     @Test

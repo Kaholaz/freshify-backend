@@ -37,7 +37,6 @@ public class HouseholdRecipeController {
     private final ShoppingListEntryService shoppingListEntryService;
     private final ItemService itemService;
     private final RecipeService recipeService;
-    private final RecipeIngredientService recipeIngredientService;
     private final HouseholdRecipeService householdRecipeService;
 
     private final HouseholdRecipeMapper householdRecipeMapper = Mappers.getMapper(HouseholdRecipeMapper.class);

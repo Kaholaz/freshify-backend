@@ -74,9 +74,6 @@ public class HouseholdRecipeControllerTest {
     private ShoppingListEntryService shoppingListEntryService;
 
     @MockBean
-    private RecipeIngredientService recipeIngredientService;
-
-    @MockBean
     private RecipeMapper recipeMapper;
 
     @MockBean
