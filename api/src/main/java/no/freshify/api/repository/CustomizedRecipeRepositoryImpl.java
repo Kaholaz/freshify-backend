@@ -8,6 +8,7 @@ import no.freshify.api.model.ItemType;
 import no.freshify.api.model.RecipeFilter;
 import no.freshify.api.model.recipe.*;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -16,12 +17,18 @@ import org.springframework.data.support.PageableExecutionUtils;
 import java.util.Comparator;
 import java.util.List;
 
-@RequiredArgsConstructor
+
 public class CustomizedRecipeRepositoryImpl implements CustomizedRecipeRepository {
     private final EntityManager entityManager;
     private final RecipeRepository recipeRepository;
     private final ItemRepository itemRepository;
 
+    @Lazy
+    public CustomizedRecipeRepositoryImpl(EntityManager entityManager, RecipeRepository recipeRepository, ItemRepository itemRepository) {
+        this.entityManager = entityManager;
+        this.recipeRepository = recipeRepository;
+        this.itemRepository = itemRepository;
+    }
 
     private long countAvailableIngredients(Recipe recipe, Long householdId) {
         long count = 0;
