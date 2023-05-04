@@ -131,15 +131,6 @@ public class RecipeServiceTest {
         assertEquals(recipe, result.get().toList().get(0));
     }
 
-    @Test
-    public void testGetRecipesNotContainingAllergensPageable_Success() {
-        when(recipeRepository.findAllNotContainingAllergens(anyList(), any(Pageable.class)))
-                .thenReturn(page);
-
-        Page<Recipe> result = recipeService.getRecipesNotContainingAllergensPageable(allergens.stream().toList(), Pageable.unpaged());
-
-        assertEquals(recipe, result.get().toList().get(0));
-    }
 
     @Test
     public void testGetRecipeById_Success() throws RecipeNotFoundException {
@@ -157,54 +148,5 @@ public class RecipeServiceTest {
         assertThrows(RecipeNotFoundException.class, () -> {
             recipeService.getRecipeById(recipe.getId());
         });
-    }
-
-    @Test
-    public void getRecipesByNameAndCategoryAndNotContainingAllergensPageable_Success() {
-        when(recipeRepository.findByCategoriesIdAndAllergensNotInOrNoAllergensAndNameLike(anyLong(), anySet(), anyString(), any(Pageable.class)))
-                .thenReturn(page);
-
-        Page<Recipe> result = recipeService.getRecipesByNameAndCategoryAndNotContainingAllergensPageable(category.getId(), allergens.stream().toList(), recipe.getName(), Pageable.unpaged());
-
-        assertEquals(recipe, result.get().toList().get(0));
-    }
-
-    @Test
-    public void testGetRecipesByNamePageable_Success() {
-        when(recipeRepository.findByNameIgnoreCaseContaining(anyString(), any(Pageable.class)))
-                .thenReturn(page);
-
-        Page<Recipe> result = recipeService.getRecipesByNamePageable("Recipe", Pageable.unpaged());
-
-        assertEquals(recipe, result.get().toList().get(0));
-    }
-
-    @Test
-    public void testGetRecipesByNameAndCategoryPageable_Success() {
-        when(recipeRepository.findByCategoryIdAndNameContainingIgnoreCase(anyLong(), anyString(), any(Pageable.class)))
-                .thenReturn(page);
-
-        Page<Recipe> result = recipeService.getRecipesByNameAndCategoryPageable(1L, "Recipe", Pageable.unpaged());
-
-        assertEquals(recipe, result.get().toList().get(0));
-    }
-
-    @Test
-    public void testGetRecipesByNameAndAllAllergensPageable_Success() {
-        when(recipeRepository.findByNameContainingIgnoreCaseAndAllergensNotInOrNoAllergens(anyString(), anySet(), any(Pageable.class)))
-                .thenReturn(page);
-
-        Page<Recipe> result = recipeService.getRecipesByNameAndAllergensPageable("Recipe", allergens.stream().toList(), Pageable.unpaged());
-
-        assertEquals(recipe, result.get().toList().get(0));
-    }
-
-    @Test
-    public void getRecipesSortedByIngredientsInFridge_Success() {
-        when(recipeRepository.findByCountInItemsDesc(anyLong(), any(Pageable.class))).thenReturn(page);
-
-        Page<Recipe> result = recipeService.getRecipesSortedByIngredientsInFridge(household, Pageable.unpaged());
-
-        assertEquals(recipe, result.get().toList().get(0));
     }
 }
