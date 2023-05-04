@@ -1019,6 +1019,8 @@ paths:
               application/json:
                 schema:
                   $ref: "#/components/schemas/HouseholdRecipeDTO"
+          "400":
+            description: The recipe is already bookmarked in given household
           "404":
             description: The specified recipe or household was not found
   /householdrecipe/{householdId}/recipe/{id}/add-to-shoppinglist:

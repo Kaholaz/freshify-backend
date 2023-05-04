@@ -44,6 +44,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    @ExceptionHandler(HouseholdRecipeAlreadyExistsException.class)
+    public ResponseEntity<Object> handleHouseholdRecipeAlreadyExistsException(HouseholdRecipeAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
     @ExceptionHandler(IllegalItemStatusException.class)
     public ResponseEntity<Object> handleItemNotFoundException(IllegalItemStatusException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());

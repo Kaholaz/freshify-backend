@@ -1,10 +1,7 @@
 package no.freshify.api.controller;
 
 import lombok.RequiredArgsConstructor;
-import no.freshify.api.exception.HouseholdNotFoundException;
-import no.freshify.api.exception.HouseholdRecipeNotFoundException;
-import no.freshify.api.exception.RecipeNotFoundException;
-import no.freshify.api.exception.ShoppingListEntryAlreadyExistsException;
+import no.freshify.api.exception.*;
 import no.freshify.api.model.Household;
 import no.freshify.api.model.ItemType;
 import no.freshify.api.model.ShoppingListEntry;
@@ -47,7 +44,7 @@ public class HouseholdRecipeController {
     /**
      * Creates a household recipe / bookmarks a recipe in a household
      * @param householdId The id of the household
-     * @param id The id of the recipe
+     * @param recipeId The id of the recipe
      * @return The created household recipe
      * @throws HouseholdNotFoundException If the household is not found
      * @throws RecipeNotFoundException If the recipe is not found
@@ -55,11 +52,15 @@ public class HouseholdRecipeController {
     @PreAuthorize("hasPermission(#householdId, 'Household', '')")
     @PostMapping("/recipe/{id}")
     public ResponseEntity<HouseholdRecipeDTO> createHouseholdRecipe(@PathVariable("householdId") Long householdId,
-                                                                    @PathVariable("id") Long id)
-            throws HouseholdNotFoundException, RecipeNotFoundException {
+                                                                    @PathVariable("id") Long recipeId)
+            throws HouseholdNotFoundException, RecipeNotFoundException, HouseholdRecipeAlreadyExistsException {
         logger.info("Creating household recipe / bookmarking recipe in household");
+        if (householdRecipeService.getRecipe(householdId, recipeId) != null) {
+            logger.warn("Household recipe already exists");
+            throw new HouseholdRecipeAlreadyExistsException();
+        }
         Household household = householdService.findHouseholdByHouseholdId(householdId);
-        Recipe recipe = recipeService.getRecipeById(id);
+        Recipe recipe = recipeService.getRecipeById(recipeId);
 
         HouseholdRecipe householdRecipe = new HouseholdRecipe();
         householdRecipe.setHousehold(household);
