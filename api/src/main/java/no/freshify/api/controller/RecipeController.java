@@ -7,6 +7,7 @@ import no.freshify.api.exception.*;
 import no.freshify.api.model.Household;
 import no.freshify.api.model.Item;
 import no.freshify.api.model.ItemType;
+import no.freshify.api.model.RecipeFilter;
 import no.freshify.api.model.dto.AllergenDTO;
 import no.freshify.api.model.dto.RecipeDTO;
 import no.freshify.api.model.dto.RecipeIngredientDTO;
@@ -50,8 +51,14 @@ public class RecipeController {
     Logger logger = LoggerFactory.getLogger(RecipeController.class);
     /**
      * API endpoint for getting paginated list of recipes, can be filtered by category and allergens.
-     * @param categoryId The category id to filter by
-     * @param allergenIds The list of allergens to exclude from the search results
+     * @param categoryIds The list of category ids to filter by
+     * @param allergenIds The list of allergen ids to exclude from the search results
+     * @param sortByIngredientsInFridge Whether to sort recipes in descending order by how many of the recipe ingredients are in fridge
+     * @param searchString The search string to filter the recipes by, searches both name and description.
+     * @param getHouseholdRecipes Whether to include household recipes in the search results.
+     *                            When true, returns only recipes that are in household
+     *                            When false, returns only recipes that aren't in household
+     *                            When not passed/null, returns all recipes
      * @param pageNo The page number
      * @param pageSize The page size
      * @return A page of recipes
@@ -60,47 +67,31 @@ public class RecipeController {
     @GetMapping("/{householdId}")
     public Page<RecipeDTO> getRecipesPaginated(@PathVariable("householdId") Long householdId,
                                                @RequestParam(required = false) boolean sortByIngredientsInFridge,
-                                               @RequestParam(required = false) String name,
-                                               @RequestParam(required = false) Long categoryId,
+                                               @RequestParam(required = false) String searchString,
+                                               @RequestParam(required = false) List<Long> categoryIds,
                                                @RequestParam(required = false) List<Long> allergenIds,
+                                               @RequestParam(required = false) Boolean getHouseholdRecipes,
                                                @RequestParam(defaultValue = "0") int pageNo,
                                                @RequestParam(defaultValue = "10") int pageSize) throws HouseholdNotFoundException {
-        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("name"));
-
-        logger.info("Searching for recipes with name: " + name + ", category id: " + categoryId + ", allergen ids: " + allergenIds + ", page number: " + pageNo + ", page size: " + pageSize);
+        logger.info("Searching for recipes with name: " + searchString + ", category id: " + categoryIds + ", allergen ids: " + allergenIds + ", page number: " + pageNo + ", page size: " + pageSize);
 
         Household household = householdService.findHouseholdByHouseholdId(householdId);
 
-        Page<Recipe> recipePage;
+        RecipeFilter.RecipeFilterBuilder filterBuilder = RecipeFilter.builder();
+        filterBuilder
+                .searchString(searchString)
+                .categoryIds(categoryIds)
+                .allergenIds(allergenIds)
+                .householdId(householdId)
+                .sortByIngredientsInFridge(sortByIngredientsInFridge)
+                .getHouseholdRecipes(getHouseholdRecipes);
 
-        if (categoryId != null && allergenIds != null && name != null) {
-            List<Allergen> allergenList = allergenService.getAllergensByIds(allergenIds);
-            recipePage = recipeService.getRecipesByNameAndCategoryAndNotContainingAllergensPageable(categoryId, allergenList, name, pageable);
-        } else if (categoryId != null && allergenIds != null) {
-            List<Allergen> allergenList = allergenService.getAllergensByIds(allergenIds);
-            recipePage = recipeService.getRecipesByCategoryAndNotContainingAllergensPageable(categoryId, allergenList, pageable);
-        } else if (categoryId != null && name != null) {
-            recipePage = recipeService.getRecipesByNameAndCategoryPageable(categoryId, name, pageable);
-        } else if (allergenIds != null && name != null) {
-            List<Allergen> allergenList = allergenService.getAllergensByIds(allergenIds);
-            recipePage = recipeService.getRecipesByNameAndAllergensPageable(name, allergenList, pageable);
-        } else if (categoryId != null) {
-            recipePage = recipeService.getRecipesByCategoryPageable(categoryId, pageable);
-        } else if (allergenIds != null) {
-            List<Allergen> allergenList = allergenService.getAllergensByIds(allergenIds);
-            recipePage = recipeService.getRecipesNotContainingAllergensPageable(allergenList, pageable);
-        } else if (name != null) {
-            recipePage = recipeService.getRecipesByNamePageable(name, pageable);
-        } else if (sortByIngredientsInFridge) {
-            recipePage = recipeService.getRecipesSortedByIngredientsInFridge(household, pageable);
-        } else {
-            recipePage = recipeService.getRecipesPageable(pageable);
-        }
+        PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
+        Page<Recipe> recipes = recipeService.getRecipesByFilter(filterBuilder.build(), pageRequest);
 
-        Page<RecipeDTO> recipeDTOPage = recipeMapper.toRecipeDTOPage(recipePage);
-
-        for (RecipeDTO recipe : recipeDTOPage.getContent()) {
-            checkIngredientsInHousehold(household , recipe);
+        Page<RecipeDTO> recipeDTOPage = recipeMapper.toRecipeDTOPage(recipes);
+        for (RecipeDTO recipeDTO : recipeDTOPage.getContent()) {
+            checkIngredientsInHousehold(household, recipeDTO);
         }
 
         return recipeDTOPage;
