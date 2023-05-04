@@ -5,8 +5,9 @@ import no.freshify.api.exception.*;
 import no.freshify.api.model.*;
 import no.freshify.api.model.dto.CreateHousehold;
 import no.freshify.api.model.dto.HouseholdDTO;
-import no.freshify.api.model.dto.UserFull;
+import no.freshify.api.model.dto.HouseholdMemberDTO;
 import no.freshify.api.model.mapper.HouseholdMapper;
+import no.freshify.api.model.mapper.HouseholdMemberMapper;
 import no.freshify.api.security.AuthenticationService;
 import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.HouseholdService;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,13 +30,12 @@ import java.util.Set;
 @RestController
 public class HouseholdController {
     private final HouseholdService householdService;
-    private final HouseholdMemberService householdMemberService;
     private final AuthenticationService authenticationService;
+    private final HouseholdMemberService householdMemberService;
 
     private final HouseholdMapper householdMapper = Mappers.getMapper(HouseholdMapper.class);
-
-    private final Logger logger = LoggerFactory.getLogger(HouseholdController.class);
-
+    private final HouseholdMemberMapper householdMemberMapper = Mappers.getMapper(HouseholdMemberMapper.class);
+    private final Logger logger = LoggerFactory.getLogger(HouseholdMemberController.class);
 
     /**
      * Creates a new household. Sets the logged on user as a superuser in the new household.
@@ -70,9 +71,11 @@ public class HouseholdController {
      */
     @PreAuthorize("hasPermission(#householdId, 'Household', 'SUPERUSER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteHousehold(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
+    public ResponseEntity<String> deleteHousehold(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
         long idToDelete = householdService.findHouseholdByHouseholdId(householdId).getId();
-        return householdService.removeHousehold(idToDelete);
+        householdService.removeHousehold(idToDelete);
+        logger.info("Removed household");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Operation successful");
     }
 
     /**
@@ -86,15 +89,17 @@ public class HouseholdController {
         return ResponseEntity.ok(householdMapper.toHouseholdDTO(householdService.findHouseholdByHouseholdId(householdId)));
     }
 
-    //TODO Remember to add authentication logic and verify/enforce access privileges before processing request
     /**
-     * Gets the users in a given household
-     * @param householdId The household to get usres from
+     * Gets the users in a given household. Can only be done by a user in the household.
+     * @param householdId The household to get users from
      * @return A list of users in the given household
+     * @throws HouseholdNotFoundException If the household was not found
      */
+    @PreAuthorize("hasPermission(#householdId, 'Household', '')")
     @GetMapping("/{id}/users")
-    public ResponseEntity<List<UserFull>> getUsers(@PathVariable("id") long householdId) throws HouseholdNotFoundException {
-        return ResponseEntity.ok(householdService.getUsers(householdId));
+    public ResponseEntity<List<HouseholdMemberDTO>> getUsers(@PathVariable("id") long householdId)
+            throws HouseholdNotFoundException {
+        return ResponseEntity.ok(householdMemberMapper.householdMemberDTOS(householdService.getUsers(householdId)));
     }
 
     /**

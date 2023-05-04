@@ -9,6 +9,8 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.List;
+
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -34,7 +36,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ItemTypesNotFoundException.class)
     public ResponseEntity<Object> handleItemTypesNotFoundException(ItemTypesNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        return ResponseEntity.ok().body(List.of());
     }
 
     @ExceptionHandler(ItemNotFoundException.class)
@@ -80,5 +82,25 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SignatureException.class)
     public ResponseEntity<Object> handleSignatureException(SignatureException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The provided token's signature could not be verified");
+    }
+
+    @ExceptionHandler(RecipeCategoryNotFoundException.class)
+    public ResponseEntity<Object> handleRecipeCategoryNotFoundException(RecipeCategoryNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(AllergenNotFoundException.class)
+    public ResponseEntity<Object> handleAllergenNotFoundException(AllergenNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(RecipeNotFoundException.class)
+    public ResponseEntity<Object> handleRecipeNotFoundException(RecipeNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(HouseholdRecipeNotFoundException.class)
+    public ResponseEntity<Object> handleHouseholdRecipeNotFoundException(HouseholdRecipeNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 }

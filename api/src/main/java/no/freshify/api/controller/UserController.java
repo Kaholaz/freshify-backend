@@ -162,4 +162,18 @@ public class UserController {
         userService.deleteUser(userDetails.getId());
         return ResponseEntity.status(HttpStatus.OK).body("User deleted");
     }
+
+    /**
+     * Gets the logged in user
+     * @param userDetails The logged in user details
+     * @return The details of the logged in user
+     * @throws UserNotFoundException If the user is not found
+     */
+    @PreAuthorize("authentication.principal.id != null")
+    @GetMapping("/loggedin")
+    public ResponseEntity<UserFull> getLoggedInUser(@AuthenticationPrincipal UserDetailsImpl userDetails) throws UserNotFoundException {
+        logger.info("Getting logged in user");
+        User user = userService.getUserById(userDetails.getId());
+        return ResponseEntity.status(HttpStatus.OK).body(userMapper.toUserFull(user));
+    }
 }

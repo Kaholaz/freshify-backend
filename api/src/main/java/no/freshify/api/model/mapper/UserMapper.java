@@ -29,6 +29,8 @@ public abstract class UserMapper {
 
     public abstract UserFull toUserFull(User user);
 
+    @Mappings({
+            @Mapping(target = "userId", source = "id")})
     public abstract UserId toUserId(User user);
 
     public abstract User toUser (UpdateUser user);

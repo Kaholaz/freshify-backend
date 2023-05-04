@@ -1,7 +1,11 @@
 package no.freshify.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.freshify.api.exception.IllegalItemParameterException;
 import no.freshify.api.model.*;
+import no.freshify.api.model.dto.WastedItemDTO;
+import no.freshify.api.model.mapper.ItemMapper;
+import no.freshify.api.model.mapper.ItemMapperImpl;
 import no.freshify.api.security.UserAuthentication;
 import no.freshify.api.security.UserDetailsImpl;
 import no.freshify.api.service.HouseholdService;
@@ -66,7 +70,7 @@ public class InventoryControllerTest {
     private Authentication authentication;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws IllegalItemParameterException {
         household = new Household();
         household.setId(1L);
         household.setName("Test Household");

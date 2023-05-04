@@ -7,13 +7,13 @@ info:
     MySQL database. The API is documented using Swagger. The API is hosted using
     Apache.
     Some useful links:
-    - [The GitLab repository](https://gitlab.stud.idi.ntnu.no/idatt2106-v23-10/smartmat-backend) 
+    - [The GitLab repository](https://gitlab.stud.idi.ntnu.no/idatt2106-v23-10/smartmat-backend)
   contact:
     email: vkbugge@hotmail.com
   license:
     name: MIT License
-    url: 'https://opensource.org/licenses/MIT'
-  version: 1.0.0
+    url: "https://opensource.org/licenses/MIT"
+  version: 2.1.2
 servers:
   - url: http://localhost:8080
 tags:
@@ -41,7 +41,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
@@ -51,9 +51,9 @@ paths:
                   userId:
                     type: integer
                     format: int64
-        '400':
+        "400":
           description: No email provided
-        '404':
+        "404":
           description: User not found
     post:
       tags:
@@ -66,15 +66,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateUser'
+              $ref: "#/components/schemas/CreateUser"
       responses:
-        '201':
+        "201":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFull'
-        '409':
+                $ref: "#/components/schemas/UserFull"
+        "409":
           description: User already exists
     put:
       tags:
@@ -87,15 +87,31 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateUser'
+              $ref: "#/components/schemas/UpdateUser"
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFull'
-        '404':
+                $ref: "#/components/schemas/UserFull"
+        "404":
+          description: User not found
+  /user/loggedin:
+    get:
+      tags:
+        - account
+      summary: Get the user details from the jwt token cookie
+      description: Returns the details of the logged in user, the details are extracted from the jwt token cookie.
+      operationId: getLoggedInUser
+      responses:
+        "200":
+          description: Returns the details of the logged in user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserFull"
+        "404":
           description: User not found
   /user/{id}:
     get:
@@ -113,13 +129,13 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFull'
-        '404':
+                $ref: "#/components/schemas/UserFull"
+        "404":
           description: User not found
     delete:
       tags:
@@ -136,11 +152,11 @@ paths:
             type: integer
             format: int64
       responses:
-        '204':
+        "204":
           description: successful operation
-        '401':
+        "401":
           description: Access denied
-        '404':
+        "404":
           description: User not found
   /user/{id}/households:
     get:
@@ -159,18 +175,18 @@ paths:
             type: integer
             format: int64
       responses:
-          '200':
-            description: successful operation
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Household'
-          '401':
-            description: Access denied
-          '404':
-            description: User not found
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Household"
+        "401":
+          description: Access denied
+        "404":
+          description: User not found
   /user/login:
     post:
       tags:
@@ -183,15 +199,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginUser'
+              $ref: "#/components/schemas/LoginUser"
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFull'
-        '401':
+                $ref: "#/components/schemas/UserFull"
+        "401":
           description: User could not be logged in
   /user/logout:
     post:
@@ -201,9 +217,9 @@ paths:
       description: Logs out a user
       operationId: logoutUser
       responses:
-        '200':
+        "200":
           description: successful operation
-        '401':
+        "401":
           description: User could not be logged out
   /household:
     post:
@@ -217,16 +233,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateHousehold'
+              $ref: "#/components/schemas/CreateHousehold"
       responses:
-        '201':
+        "201":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Household'
-        '409':
-          description: Household already exists
+                $ref: "#/components/schemas/Household"
   /household/{id}/users:
     get:
       tags:
@@ -243,7 +257,7 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
@@ -252,14 +266,16 @@ paths:
                 items:
                   type: object
                   properties:
+                    id:
+                      $ref: "#/components/schemas/HouseholdMemberKey"
                     user:
-                      $ref: '#/components/schemas/UserFull'
+                      $ref: "#/components/schemas/UserFull"
                     userType:
-                      $ref: '#/components/schemas/HouseholdUserType'
-        '401':
+                      $ref: "#/components/schemas/HouseholdUserType"
+        "401":
           description: Access denied
-        '404':
-            description: Household not found
+        "404":
+          description: Household not found
     put:
       tags:
         - household
@@ -281,18 +297,18 @@ paths:
             schema:
               $ref: "#/components/schemas/UpdateHouseholdUserType"
       responses:
-        '200':
+        "200":
           description: The updated household member
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HouseholdMember'
-        '400':
+                $ref: "#/components/schemas/HouseholdMember"
+        "400":
           description: Illegal household member role/User does not belong to household
-        '401':
+        "401":
           description: Access denied
-        '404':
-            description: Household not found/user not found
+        "404":
+          description: Household not found/user not found
     post:
       tags:
         - household
@@ -318,14 +334,14 @@ paths:
                   type: integer
                   format: int64
       responses:
-        '201':
+        "201":
           description: successful operation
-        '409':
+        "409":
           description: User already exists in the household
-        '401':
+        "401":
           description: Access denied
-        '404':
-            description: Household not found
+        "404":
+          description: Household not found
   /household/{id}/users/{userId}:
     delete:
       tags:
@@ -349,12 +365,76 @@ paths:
             type: integer
             format: int64
       responses:
-        '204':
+        "204":
           description: successful operation
-        '404':
+        "404":
           description: User not found/Household not found/User does not belong to household
-        '401':
+        "401":
           description: Access denied
+  /household/{id}/inventory/waste-per-month:
+    get:
+      tags:
+        - household
+        - inventory
+      summary: Gets a list of average amount wasted per month
+      description: Gets a list of average amount wasted per month
+      parameters:
+        - name: id
+          in: path
+          description: ID of household to get waste from
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: limit
+          in: query
+          description: The number of months backward to process. The returned list starts at the current month for index 0, the previous month for index 1 etc...
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                example:
+                  [0.2, 0.4, 0.6]
+                items:
+                  type: number
+        "404":
+          description: Household not found
+  /household/{id}/inventory/waste:
+    get:
+      tags:
+        - household
+        - inventory
+      summary: Returns a list of household waste
+      description: Returns lists of household waste
+      parameters:
+        - name: id
+          in: path
+          description: ID of household to get waste from
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: limit
+          in: query
+          description: The number of months back to get wasted items from
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryWasteResponse"
+        "404":
+          description: Household not found
   /household/{id}:
     delete:
       tags:
@@ -371,11 +451,11 @@ paths:
             type: integer
             format: int64
       responses:
-        '204':
+        "204":
           description: successful operation
-        '404':
+        "404":
           description: Household not found
-        '401':
+        "401":
           description: Access denied
     get:
       tags:
@@ -392,17 +472,17 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Household'
-        '404':
+                $ref: "#/components/schemas/Household"
+        "404":
           description: Household not found
     put:
       tags:
-          - household
+        - household
       summary: Update household
       description: Updates the household's attributes. Can only be done by a superuser
       operationId: updateHousehold
@@ -419,18 +499,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Household'
+              $ref: "#/components/schemas/Household"
       responses:
-          '200':
-            description: successful operation
-          '404':
-            description: Household not found
-          '401':
-            description: Access denied
+        "200":
+          description: successful operation
+        "404":
+          description: Household not found
+        "401":
+          description: Access denied
   /household/{id}/shoppinglist:
     get:
       tags:
-       - shopping list
+        - shopping list
       summary: Get the shopping list of a household
       description: Gets a shopping list with item id from shopping list
       operationId: getShoppingList
@@ -443,17 +523,19 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: household ShoppingList items
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ShoppingListEntry'
-        '401':
+                  $ref: "#/components/schemas/ShoppingListEntry"
+        "401":
           description: Unauthorized
-    post: 
+        "404":
+          description: Household not found
+    post:
       tags:
         - shopping list
       summary: Add item to shopping list
@@ -472,18 +554,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateShoppingListEntry'
+              $ref: "#/components/schemas/CreateShoppingListEntry"
       responses:
-        '201':
+        "201":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ShoppingListEntry'
-        '401':
+                $ref: "#/components/schemas/ShoppingListEntry"
+        "401":
           description: Unauthorized response
-        '409':
+        "409":
           description: Item already exists in shopping list
+        "404":
+          description: Item type or household does not exist
     put:
       tags:
         - shopping list
@@ -502,15 +586,17 @@ paths:
         description: ItemType and count to change in shopping list
         content:
           application/json:
-           schema:
-            $ref: '#/components/schemas/UpdateShoppingListEntry'
+            schema:
+              $ref: "#/components/schemas/UpdateShoppingListEntry"
       responses:
-        '200':
+        "204":
           description: Successful operation
-        '400':
+        "400":
           description: Invalid operation. More items are removed than in shopping list.
-        '401':
+        "401":
           description: Unauthorized response, user is not validated or does not have access
+        "404":
+          description: Shopping list entry not found
   /household/{id}/shoppinglist/{listEntryId}:
     delete:
       tags:
@@ -534,11 +620,11 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "204":
           description: Successful operation
-        '404':
+        "404":
           description: Shopping list or shopping list entry not found.
-        '401':
+        "401":
           description: Unauthorized response, user is not validated or does not have access
   /household/{id}/shoppinglist/buy:
     post:
@@ -556,13 +642,13 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: Successful operation
-        '400':
+        "400":
           description: Invalid operation. More items are removed than in shopping list.
-        '401':
+        "401":
           description: Unauthorized response, user is not validated or does not have access
-        '404':
+        "404":
           description: Item not found in shopping list
   /household/{id}/inventory:
     post:
@@ -595,19 +681,19 @@ paths:
                     type: integer
                     format: int64
       responses:
-        '201':
+        "201":
           description: Returns a list of the newly added items.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InventoryItems'
-        '401':
+                $ref: "#/components/schemas/InventoryItems"
+        "401":
           description: Unauthorized response, user is not validated or does not have access
-        '404':
+        "404":
           description: Household not found/User not found/Item type not found
     get:
       tags:
-       - inventory
+        - inventory
       summary: Gets all items from inventory
       description: Gets all items of a specific inventory
       operationId: getInventoryItems
@@ -620,17 +706,17 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: item found
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Item'
-        '401':
+                  $ref: "#/components/schemas/Item"
+        "401":
           description: Unauthorized
-        '404':
+        "404":
           description: Household not found
     put:
       tags:
@@ -653,13 +739,13 @@ paths:
             schema:
               $ref: "#/components/schemas/UpdateItem"
       responses:
-        '200':
+        "200":
           description: Successful operation
-        '400':
+        "400":
           description: The given item status is not a valid status for item/item does not belong to household
-        '401':
+        "401":
           description: Unauthorized response, user is not validated or does not have access
-        '404':
+        "404":
           description: Item not found/household not found
   /household/{id}/inventory/{itemId}:
     delete:
@@ -671,7 +757,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of household's inventory to delete the item from 
+          description: ID of household's inventory to delete the item from
           required: true
           schema:
             type: integer
@@ -684,11 +770,11 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: Successful operation
-        '401':
+        "401":
           description: Unauthorized response, user is not validated or does not have access
-        '404':
+        "404":
           description: Item not found/household not found
   /household/{id}/inventory/suggest:
     post:
@@ -721,15 +807,15 @@ paths:
                     type: integer
                     format: int64
       responses:
-        '201':
+        "201":
           description: Returns a list of the newly added suggestions.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InventoryItems'
-        '401':
+                $ref: "#/components/schemas/InventoryItems"
+        "401":
           description: Unauthorized response, user is not validated or does not have access
-        '404':
+        "404":
           description: Household not found/User not found/Item type not found
   /itemtype:
     get:
@@ -752,9 +838,280 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ItemType'
+                  $ref: "#/components/schemas/ItemType"
         404:
           description: No item types found
+  /recipes/{householdId}:
+    get:
+      tags:
+        - recipes
+      summary: Gets a page of recipes that can also be filtered
+      description: Retrieves a paginated list of recipes that can optionally be filtered by recipe category and/or allergens. For each ingredient in the recipe, it checks whether the household has the specified ingredient item type in the fridge.
+      operationId: getRecipesPaginated
+      parameters:
+        - name: householdId
+          in: path
+          description: ID of the household to check for ingredients
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: sortByIngredientsInFridge
+          in: query
+          description: Decides whether or not to fetch and sort the recipes by the number of ingredients that exist in fridge in descending order.
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: name
+          in: query
+          description: Search string to find recipe by name
+          required: false
+          schema:
+            type: string
+        - name: categoryId
+          in: query
+          description: ID of the recipe category to filter by
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: allergenIds
+          in: query
+          description: Array of IDs of the allergens to filter by
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: pageNo
+          in: query
+          description: Page number to retrieve
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: pageSize
+          in: query
+          description: Number of recipes per page
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        "200":
+          description: A page of recipes were sucessfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeDTOPage"
+        "404":
+          description: The specified household or recipe category was not found
+  /recipes/{householdId}/recipe/{id}:
+    get:
+      tags:
+        - recipes
+      summary: Gets a recipe by ID
+      description: Retrieves the recipe with the specified ID and each ingredient is also checked against the specified household's fridge.
+      operationId: getRecipeById
+      parameters:
+        - name: householdId
+          in: path
+          description: ID of the household to check for ingredients
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: id
+          in: path
+          description: ID of the recipe to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Success - the requested recipe was found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeDTO"
+        "404":
+          description: The specified recipe or household was not found
+  /recipes:
+    post:
+      tags:
+        - recipes
+      summary: Create a new recipe
+      description: Creates a new recipe and saves to backend.
+      operationId: createRecipe
+      requestBody:
+        description: Recipe object to be created and saved.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipeRequest'
+      responses:
+        '200':
+          description: The newly created recipe.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipeDTO'
+        '404':
+          description: Item type not found/Recipe category not found/Allergen not found
+  /householdrecipe/{householdId}/recipe/{id}:
+    delete:
+        tags:
+          - household recipe
+        summary: Removes a recipe from a household
+        description: Removes a recipe from a household. It will no longer be bookmarked in that household.
+        operationId: removeHouseholdRecipe
+        parameters:
+            - name: householdId
+              in: path
+              description: ID of the household to add the recipe to
+              required: true
+              schema:
+                type: integer
+                format: int64
+            - name: id
+              in: path
+              description: ID of the recipe to add
+              required: true
+              schema:
+                type: integer
+                format: int64
+        responses:
+            "204":
+              description: Success - the recipe was removed from the household
+            "404":
+              description: The specified recipe or household was not found
+    post:
+        tags:
+          - household recipe
+        summary: Adds a recipe to a household
+        description: Adds a recipe as bookmarked to the given household.
+        operationId: createHouseholdRecipe
+        parameters:
+          - name: householdId
+            in: path
+            description: ID of the household to add the recipe to
+            required: true
+            schema:
+              type: integer
+              format: int64
+          - name: id
+            in: path
+            description: ID of the recipe to add
+            required: true
+            schema:
+              type: integer
+              format: int64
+        responses:
+          "201":
+            description: Success - the recipe was added to household
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/HouseholdRecipeDTO"
+          "404":
+            description: The specified recipe or household was not found
+  /householdrecipe/{householdId}/recipe/{id}/add-to-shoppinglist:
+    post:
+      tags:
+        - household recipe
+      summary: Adds missing ingredients from the recipe to the shopping list
+      description: Adds all the missing ingredients of the given recipe to the given household's shopping list.
+      operationId: addRecipeToShoppingList
+      parameters:
+        - name: householdId
+          in: path
+          description: ID of the household to add the recipe to
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: id
+          in: path
+          description: ID of the recipe to add
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+          "200":
+            description: Success - the recipe's missing ingredients were added to the household's shopping list
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/RecipeIngredientDTO"
+          "404":
+            description: The specified recipe or household was not found
+  /householdrecipe/{householdId}/recipe:
+    get:
+        tags:
+          - household recipe
+        summary: Gets all the recipes added/bookmarked to a household
+        description: Gets a list of all the households that have been added/bookmarked to a given household
+        operationId: getHouseholdRecipes
+        parameters:
+          - name: householdId
+            in: path
+            description: ID of the household to check for ingredients
+            required: true
+            schema:
+              type: integer
+              format: int64
+        responses:
+          "200":
+            description: Operation successfull
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/HouseholdRecipeDTO"
+          "404":
+            description: The specified household was not found
+  /recipecategory:
+    get:
+      tags:
+        - recipe category
+      summary: Get all recipe categories
+      description: Returns a list of recipe categories containing all recipe categories from database
+      operationId: getAllRecipeCategories
+      responses:
+        200:
+          description: A list of all recipe categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecipeCategory"
+  /allergens:
+    get:
+      tags:
+        - allergen
+      summary: Get all allergens
+      description: Returns a list of allergens containing all allergens from database
+      operationId: getAllergens
+      responses:
+        200:
+          description: A list of all allergens
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AllergenRequest"
 components:
   schemas:
     CreateUser:
@@ -860,14 +1217,14 @@ components:
           format: int32
           example: 1
         type:
-          $ref: '#/components/schemas/ItemType'
+          $ref: "#/components/schemas/ItemType"
         suggested:
           type: boolean
         checked:
           example: false
           type: boolean
         addedBy:
-          $ref: '#/components/schemas/UserFull'
+          $ref: "#/components/schemas/UserFull"
     ItemState:
       type: string
       enum:
@@ -894,7 +1251,7 @@ components:
           type: integer
           example: 123
         state:
-          $ref: '#/components/schemas/ItemState' 
+          $ref: "#/components/schemas/ItemState"
         remaining:
           type: number
           format: double
@@ -903,39 +1260,43 @@ components:
           type: string
           format: date
           example: "2020-01-01"
+        lastChanged:
+          type: string
+          format: date
+          example: "2020-01-01"
         suggested:
           type: boolean
         type:
-          $ref: '#/components/schemas/ItemType'
+          $ref: "#/components/schemas/ItemType"
         addedBy:
-          $ref: '#/components/schemas/UserFull'
+          $ref: "#/components/schemas/UserFull"
     InventoryItems:
       type: array
       items:
-          properties:
-            id:
-              type: integer
-              example: 123
-            state:
-              $ref: '#/components/schemas/ItemState' 
-            remaining:
-              type: number
-              format: double
-              example: 1
-            lastChanged:
-              type: string
-              format: date
-              example: "2020-01-01"
-            addedDate:
-              type: string
-              format: date
-              example: "2020-01-01"
-            suggested:
-              type: boolean
-            type:
-              $ref: '#/components/schemas/ItemType'
-            addedBy:
-              $ref: '#/components/schemas/UserFull'
+        properties:
+          id:
+            type: integer
+            example: 123
+          state:
+            $ref: "#/components/schemas/ItemState"
+          remaining:
+            type: number
+            format: double
+            example: 1
+          lastChanged:
+            type: string
+            format: date
+            example: "2020-01-01"
+          bought:
+            type: string
+            format: date
+            example: "2020-01-01"
+          suggested:
+            type: boolean
+          type:
+            $ref: "#/components/schemas/ItemType"
+          addedBy:
+            $ref: "#/components/schemas/UserFull"
     HouseholdUserType:
       type: string
       enum:
@@ -948,7 +1309,33 @@ components:
           type: integer
           example: 123
         type:
-          $ref: '#/components/schemas/HouseholdUserType'
+          $ref: "#/components/schemas/HouseholdUserType"
+    WastedItemDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Milk"
+        countWasted:
+          type: number
+          example: 3
+        amountWasted:
+          type: number
+          example: 0.2
+    InventoryWasteResponse:
+      type: object
+      properties:
+        wastedItems:
+          type: array
+          items:
+            type: object
+            $ref: "#/components/schemas/WastedItemDTO"
+        total:
+          type: number
+          example: 23
+        average:
+          type: number
+          example: 0.32
     HouseholdMemberKey:
       type: object
       properties:
@@ -962,11 +1349,11 @@ components:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/HouseholdMemberKey'
+          $ref: "#/components/schemas/HouseholdMemberKey"
         user:
-          $ref: '#/components/schemas/UserFull'
+          $ref: "#/components/schemas/UserFull"
         type:
-          $ref: '#/components/schemas/HouseholdUserType'
+          $ref: "#/components/schemas/HouseholdUserType"
     Household:
       type: object
       properties:
@@ -982,3 +1369,284 @@ components:
         name:
           type: string
           example: "My family"
+    RecipeRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Spaghetti Bolognese"
+        description:
+          type: string
+          example: "Italian dish made with ground beef and tomatoes"
+        steps:
+          type: string
+          example: "1. Cook spaghetti by package instructions. 2. Brown ground beef in a large pan. 3. Add tomatoes. 4. Simmer for 20 minutes."
+        estimatedTime:
+          type: integer
+          format: int64
+          example: 30
+        recipeIngredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeIngredientRequest'
+          example: [{ "itemType": { "id": 1, "name": "Ground Beef" }, "amount": 1.5, "unit": "kg" }, { "itemType": { "id": 2, "name": "Tomatoes" }, "amount": 1, "unit": "can"}]
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeCategory'
+          example: [{ "id": 1, "name": "Italian" }, { "id": 2, "name": "Meat Dish" }]
+        allergens:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllergenRequest'
+          example: [ { "id": 1, "name": "Gluten" }, { "id": 2, "name": "Lactose" } ]
+        image:
+          type: string
+          example: "https://images.matprat.no/nten4ykzxh-jumbotron/large/pastacarbonara0904_1.jpg"
+    RecipeIngredientRequest:
+      type: object
+      properties:
+        itemType:
+          $ref: '#/components/schemas/ItemType'
+        amount:
+          type: number
+          format: double
+          example: 1.5
+        unit:
+          type: string
+          example: "pounds"
+    ItemTypeDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Ground Beef"
+    Recipe:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Spaghetti Bolognese"
+        description:
+          type: string
+          example: "Classic Italian dish made with ground beef, tomatoes, and herbs"
+        estimatedTime:
+          type: integer
+          format: int64
+          example: 30
+        steps:
+          type: string
+          example: "1. Cook spaghetti according to package instructions. 2. Brown ground beef in a large pan. 3. Add tomatoes, herbs, and seasoning. 4. Simmer for 20 minutes. 5. Serve over cooked spaghetti."
+        recipeIngredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeIngredient'
+          example: [{ "id": 1, "itemType": { "id": 1, "name": "Ground Beef" }, "amount": 1.5, "unit": "pounds" }]
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeCategory'
+          example: [{ "id": 1, "name": "Italian" }]
+        allergens:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllergenRequest'
+          example: [ { "id": 1, "name": "Gluten" }, { "id": 2, "name": "Lactose" } ]
+        image:
+          type: string
+          example: "https://images.matprat.no/nten4ykzxh-jumbotron/large/pastacarbonara0904_1.jpg"
+    RecipeIngredient:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        itemType:
+          $ref: '#/components/schemas/ItemType'
+        amount:
+          type: number
+          format: double
+          example: 1.5
+        unit:
+          type: string
+          example: "pounds"
+    AllergenRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Lactose"
+    RecipeCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Italian"
+    RecipeIngredientDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        itemType:
+          $ref: "#/components/schemas/ItemType"
+        amount:
+          type: number
+          example: 2.3
+        unit:
+          type: string
+          example: "dairy"
+        householdHasIngredient:
+          type: boolean
+    RecipeDTOPage:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecipeDTO"
+        pageable:
+          type: object
+          properties:
+            sort:
+              type: object
+              properties:
+                empty:
+                  type: boolean
+                sorted:
+                  type: boolean
+                unsorted:
+                  type: boolean
+            offset:
+              type: integer
+              format: int64
+            pageSize:
+              type: integer
+              format: int32
+            pageNumber:
+              type: integer
+              format: int32
+            paged:
+              type: boolean
+            unpaged:
+              type: boolean
+        last:
+          type: boolean
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        number:
+          type: integer
+          format: int32
+        sort:
+          type: object
+          properties:
+            empty:
+              type: boolean
+            sorted:
+              type: boolean
+            unsorted:
+              type: boolean
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    RecipeDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Spaghetti Bolognese"
+        description:
+          type: string
+          example: "Classic Italian dish made with ground beef, tomatoes, and herbs"
+        estimatedTime:
+          type: integer
+          format: int64
+          example: 30
+        steps:
+          type: string
+          example: "1. Cook spaghetti according to package instructions. 2. Brown ground beef in a large pan. 3. Add tomatoes, herbs, and seasoning. 4. Simmer for 20 minutes. 5. Serve over cooked spaghetti."
+        totalIngredientsInFridge:
+          type: integer
+          format: int32
+          example: 3
+        recipeIngredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeIngredientResponse'
+          example: [ { "id": 1, "itemType": { "id": 1, "name": "Ground Beef" }, "amount": 1.5, "unit": "pounds", "householdHasIngredient": true } ]
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeCategory'
+          example: [ { "id": 1, "name": "Italian" } ]
+        allergens:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllergenRequest'
+          example: [ { "id": 1, "name": "Gluten" }, { "id": 2, "name": "Lactose" } ]
+        image:
+          type: string
+          example: "https://images.matprat.no/nten4ykzxh-jumbotron/large/pastacarbonara0904_1.jpg"
+    HouseholdRecipeDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        recipe:
+          $ref: '#/components/schemas/RecipeDTO'
+        household:
+          $ref: '#/components/schemas/Household'
+    RecipeIngredientResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        itemType:
+          $ref: '#/components/schemas/ItemType'
+        amount:
+          type: number
+          format: double
+          example: 1.5
+        unit:
+          type: string
+          example: "pounds"
+        householdHasIngredient:
+          type: boolean
+          example: true

@@ -3,21 +3,24 @@ package no.freshify.api.service;
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.ItemDoesNotBelongToHouseholdException;
 import no.freshify.api.exception.ItemNotFoundException;
-import no.freshify.api.model.Household;
-import no.freshify.api.model.Item;
-import no.freshify.api.model.ItemStatus;
+import no.freshify.api.model.*;
+import no.freshify.api.model.dto.WastedItemDTO;
+import no.freshify.api.model.mapper.ItemMapper;
+import no.freshify.api.model.mapper.ItemMapperImpl;
 import no.freshify.api.repository.ItemRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ItemService {
     private final ItemRepository itemRepository;
+    private final ItemMapper itemMapper = new ItemMapperImpl();
 
     Logger logger = LoggerFactory.getLogger(ItemService.class);
 
@@ -50,6 +53,20 @@ public class ItemService {
         return item;
     }
 
+    public List<Item> findWastedItemsInTimeInterval(Household household, Date startDate, Date endDate) {
+        return itemRepository.findItemsByHouseholdAndStatusAndLastChangedBetweenAndRemainingGreaterThan
+                (household, ItemStatus.USED, startDate, endDate, 0D);
+    }
+
+    public List<Item> findAllWastedItems(Household household) {
+        return itemRepository.findItemsByHouseholdAndStatusAndRemainingGreaterThan(household, ItemStatus.USED, 0D);
+    }
+
+
+    public List<Item> findAllUsedItems(Household household) {
+        return itemRepository.findItemsByHouseholdAndStatus(household, ItemStatus.USED);
+    }
+
     public void deleteItemById(long id) {
         itemRepository.deleteById(id);
     }
@@ -60,5 +77,19 @@ public class ItemService {
 
     public Item addItem(Item item) {
         return itemRepository.save(item);
+    }
+
+    public Double getAverageWaste(List<Item> wastedItems) {
+        return wastedItems.stream().mapToDouble(Item::getRemaining).average().orElse(0D);
+    }
+
+    public List<Item> findByTypeAndHousehold(ItemType type, Household household) {
+        return itemRepository.findByTypeAndHousehold(type, household);
+    }
+
+    public HashSet<ItemType> getUniqueItemTypes(List<Item> items) {
+        return items.stream()
+                .map(Item::getType)
+                .collect(Collectors.toCollection(HashSet::new));
     }
 }

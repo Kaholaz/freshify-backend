@@ -10,6 +10,7 @@ import no.freshify.api.model.User;
 import no.freshify.api.service.HouseholdMemberService;
 import no.freshify.api.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -129,5 +130,11 @@ public class AuthenticationService {
     public User getLoggedInUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return userService.getUserByEmail(auth.getName());
+    }
+
+    public boolean isSuperuser(long householdId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        PermissionEvaluator permissionEvaluator = new PermissionEvaluatorImpl();
+        return permissionEvaluator.hasPermission(auth, householdId, "household", "SUPERUSER");
     }
 }

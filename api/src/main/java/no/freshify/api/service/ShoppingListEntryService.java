@@ -19,8 +19,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Getter
@@ -35,14 +37,14 @@ public class ShoppingListEntryService {
 
     private final HouseholdService householdService;
 
-    public void addItem(ShoppingListEntry shoppingListEntry) throws ShoppingListEntryAlreadyExistsException {
+    public ShoppingListEntry addItem(ShoppingListEntry shoppingListEntry) throws ShoppingListEntryAlreadyExistsException {
         logger.info("Adding item to shopping list");
         if (shoppingListEntry.getId() != null &&
                 shoppingListEntryRepository.existsById(shoppingListEntry.getId())) {
             logger.warn("Shopping list entry already exists in the shopping list");
             throw new ShoppingListEntryAlreadyExistsException();
         }
-        shoppingListEntryRepository.save(shoppingListEntry);
+        return shoppingListEntryRepository.save(shoppingListEntry);
     }
 
     public void updateShoppingListEntry(ShoppingListEntry updatedEntry) throws InvalidItemCountException, ShoppingListEntryNotFoundException {
@@ -135,14 +137,16 @@ public class ShoppingListEntryService {
         shoppingListEntries.stream().filter(ShoppingListEntry::getChecked)
                 .forEach(entry -> {
                     try {
-                        moveEntryToInventory(entry.getId());
+                        moveEntryToInventory(entry.getId(), householdId);
                     } catch (ShoppingListEntryNotFoundException e) {
                         logger.error("Shopping list entry not found while moving checked items to inventory");
+                    } catch (HouseholdNotFoundException e) {
+                        logger.error("Household not found while moving checked items to inventory");
                     }
                 });
     }
 
-    public void moveEntryToInventory(long shoppingListEntryId) throws ShoppingListEntryNotFoundException {
+    public void moveEntryToInventory(long shoppingListEntryId, long householdId) throws ShoppingListEntryNotFoundException, HouseholdNotFoundException {
         logger.info("Moving shopping list entry with id " + shoppingListEntryId + " to inventory");
         ShoppingListEntry shoppingListEntry = shoppingListEntryRepository.findById(shoppingListEntryId).orElse(null);
         if (shoppingListEntry == null) {
@@ -150,14 +154,19 @@ public class ShoppingListEntryService {
             throw new ShoppingListEntryNotFoundException();
         }
 
-        Item item = new Item();
-        item.setType(shoppingListEntry.getType());
-        item.setHousehold(shoppingListEntry.getHousehold());
-        item.setAddedBy(shoppingListEntry.getAddedBy());
-
         for (int i = 0; i < shoppingListEntry.getCount(); i++) {
+            Item item = new Item();
+            item.setType(shoppingListEntry.getType());
+            item.setHousehold(shoppingListEntry.getHousehold());
+            item.setAddedBy(shoppingListEntry.getAddedBy());
             itemService.addItem(item);
-            item.setId(null);
         }
+        deleteShoppingListEntryById(householdId, shoppingListEntry.getId());
+    }
+
+    public HashSet<ItemType> getUniqueItemTypes(List<ShoppingListEntry> items) {
+        return items.stream()
+                .map(ShoppingListEntry::getType)
+                .collect(Collectors.toCollection(HashSet::new));
     }
 }
