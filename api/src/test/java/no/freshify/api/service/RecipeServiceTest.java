@@ -43,9 +43,6 @@ public class RecipeServiceTest {
     @InjectMocks
     private RecipeService recipeService;
 
-    @Mock
-    private RecipeIngredientService recipeIngredientService;
-
     private Recipe recipe;
     private Set<Recipe> recipes;
     private RecipeIngredient recipeIngredient;
@@ -110,7 +107,6 @@ public class RecipeServiceTest {
     @Test
     public void testAddRecipe() {
         when(recipeRepository.save(any(Recipe.class))).thenReturn(recipe);
-        doNothing().when(recipeIngredientService).addRecipeIngredients(anySet());
 
         Recipe result = recipeService.addRecipe(recipe);
 

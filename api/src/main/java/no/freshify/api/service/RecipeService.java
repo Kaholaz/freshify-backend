@@ -18,7 +18,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class RecipeService {
     private final RecipeRepository recipeRepository;
-    private final RecipeIngredientService recipeIngredientService;
 
     public Page<Recipe> getRecipesByCategoryPageable(Long categoryId, Pageable pageable) {
         return recipeRepository.findByCategoriesId(categoryId, pageable);
@@ -30,7 +29,6 @@ public class RecipeService {
 
     public Recipe addRecipe(Recipe recipe) {
         try {
-            recipeIngredientService.addRecipeIngredients(recipe.getRecipeIngredients());
             return recipeRepository.save(recipe);
         } catch (Exception e) {
             System.out.println(e.getMessage());
