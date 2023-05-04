@@ -11,7 +11,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class WasteSortedListsResponse {
-    private List<WastedItemDTO> wastedItemsByCount;
-    private List<WastedItemDTO> wastedItemsByAverageAmount;
+public class InventoryWasteResponse {
+    List<WastedItemDTO> wastedItems;
+    Integer total;
+    Double average;
 }
