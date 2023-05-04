@@ -13,7 +13,7 @@ info:
   license:
     name: MIT License
     url: "https://opensource.org/licenses/MIT"
-  version: 2.1.2
+  version: 2.2.1
 servers:
   - url: http://localhost:8080
 tags:
@@ -846,7 +846,7 @@ paths:
       tags:
         - recipes
       summary: Gets a page of recipes that can also be filtered
-      description: Retrieves a paginated list of recipes that can optionally be filtered by recipe category and/or allergens. For each ingredient in the recipe, it checks whether the household has the specified ingredient item type in the fridge.
+      description: Retrieves a paginated list of recipes that can optionally be filtered. For each ingredient in the recipe it also checks whether the household has the specified ingredient item type in the fridge.
       operationId: getRecipesPaginated
       parameters:
         - name: householdId
@@ -863,31 +863,39 @@ paths:
           schema:
             type: boolean
             default: false
-        - name: name
+        - name: searchString
           in: query
-          description: Search string to find recipe by name
+          description: Search string, searches for match in both recipe name and description.
           required: false
           schema:
             type: string
-        - name: categoryId
+        - name: categoryIds
           in: query
-          description: ID of the recipe category to filter by
-          required: false
-          schema:
-            type: integer
-            format: int64
-        - name: allergenIds
-          in: query
-          description: Array of IDs of the allergens to filter by
+          description: Array of IDs of recipe categories to filter by.
           required: false
           schema:
             type: array
             items:
               type: integer
               format: int64
+        - name: allergenIds
+          in: query
+          description: Array of IDs of the allergens to filter by, given ids are excluded.
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: getHouseholdRecipes
+          in: query
+          description: Whether to include household recipes in the search results, when true only returns recipes are saved in the household, when false returns only recipes that are not saved in the household, when null returns all recipes.
+          required: false
+          schema:
+            type: boolean
         - name: pageNo
           in: query
-          description: Page number to retrieve
+          description: Page number to retrieve, starts from 0
           required: false
           schema:
             type: integer
@@ -903,7 +911,7 @@ paths:
             default: 10
       responses:
         "200":
-          description: A page of recipes were sucessfully retrieved
+          description: Page of recipes were successfully retrieved
           content:
             application/json:
               schema:
