@@ -37,7 +37,6 @@ public class InventoryController {
     private final HouseholdService householdService;
     private final UserService userService;
     private final ItemTypeService itemTypeService;
-    private final AuthenticationService authenticationService;
     private final ItemService itemService;
     private final ItemMapper itemMapper = new ItemMapperImpl();
 
