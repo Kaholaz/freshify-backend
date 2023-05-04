@@ -371,13 +371,13 @@ paths:
           description: User not found/Household not found/User does not belong to household
         "401":
           description: Access denied
-  /household/{id}/inventory/waste:
+  /household/{id}/inventory/waste-per-month:
     get:
       tags:
         - household
         - inventory
-      summary: Returns a list of household waste
-      description: Returns lists of household waste sorted by number of items wasted and percentage of items wasted. The lists are sorted in descending order.
+      summary: Gets a list of average amount wasted per month
+      description: Gets a list of average amount wasted per month
       parameters:
         - name: id
           in: path
@@ -388,29 +388,51 @@ paths:
             format: int64
         - name: limit
           in: query
-          description: The number of items to return (maximum 50)
+          description: The number of months backward to process. The returned list starts at the current month for index 0, the previous month for index 1 etc...
+          required: true
           schema:
-            type: integer
-            maximum: 50
-        - name: start_date
-          in: query
-          description: Start date for the time interval (YYYY-MM-DD)
-          required: false
-          schema:
-            type: string
-        - name: end_date
-          in: query
-          description: End date for the time interval (YYYY-MM-DD)
-          required: false
-          schema:
-            type: string  
+            type: number
       responses:
         "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WasteSortedListsResponse"
+                type: array
+                example:
+                  [0.2, 0.4, 0.6]
+                items:
+                  type: number
+        "404":
+          description: Household not found
+  /household/{id}/inventory/waste:
+    get:
+      tags:
+        - household
+        - inventory
+      summary: Returns a list of household waste
+      description: Returns lists of household waste
+      parameters:
+        - name: id
+          in: path
+          description: ID of household to get waste from
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: limit
+          in: query
+          description: The number of months back to get wasted items from
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryWasteResponse"
         "404":
           description: Household not found
   /household/{id}:
@@ -1288,25 +1310,32 @@ components:
           example: 123
         type:
           $ref: "#/components/schemas/HouseholdUserType"
-    WasteSortedListsResponse:
-      type: object
-      properties:
-        wastedItemsByCount:
-          type: array
-          items:
-            $ref: "#/components/schemas/WastedItemDTO"
-        wastedItemsByAverageAmount:
-          type: array
-          items:
-            $ref: "#/components/schemas/WastedItemDTO"
     WastedItemDTO:
       type: object
       properties:
-        itemType:
-          $ref: "#/components/schemas/ItemType"
-        amountWasted:
+        name:
+          type: string
+          example: "Milk"
+        countWasted:
           type: number
           example: 3
+        amountWasted:
+          type: number
+          example: 0.2
+    InventoryWasteResponse:
+      type: object
+      properties:
+        wastedItems:
+          type: array
+          items:
+            type: object
+            $ref: "#/components/schemas/WastedItemDTO"
+        total:
+          type: number
+          example: 23
+        average:
+          type: number
+          example: 0.32
     HouseholdMemberKey:
       type: object
       properties:
