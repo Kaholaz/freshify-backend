@@ -3,10 +3,13 @@ package no.freshify.api.service;
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.RecipeNotFoundException;
 import no.freshify.api.model.Household;
+import no.freshify.api.model.RecipeFilter;
 import no.freshify.api.model.recipe.Allergen;
 import no.freshify.api.model.recipe.Recipe;
+import no.freshify.api.repository.CustomizedRecipeRepository;
 import no.freshify.api.repository.RecipeRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,10 @@ public class RecipeService {
         return recipeRepository.findByCategoriesId(categoryId, pageable);
     }
 
+    public Page<Recipe> getRecipesByFilter(RecipeFilter filter, PageRequest pageRequest) {
+        return recipeRepository.findAll(filter, pageRequest);
+    }
+
     public Page<Recipe> getRecipesPageable(Pageable pageable) {
         return recipeRepository.findAll(pageable);
     }
@@ -35,14 +42,6 @@ public class RecipeService {
         }
     }
 
-    public Page<Recipe> getRecipesNotContainingAllergensPageable(List<Allergen> allergens, Pageable pageable) {
-        return recipeRepository.findAllNotContainingAllergens(allergens, pageable);
-    }
-
-    public Page<Recipe> getRecipesByCategoryAndNotContainingAllergensPageable(Long categoryId, List<Allergen> allergens, Pageable pageable) {
-        Set<Allergen> allergensSet = new HashSet<>(allergens);
-        return recipeRepository.findByCategoriesIdAndAllergensNotInOrNoAllergens(categoryId, allergensSet, pageable);
-    }
 
     public Recipe getRecipeById(Long id) throws RecipeNotFoundException {
         Recipe recipe = recipeRepository.findById(id).orElse(null);
@@ -50,27 +49,5 @@ public class RecipeService {
             throw new RecipeNotFoundException();
         }
         return recipe;
-    }
-
-    public Page<Recipe> getRecipesByNameAndCategoryAndNotContainingAllergensPageable(Long categoryId, List<Allergen> allergens, String recipeName,  Pageable pageable) {
-        Set<Allergen> allergensSet = new HashSet<>(allergens);
-        return recipeRepository.findByCategoriesIdAndAllergensNotInOrNoAllergensAndNameLike(categoryId, allergensSet, recipeName, pageable);
-    }
-
-    public Page<Recipe> getRecipesByNamePageable(String recipeName, Pageable pageable) {
-        return recipeRepository.findByNameIgnoreCaseContaining(recipeName, pageable);
-    }
-
-    public Page<Recipe> getRecipesByNameAndCategoryPageable(Long categoryId, String recipeName, Pageable pageable) {
-        return recipeRepository.findByCategoryIdAndNameContainingIgnoreCase(categoryId, recipeName, pageable);
-    }
-
-    public Page<Recipe> getRecipesByNameAndAllergensPageable(String recipeName, List<Allergen> allergens, Pageable pageable) {
-        Set<Allergen> allergensSet = new HashSet<>(allergens);
-        return recipeRepository.findByNameContainingIgnoreCaseAndAllergensNotInOrNoAllergens(recipeName, allergensSet, pageable);
-    }
-
-    public Page<Recipe> getRecipesSortedByIngredientsInFridge(Household household, Pageable pageable) {
-        return recipeRepository.findByCountInItemsDesc(household.getId(), pageable);
     }
 }
