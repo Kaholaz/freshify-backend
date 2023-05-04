@@ -1,7 +1,16 @@
-# Setup database
+# Freshify backend
+This is the backend for freshify.no. The backend can be accessed on api.freshify.no. It can also be run locally.
+
+## Dependencies
+- Docker v23.0.2
+- Apache Maven v3.6.3
+- OpenJDK Runtime Environment v17.0.6
+
+## How to run
+### Linux
 ```
-sudo mysql
-CREATE DATABASE freshify_dev;
-CREATE USER 'freshify_dev'@'localhost' IDENTIFIED BY 'freshify_dev';
-GRANT CREATE, ALTER, DROP, INSERT, UPDATE, DELETE, SELECT, REFERENCES on freshify_dev.* TO 'freshify_dev'@'localhost' WITH GRANT OPTION;
+cd api
+docker pull mysql
+./start_application.sh
 ```
+
