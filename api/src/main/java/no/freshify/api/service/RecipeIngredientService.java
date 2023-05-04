@@ -16,7 +16,7 @@ public class RecipeIngredientService {
 
     public void addRecipeIngredients(Set<RecipeIngredient> recipeIngredients) {
         try {
-
+            recipeIngredientRepository.saveAll(recipeIngredients);
         } catch (Exception e) {
             throw new RuntimeException("Could not add recipe ingredients");
         }

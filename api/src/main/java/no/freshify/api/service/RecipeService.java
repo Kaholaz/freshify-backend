@@ -6,6 +6,8 @@ import no.freshify.api.model.Household;
 import no.freshify.api.model.recipe.Allergen;
 import no.freshify.api.model.recipe.Recipe;
 import no.freshify.api.repository.RecipeRepository;
+import org.hibernate.service.spi.InjectService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ public class RecipeService {
             recipeIngredientService.addRecipeIngredients(recipe.getRecipeIngredients());
             return recipeRepository.save(recipe);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new RuntimeException("Could not add recipe");
         }
     }
