@@ -67,7 +67,7 @@ public class RecipeController {
     @PreAuthorize("hasPermission(#householdId, 'HOUSEHOLD', '')")
     @GetMapping("/{householdId}")
     public Page<RecipeDTO> getRecipesPaginated(@PathVariable("householdId") Long householdId,
-                                               @RequestParam(required = false) boolean sortByIngredientsInFridge,
+                                               @RequestParam(required = false) Boolean sortByIngredientsInFridge,
                                                @RequestParam(required = false) String searchString,
                                                @RequestParam(required = false) List<Long> categoryIds,
                                                @RequestParam(required = false) List<Long> allergenIds,
@@ -87,8 +87,10 @@ public class RecipeController {
                 .categoryIds(categoryIds)
                 .allergenIds(allergenIds)
                 .householdId(householdId)
-                .sortByIngredientsInFridge(sortByIngredientsInFridge)
                 .getHouseholdRecipes(getHouseholdRecipes);
+
+        if (sortByIngredientsInFridge != null) filterBuilder.sortByIngredientsInFridge(sortByIngredientsInFridge);
+        if (getHouseholdRecipes != null) filterBuilder.getHouseholdRecipes(getHouseholdRecipes);
 
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
         Page<Recipe> recipes = recipeService.getRecipesByFilter(filterBuilder.build(), pageRequest);
