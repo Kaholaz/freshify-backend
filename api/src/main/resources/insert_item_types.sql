@@ -935,7 +935,6 @@ INSERT INTO item_type (name) VALUES ('Tindved');
 INSERT INTO item_type (name) VALUES ('Tofu');
 INSERT INTO item_type (name) VALUES ('Tomat');
 INSERT INTO item_type (name) VALUES ('Tomatbønner');
-INSERT INTO item_type (name) VALUES ('Tomater');
 INSERT INTO item_type (name) VALUES ('Tomatjuice');
 INSERT INTO item_type (name) VALUES ('Tomatpuré');
 INSERT INTO item_type (name) VALUES ('Tomatsalsa');
