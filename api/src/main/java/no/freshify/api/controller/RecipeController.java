@@ -94,6 +94,7 @@ public class RecipeController {
         for (RecipeDTO recipeDTO : recipeDTOPage.getContent()) {
             checkIngredientsInHousehold(household, recipeDTO);
             HouseholdRecipe householdRecipe = householdRecipeService.getRecipe(householdId, recipeDTO.getId());
+            recipeDTO.setImage(recipeService.getFullImageUrl(recipeDTO.getImage()));
             if (householdRecipe != null) recipeDTO.setIsInHousehold(true);
         }
 
@@ -112,6 +113,7 @@ public class RecipeController {
         Household household = householdService.findHouseholdByHouseholdId(householdId);
 
         RecipeDTO recipeDTO = recipeMapper.toRecipeDTO(recipe);
+        recipeDTO.setImage(recipeService.getFullImageUrl(recipeDTO.getImage()));
 
         checkIngredientsInHousehold(household, recipeDTO);
 

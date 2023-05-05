@@ -10,6 +10,7 @@ import no.freshify.api.repository.CustomizedRecipeRepository;
 import no.freshify.api.repository.RecipeRepository;
 import org.hibernate.service.spi.InjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,9 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class RecipeService {
+    @Value("${api.base.image.url}")
+    private String BASE_IMAGE_URL;
+
     private final RecipeRepository recipeRepository;
 
     public Page<Recipe> getRecipesByCategoryPageable(Long categoryId, Pageable pageable) {
@@ -50,5 +54,9 @@ public class RecipeService {
             throw new RecipeNotFoundException();
         }
         return recipe;
+    }
+
+    public String getFullImageUrl(String imageUrl) {
+        return BASE_IMAGE_URL + imageUrl;
     }
 }
