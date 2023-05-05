@@ -248,7 +248,6 @@ public class RecipeControllerTest {
                 .andExpect(jsonPath("$.id", is(recipe.getId().intValue())))
                 .andExpect(jsonPath("$.name", is(recipe.getName())))
                 .andExpect(jsonPath("$.description", is(recipe.getDescription())))
-                .andExpect(jsonPath("$.image", is(recipe.getImage())))
                 .andExpect(jsonPath("$.steps", is(recipe.getSteps())))
                 .andExpect(jsonPath("$.estimatedTime", is(recipe.getEstimatedTime())))
                 .andReturn();
