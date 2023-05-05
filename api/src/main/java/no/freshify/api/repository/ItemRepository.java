@@ -21,4 +21,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     List<Item> findByTypeAndHousehold(ItemType type , Household household);
     long countByTypeAndHouseholdId(ItemType type , Long householdId);
+
+    List<Item> findItemsByHouseholdAndStatusAndLastChangedBetween(Household household, ItemStatus used, Date startDate, Date endDate);
 }

@@ -53,9 +53,9 @@ public class ItemService {
         return item;
     }
 
-    public List<Item> findWastedItemsInTimeInterval(Household household, Date startDate, Date endDate) {
-        return itemRepository.findItemsByHouseholdAndStatusAndLastChangedBetweenAndRemainingGreaterThan
-                (household, ItemStatus.USED, startDate, endDate, 0D);
+    public List<Item> findAllUsedItemsInTimeInterval(Household household, Date startDate, Date endDate) {
+        return itemRepository.findItemsByHouseholdAndStatusAndLastChangedBetween
+                (household, ItemStatus.USED, startDate, endDate);
     }
 
     public List<Item> findAllWastedItems(Household household) {

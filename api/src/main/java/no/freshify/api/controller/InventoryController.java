@@ -173,7 +173,7 @@ public class InventoryController {
 
         LocalDate startDate = LocalDate.now().minusMonths(numMonths);
 
-        List<Item> wastedItems = itemService.findWastedItemsInTimeInterval
+        List<Item> wastedItems = itemService.findAllUsedItemsInTimeInterval
                 (household, java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(LocalDate.now().plusDays(1)));
 
         Double average = itemService.getAverageWaste(wastedItems);
