@@ -1,12 +1,18 @@
 package no.freshify.api.configuration;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.lang.NonNull;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * This class is used to expose the uploads directory to the web server.
@@ -34,5 +40,14 @@ public class MvcConfig implements WebMvcConfigurer {
         if (dirName.startsWith("../")) dirName = dirName.replace("../", "");
 
         registry.addResourceHandler("/" + dirName + "/**").addResourceLocations("file:" + uploadPath + "/");
+    }
+
+    /**
+     * Configures the message converters. All messages are converted to UTF-8.
+     * @param converters initially an empty list of converters
+     */
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter(StandardCharsets.UTF_8);
+        converters.add(stringHttpMessageConverter);
     }
 }

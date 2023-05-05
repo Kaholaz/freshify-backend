@@ -27,7 +27,7 @@ INSERT INTO recipe_category(id, name) VALUES (13, 'Breakfast');
 INSERT INTO recipe_category(id, name) VALUES (14, 'Sandwich');
 INSERT INTO recipe_category(id, name) VALUES (15, 'Seafood');
 
-INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (1, 60, 'Pesto Pasta', 'En enkel og smakfull pastarett med hjemmelaget pesto', '1. Kok pastaen i en stor gryte med saltet vann.\n 2. Mens pastaen koker, lag pesto ved å blande basilikum, pinjekjerner, hvitløk, parmesan, olivenolje og salt i en blender eller food processor.\n 3. Sil av pastaen og bland den med pestoen.\n 4.Server varm eller kald.\n', 'pasta-pesto.png');
+INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (1, 60, 'Pesto Pasta', 'En enkel og smakfull pastarett med hjemmelaget pesto', '1. Kok pastaen i en stor gryte med saltet vann.\n 2. Mens pastaen koker, lag pesto ved Ã¥ blande basilikum, pinjekjerner, hvitlÃ¸k, parmesan, olivenolje og salt i en blender eller food processor.\n 3. Sil av pastaen og bland den med pestoen.\n 4.Server varm eller kald.\n', 'pasta-pesto.png');
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (500, 'g', 632, 1);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (2, 'bunter', 52, 1);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (50, 'g', 657, 1);
@@ -40,7 +40,7 @@ INSERT INTO recipe_category_association (recipe_id, category_id) VALUES (1, 8);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (1, 1);
 
 
-INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (2, 30, 'Tomatsuppe', 'En varm og deilig suppe med masse smak av tomat', '1. Varm opp olivenolje i en stor gryte.\n 2. Tilsett løk og hvitløk og stek til de er myke.\n 3. Tilsett tomater, vann, buljongterning og krydder og la det småkoke i 20 minutter.\n 4. Bruk en stavmikser eller blender for å lage en jevn suppe.\n 5. Server varm med brød eller kjeks.\n', 'tomato-soup.png');
+INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (2, 30, 'Tomatsuppe', 'En varm og deilig suppe med masse smak av tomat', '1. Varm opp olivenolje i en stor gryte.\n 2. Tilsett lÃ¸k og hvitlÃ¸k og stek til de er myke.\n 3. Tilsett tomater, vann, buljongterning og krydder og la det smÃ¥koke i 20 minutter.\n 4. Bruk en stavmikser eller blender for Ã¥ lage en jevn suppe.\n 5. Server varm med brÃ¸d eller kjeks.\n', 'tomato-soup.png');
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'l', 966, 2);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'kg', 935, 2);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'stk', 502, 2);
@@ -52,7 +52,7 @@ INSERT INTO recipe_category_association (recipe_id, category_id) VALUES (2, 7);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (2, 8);
 
 
-INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (3, 60, 'Grønnsakscurry', 'En smaksrik vegetarisk curry med masse grønnsaker', '1. Varm opp olivenolje i en stor gryte.\n 2. Tilsett løk og hvitløk og stek til de er myke.\n 3. Tilsett currypulver og la det steke i 1 minutt.\n 4. Tilsett grønnsaker, kokosmelk, vann og buljongterning og la det småkoke i 30 minutter.\n 5. Server med ris eller naanbrød.\n', 'vegetable-curry.png');
+INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (3, 60, 'GrÃ¸nnsakscurry', 'En smaksrik vegetarisk curry med masse grÃ¸nnsaker', '1. Varm opp olivenolje i en stor gryte.\n 2. Tilsett lÃ¸k og hvitlÃ¸k og stek til de er myke.\n 3. Tilsett currypulver og la det steke i 1 minutt.\n 4. Tilsett grÃ¸nnsaker, kokosmelk, vann og buljongterning og la det smÃ¥koke i 30 minutter.\n 5. Server med ris eller naanbrÃ¸d.\n', 'vegetable-curry.png');
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'stk', 502, 3);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (2, 'fedd', 340, 3);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (2, 'ts', 4, 3);
@@ -66,7 +66,7 @@ INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (3, 2);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (3, 7);
 
 
-INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (4, 45, 'Kyllingsalat med avocado', 'En frisk og sunn salat med kylling og avocado', '1. Stek kyllingbryst i en stekepanne.\n 2. Kutt opp grønnsaker og avokado i små biter.\n 3. Bland sammen grønnsaker, avokado og kylling i en stor bolle.\n 4. Lag en dressing av olivenolje, sitronsaft, salt og pepper, og hell over salaten.\n 5. Server umiddelbart.\n', 'chicken-salad.png');
+INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (4, 45, 'Kyllingsalat med avocado', 'En frisk og sunn salat med kylling og avocado', '1. Stek kyllingbryst i en stekepanne.\n 2. Kutt opp grÃ¸nnsaker og avokado i smÃ¥ biter.\n 3. Bland sammen grÃ¸nnsaker, avokado og kylling i en stor bolle.\n 4. Lag en dressing av olivenolje, sitronsaft, salt og pepper, og hell over salaten.\n 5. Server umiddelbart.\n', 'chicken-salad.png');
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (2, 'stk', 469, 4);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'stk', 33, 4);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'stk', 502, 4);
@@ -81,7 +81,7 @@ INSERT INTO recipe_category_association (recipe_id, category_id) VALUES (4, 3);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (4, 5);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (4, 6);
 
-INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (5, 30, 'Vegansk sjokoladekake', 'En deilig, saftig kake uten animalske produkter', '1. Forvarm ovnen til 180°C.\n 2. Bland sammen mel, sukker, kakao, natron og salt i en bolle.\n 3. Tilsett vegetabilsk olje, eddik, vaniljeekstrakt og vann til blandingen og rør godt sammen.\n 4. Hell røren i en smurt kakeform.\n 5. Stek i ovnen i 25-30 minutter, eller til kaken er gjennomstekt.\n 6. Avkjøl før servering.\n', 'vegan-chocolate-cake.png');
+INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (5, 30, 'Vegansk sjokoladekake', 'En deilig, saftig kake uten animalske produkter', '1. Forvarm ovnen til 180Â°C.\n 2. Bland sammen mel, sukker, kakao, natron og salt i en bolle.\n 3. Tilsett vegetabilsk olje, eddik, vaniljeekstrakt og vann til blandingen og rÃ¸r godt sammen.\n 4. Hell rÃ¸ren i en smurt kakeform.\n 5. Stek i ovnen i 25-30 minutter, eller til kaken er gjennomstekt.\n 6. AvkjÃ¸l fÃ¸r servering.\n', 'vegan-chocolate-cake.png');
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (2, 'dl', 337, 5);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (3, 'dl', 692, 5);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'dl', 371, 5);
@@ -96,7 +96,7 @@ INSERT INTO recipe_category_association (recipe_id, category_id) VALUES (5, 15);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (5, 2);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (5, 9);
 
-INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (6, 60, 'Vegetarisk lasagne', 'En smakfull lasagne uten kjøtt', '1. Forvarm ovnen til 200°C.\n 2. Stek løk og hvitløk i en stor stekepanne til løken er myk.\n 3. Tilsett sopp og stek i noen minutter til soppen har blitt myk.\n 4. Tilsett hakkede tomater, tomatpuré, basilikum, salt og pepper. La sausen småkoke i 15 minutter.\n 5. Legg lasagneplater i bunnen av en ildfast form.\n 6. Legg lagvis med saus, spinat og ost.\n 7. Fortsett å legge lasagneplater og lagvis med saus, spinat og ost til formen er full.\n 8. Stek i ovnen i 30-35 minutter, eller til lasagnen er gjennomstekt og osten er smeltet.\n', 'vegan-lasange.png');
+INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (6, 60, 'Vegetarisk lasagne', 'En smakfull lasagne uten kjÃ¸tt', '1. Forvarm ovnen til 200Â°C.\n 2. Stek lÃ¸k og hvitlÃ¸k i en stor stekepanne til lÃ¸ken er myk.\n 3. Tilsett sopp og stek i noen minutter til soppen har blitt myk.\n 4. Tilsett hakkede tomater, tomatpurÃ©, basilikum, salt og pepper. La sausen smÃ¥koke i 15 minutter.\n 5. Legg lasagneplater i bunnen av en ildfast form.\n 6. Legg lagvis med saus, spinat og ost.\n 7. Fortsett Ã¥ legge lasagneplater og lagvis med saus, spinat og ost til formen er full.\n 8. Stek i ovnen i 30-35 minutter, eller til lasagnen er gjennomstekt og osten er smeltet.\n', 'vegan-lasange.png');
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'stk', 502, 6);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (2, 'fedd', 304, 6);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (200, 'g', 885, 6);
@@ -113,7 +113,7 @@ INSERT INTO recipe_category_association (recipe_id, category_id) VALUES (6, 11);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (6, 1);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (6, 8);
 
-INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (7, 45, 'Nøttefri brownies', 'En deilig sjokoladekake uten nøtter', '1. Forvarm ovnen til 180°C.\n 2. Smelt smør og sjokolade i en kjele på lav varme. Rør jevnlig.\n 3. Pisk egg og sukker sammen i en stor bolle.\n 4. Rør inn sjokoladeblandingen i eggeblandingen.\n 5. Sikt inn mel, kakao og salt og rør til alt er godt blandet.\n 6. Hell røren i en ildfast form og stek i ovnen i 25-30 minutter.\n 7. Avkjøl kaken før du skjærer den i biter.', 'brownies.png');
+INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (7, 45, 'NÃ¸ttefri brownies', 'En deilig sjokoladekake uten nÃ¸tter', '1. Forvarm ovnen til 180Â°C.\n 2. Smelt smÃ¸r og sjokolade i en kjele pÃ¥ lav varme. RÃ¸r jevnlig.\n 3. Pisk egg og sukker sammen i en stor bolle.\n 4. RÃ¸r inn sjokoladeblandingen i eggeblandingen.\n 5. Sikt inn mel, kakao og salt og rÃ¸r til alt er godt blandet.\n 6. Hell rÃ¸ren i en ildfast form og stek i ovnen i 25-30 minutter.\n 7. AvkjÃ¸l kaken fÃ¸r du skjÃ¦rer den i biter.', 'brownies.png');
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (150, 'g', 845, 7);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (200, 'g', 818, 7);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (3, 'stk', 171, 7);
@@ -125,7 +125,7 @@ INSERT INTO recipe_category_association (recipe_id, category_id) VALUES (7, 5);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (7, 4);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (7, 9);
 
-INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (8, 30, 'Gulrotsuppe', 'En varmende suppe på kalde dager', '1. Skrell gulrøttene og kutt dem i små biter.\n 2. Finhakk løken.\n 3. Varm opp olivenolje i en stor kjele og tilsett gulrøtter og løk. Stek i noen minutter til grønnsakene er myke.\n 4. Tilsett vann og buljongterning og la det koke i 20 minutter.\n 5. Bruk en stavmikser for å lage en jevn suppe.\n 6. Tilsett fløte og smak til med salt og pepper.\n 7. Server suppen varm med en skje rømme og hakket gressløk på toppen.', 'carrot-soup.png');
+INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (8, 30, 'Gulrotsuppe', 'En varmende suppe pÃ¥ kalde dager', '1. Skrell gulrÃ¸ttene og kutt dem i smÃ¥ biter.\n 2. Finhakk lÃ¸ken.\n 3. Varm opp olivenolje i en stor kjele og tilsett gulrÃ¸tter og lÃ¸k. Stek i noen minutter til grÃ¸nnsakene er myke.\n 4. Tilsett vann og buljongterning og la det koke i 20 minutter.\n 5. Bruk en stavmikser for Ã¥ lage en jevn suppe.\n 6. Tilsett flÃ¸te og smak til med salt og pepper.\n 7. Server suppen varm med en skje rÃ¸mme og hakket gresslÃ¸k pÃ¥ toppen.', 'carrot-soup.png');
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (3, 'stk', 287, 8);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'stk', 502, 8);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (2, 'ss', 602, 8);
@@ -141,7 +141,7 @@ INSERT INTO recipe_category_association (recipe_id, category_id) VALUES (8, 13);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (8, 2);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (8, 4);
 
-INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (9, 60, 'Thai Red Curry', 'En spicy og smaksrik thailandsk rett', '1. Kutt kylling i små biter, og stek i en stor panne til gjennomstekt.\n 2. Kutt løk, paprika og gulrot i små biter og tilsett i pannen sammen med kyllingen. Stek i noen minutter til grønnsakene er myke.\n 3. Tilsett red curry paste og kokosmelk i pannen, og la det koke i 10 minutter.\n 4. Smak til med salt, pepper og evt. litt sukker.\n 5. Server curryen med ris og hakket koriander på toppen.', 'thai-red-curry.png');
+INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (9, 60, 'Thai Red Curry', 'En spicy og smaksrik thailandsk rett', '1. Kutt kylling i smÃ¥ biter, og stek i en stor panne til gjennomstekt.\n 2. Kutt lÃ¸k, paprika og gulrot i smÃ¥ biter og tilsett i pannen sammen med kyllingen. Stek i noen minutter til grÃ¸nnsakene er myke.\n 3. Tilsett red curry paste og kokosmelk i pannen, og la det koke i 10 minutter.\n 4. Smak til med salt, pepper og evt. litt sukker.\n 5. Server curryen med ris og hakket koriander pÃ¥ toppen.', 'thai-red-curry.png');
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (500, 'g', 469, 9);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'stk', 502, 9);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'stk', 624, 9);
@@ -158,7 +158,7 @@ INSERT INTO recipe_category_association (recipe_id, category_id) VALUES (9, 11);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (9, 3);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (9, 7);
 
-INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (10, 45, 'Chili Con Carne', 'En klassisk meksikansk rett', '1. Finhakk løk og hvitløk, og stek i en stor panne sammen med karbonadedeig.\n 2. Tilsett paprika og chili, og stek videre i noen minutter.\n 3. Tilsett hermetiske tomater, røde bønner, og krydder i pannen. La det småkoke i 30-40 minutter.\n 4. Server chili con carne med ris og en skje rømme på toppen.', 'chilli-con-carne.png');
+INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (10, 45, 'Chili Con Carne', 'En klassisk meksikansk rett', '1. Finhakk lÃ¸k og hvitlÃ¸k, og stek i en stor panne sammen med karbonadedeig.\n 2. Tilsett paprika og chili, og stek videre i noen minutter.\n 3. Tilsett hermetiske tomater, rÃ¸de bÃ¸nner, og krydder i pannen. La det smÃ¥koke i 30-40 minutter.\n 4. Server chili con carne med ris og en skje rÃ¸mme pÃ¥ toppen.', 'chilli-con-carne.png');
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (500, 'g', 395, 10);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'stk', 502, 10);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (2, 'fedd', 340, 10);
@@ -178,7 +178,7 @@ INSERT INTO recipe_category_association (recipe_id, category_id) VALUES (10, 14)
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (10, 2);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (10, 4);
 
-INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (11, 30, 'Tomato og Basil Bruschetta', 'En enkel og smakfull italiensk forrett', '1. Skjær tomater i små biter og ha dem i en bolle. Tilsett hakket basilikum, finhakket hvitløk, olivenolje og salt. Bland godt.\n 2. Rist brødskivene i en brødrister eller stekepanne. Gni hvitløksfedd over brødskivene mens de fortsatt er varme.\n 3. Legg en skje med tomatsalsa på hver brødskive. Server umiddelbart.', 'tomato-bruschetta.png');
+INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (11, 30, 'Tomato og Basil Bruschetta', 'En enkel og smakfull italiensk forrett', '1. SkjÃ¦r tomater i smÃ¥ biter og ha dem i en bolle. Tilsett hakket basilikum, finhakket hvitlÃ¸k, olivenolje og salt. Bland godt.\n 2. Rist brÃ¸dskivene i en brÃ¸drister eller stekepanne. Gni hvitlÃ¸ksfedd over brÃ¸dskivene mens de fortsatt er varme.\n 3. Legg en skje med tomatsalsa pÃ¥ hver brÃ¸dskive. Server umiddelbart.', 'tomato-bruschetta.png');
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (4, 'stk', 934, 11);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'bunt', 52, 11);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (2, 'fedd', 340, 11);
@@ -187,10 +187,9 @@ INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1,
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (4, 'skiver', 99, 11);
 INSERT INTO recipe_category_association (recipe_id, category_id) VALUES (11, 1);
 INSERT INTO recipe_category_association (recipe_id, category_id) VALUES (11, 6);
-INSERT INTO recipe_category_association (recipe_id, category_id) VALUES (11, 1);
 INSERT INTO recipe_category_association (recipe_id, category_id) VALUES (11, 8);
 
-INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (12, 60, 'Thai Green Curry', 'En smakfull og kremet thailandsk kyllingrett', '1. Kutt kyllingfilet i strimler og ha dem i en stor gryte sammen med grønnsaker og grønn currypasta. Stek i noen minutter.\n 2. Tilsett kokosmelk, fiskesaus og sukker. La det småkoke i 40-50 minutter.\n 3. Server curryen sammen med ris og hakket koriander.', 'thai-green-curry.png');
+INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (12, 60, 'Thai Green Curry', 'En smakfull og kremet thailandsk kyllingrett', '1. Kutt kyllingfilet i strimler og ha dem i en stor gryte sammen med grÃ¸nnsaker og grÃ¸nn currypasta. Stek i noen minutter.\n 2. Tilsett kokosmelk, fiskesaus og sukker. La det smÃ¥koke i 40-50 minutter.\n 3. Server curryen sammen med ris og hakket koriander.', 'thai-green-curry.png');
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (500, 'g', 469, 12);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'stk', 502, 12);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (2, 'stk', 624, 12);
