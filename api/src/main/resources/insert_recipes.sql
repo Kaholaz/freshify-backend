@@ -178,7 +178,7 @@ INSERT INTO recipe_category_association (recipe_id, category_id) VALUES (10, 14)
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (10, 2);
 INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (10, 4);
 
-INSERT INTO Recipe (id, estimatedTime, name, description, steps, image) VALUES (11, 30, 'Tomato og Basil Bruschetta', 'En enkel og smakfull italiensk forrett', '1. Skjær tomater i små biter og ha dem i en bolle. Tilsett hakket basilikum, finhakket hvitløk, olivenolje og salt. Bland godt.\n 2. Rist brødskivene i en brødrister eller stekepanne. Gni hvitløksfedd over brødskivene mens de fortsatt er varme.\n 3. Legg en skje med tomatsalsa på hver brødskive. Server umiddelbart.', '/media/image/tomato-bruschetta.jpg');
+INSERT INTO Recipe (id, estimatedTime, name, description, steps, image) VALUES (11, 30, 'Tomato og Basil Bruschetta', 'En enkel og smakfull italiensk forrett', '1. Skjær tomater i små biter og ha dem i en bolle. Tilsett hakket basilikum, finhakket hvitløk, olivenolje og salt. Bland godt.\n 2. Rist brødskivene i en brødrister eller stekepanne. Gni hvitløksfedd over brødskivene mens de fortsatt er varme.\n 3. Legg en skje med tomatsalsa på hver brødskive. Server umiddelbart.', '/media/image/tomato-bruschetta.png');
 INSERT INTO RecipeIngredient (amount, unit, ingredientType, recipe_id) VALUES (4, 'stk', 934, 11);
 INSERT INTO RecipeIngredient (amount, unit, ingredientType, recipe_id) VALUES (1, 'bunt', 52, 11);
 INSERT INTO RecipeIngredient (amount, unit, ingredientType, recipe_id) VALUES (2, 'fedd', 340, 11);
@@ -190,7 +190,7 @@ INSERT INTO Recipe_category_association (recipe_id, category_id) VALUES (11, 6);
 INSERT INTO Recipe_allergen_association (recipe_id, allergen_id) VALUES (11, 1);
 INSERT INTO Recipe_allergen_association (recipe_id, allergen_id) VALUES (11, 8);
 
-INSERT INTO Recipe (id, estimatedTime, name, description, steps, image) VALUES (12, 60, 'Thai Green Curry', 'En smakfull og kremet thailandsk kyllingrett', '1. Kutt kyllingfilet i strimler og ha dem i en stor gryte sammen med grønnsaker og grønn currypasta. Stek i noen minutter.\n 2. Tilsett kokosmelk, fiskesaus og sukker. La det småkoke i 40-50 minutter.\n 3. Server curryen sammen med ris og hakket koriander.', '/media/image/thai-curry.jpg');
+INSERT INTO Recipe (id, estimatedTime, name, description, steps, image) VALUES (12, 60, 'Thai Green Curry', 'En smakfull og kremet thailandsk kyllingrett', '1. Kutt kyllingfilet i strimler og ha dem i en stor gryte sammen med grønnsaker og grønn currypasta. Stek i noen minutter.\n 2. Tilsett kokosmelk, fiskesaus og sukker. La det småkoke i 40-50 minutter.\n 3. Server curryen sammen med ris og hakket koriander.', '/media/image/thai-green-curry.png');
 INSERT INTO RecipeIngredient (amount, unit, ingredientType, recipe_id) VALUES (500, 'g', 469, 12);
 INSERT INTO RecipeIngredient (amount, unit, ingredientType, recipe_id) VALUES (1, 'stk', 502, 12);
 INSERT INTO RecipeIngredient (amount, unit, ingredientType, recipe_id) VALUES (2, 'stk', 624, 12);
