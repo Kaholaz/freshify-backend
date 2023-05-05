@@ -83,7 +83,6 @@ INSERT INTO recipe_allergen_association (recipe_id, allergen_id) VALUES (4, 6);
 
 INSERT INTO recipe (id, estimated_time, name, description, steps, image) VALUES (5, 30, 'Vegansk sjokoladekake', 'En deilig, saftig kake uten animalske produkter', '1. Forvarm ovnen til 180°C.\n 2. Bland sammen mel, sukker, kakao, natron og salt i en bolle.\n 3. Tilsett vegetabilsk olje, eddik, vaniljeekstrakt og vann til blandingen og rør godt sammen.\n 4. Hell røren i en smurt kakeform.\n 5. Stek i ovnen i 25-30 minutter, eller til kaken er gjennomstekt.\n 6. Avkjøl før servering.\n', 'vegan-chocolate-cake.png');
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (2, 'dl', 337, 5);
-INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (3, 'dl', 692, 5);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'dl', 371, 5);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'ts', 578, 5);
 INSERT INTO recipe_ingredient (amount, unit, item_type_id, recipe_id) VALUES (1, 'klype', 776, 5);
