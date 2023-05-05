@@ -998,4 +998,5 @@ INSERT INTO item_type (name) VALUES ('Vaniljeekstrakt');
 INSERT INTO item_type (name) VALUES ('Lasagneplater');
 INSERT INTO item_type (name) VALUES ('Curry paste');
 INSERT INTO item_type (name) VALUES ('Spisskumm');
+INSERT INTO item_type (name) VALUES ('Fiskesaus');
 COMMIT;
