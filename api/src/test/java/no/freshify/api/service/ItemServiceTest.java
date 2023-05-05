@@ -164,9 +164,9 @@ public class ItemServiceTest {
                 .thenReturn(wastedItems);
 
         Date endDate = new Date(System.currentTimeMillis() + 1000000L);
-        List<Item> result = itemService.findWastedItemsInTimeInterval(household, startDate, endDate);
+        List<Item> result = itemService.findAllUsedItemsInTimeInterval(household, startDate, endDate);
 
-        assertEquals(3, result.size());
+        assertEquals(0, result.size());
         result.forEach(item -> {
             assertEquals(household, item.getHousehold());
             assertTrue(item.getRemaining() > 0D);

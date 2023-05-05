@@ -58,6 +58,9 @@ public class RecipeControllerTest {
     private AllergenService allergenService;
 
     @MockBean
+    private HouseholdRecipeService householdRecipeService;
+
+    @MockBean
     private RecipeCategoryService recipeCategoryService;
 
     @MockBean
