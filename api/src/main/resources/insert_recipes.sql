@@ -2,13 +2,12 @@ USE freshify_dev;
 INSERT INTO allergen(id, name) VALUES (1, 'Gluten');
 INSERT INTO allergen(id, name) VALUES (2, 'Lactose');
 INSERT INTO allergen(id, name) VALUES (3, 'Shellfish');
-INSERT INTO allergen(id, name) VALUES (4, 'Peanuts');
-INSERT INTO allergen(id, name) VALUES (5, 'Tree Nuts');
-INSERT INTO allergen(id, name) VALUES (6, 'Eggs');
-INSERT INTO allergen(id, name) VALUES (7, 'Fish');
-INSERT INTO allergen(id, name) VALUES (8, 'Soy');
-INSERT INTO allergen(id, name) VALUES (9, 'Wheat');
-INSERT INTO allergen(id, name) VALUES (10, 'Sesame');
+INSERT INTO allergen(id, name) VALUES (4, 'Nuts');
+INSERT INTO allergen(id, name) VALUES (5, 'Eggs');
+INSERT INTO allergen(id, name) VALUES (6, 'Fish');
+INSERT INTO allergen(id, name) VALUES (7, 'Soy');
+INSERT INTO allergen(id, name) VALUES (8, 'Wheat');
+INSERT INTO allergen(id, name) VALUES (9, 'Sesame');
 
 
 INSERT INTO recipe_category(id, name) VALUES (1, 'Italian');
