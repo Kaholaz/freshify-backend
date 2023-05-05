@@ -71,23 +71,6 @@ public class HouseholdRecipeController {
     }
 
     /**
-     * Gets all bookmarked recipes in a household
-     * @param householdId The id of the household
-     * @return A list of all bookmarked recipes in the household
-     * @throws HouseholdNotFoundException If the household is not found
-     */
-    @PreAuthorize("hasPermission(#householdId, 'Household', '')")
-    @GetMapping("/recipe")
-    public ResponseEntity<List<HouseholdRecipeDTO>> getHouseholdRecipes(@PathVariable("householdId") Long householdId) throws HouseholdNotFoundException {
-        logger.info("Getting all bookmarked recipes in household");
-
-        List<HouseholdRecipe> recipes = householdRecipeService.getRecipes(householdId);
-        List<HouseholdRecipeDTO> recipeDTOS = householdRecipeMapper.toHouseholdRecipeDTOs(recipes);
-
-        return ResponseEntity.ok(recipeDTOS);
-    }
-
-    /**
      * Removes a household recipe / bookmarked recipe in a household. Can only be done by superuser
      * @param householdId The id of the household
      * @param id The id of the recipe
