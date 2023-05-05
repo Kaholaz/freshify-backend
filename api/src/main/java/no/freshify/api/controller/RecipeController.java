@@ -76,6 +76,9 @@ public class RecipeController {
                                                @RequestParam(defaultValue = "10") int pageSize) throws HouseholdNotFoundException {
         logger.info("Searching for recipes with name: " + searchString + ", category id: " + categoryIds + ", allergen ids: " + allergenIds + ", page number: " + pageNo + ", page size: " + pageSize);
 
+        if (categoryIds != null && categoryIds.isEmpty()) categoryIds = null;
+        if (allergenIds != null && allergenIds.isEmpty()) allergenIds = null;
+
         Household household = householdService.findHouseholdByHouseholdId(householdId);
 
         RecipeFilter.RecipeFilterBuilder filterBuilder = RecipeFilter.builder();
