@@ -46,5 +46,6 @@ deploy:
     - echo "spring.profiles.active=prod" > src/main/resources/application.properties
     - mvn clean package -DskipTests
     - scp -o StrictHostKeyChecking=no -o PasswordAuthentication=no target/*.jar freshify@freshify.no:/var/www/api.freshify.no/application.jar
+    - scp -o StrictHostKeyChecking=no -o PasswordAuthentication=no media/image/* freshify@freshify.no:/var/www/api.freshify.no/media/image
   only:
     - dev
