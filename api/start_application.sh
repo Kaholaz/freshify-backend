@@ -3,4 +3,5 @@ echo "Waiting for database to start..."
 sleep 10
 mvn spring-boot:start && mvn spring-boot:stop
 docker exec -i freshify_dev_database mysql -uroot -pfreshify < ./src/main/resources/insert_item_types.sql
+docker exec -i freshify_dev_database mysql -uroot -pfreshify < ./src/main/resources/insert_recipes.sql
 mvn spring-boot:run
