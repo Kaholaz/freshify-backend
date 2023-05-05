@@ -13,10 +13,7 @@ import no.freshify.api.model.dto.RecipeDTO;
 import no.freshify.api.model.dto.RecipeIngredientDTO;
 import no.freshify.api.model.dto.RecipeRequest;
 import no.freshify.api.model.mapper.RecipeMapper;
-import no.freshify.api.model.recipe.Allergen;
-import no.freshify.api.model.recipe.Recipe;
-import no.freshify.api.model.recipe.RecipeCategory;
-import no.freshify.api.model.recipe.RecipeIngredient;
+import no.freshify.api.model.recipe.*;
 import no.freshify.api.security.UserDetailsImpl;
 import no.freshify.api.service.*;
 import org.mapstruct.factory.Mappers;
@@ -46,6 +43,7 @@ public class RecipeController {
     private final RecipeCategoryService recipeCategoryService;
     private final ItemService itemService;
     private final HouseholdService householdService;
+    private final HouseholdRecipeService householdRecipeService;
 
     private final RecipeMapper recipeMapper = Mappers.getMapper(RecipeMapper.class);
 
@@ -98,6 +96,8 @@ public class RecipeController {
         Page<RecipeDTO> recipeDTOPage = recipeMapper.toRecipeDTOPage(recipes);
         for (RecipeDTO recipeDTO : recipeDTOPage.getContent()) {
             checkIngredientsInHousehold(household, recipeDTO);
+            HouseholdRecipe householdRecipe = householdRecipeService.getRecipe(householdId, recipeDTO.getId());
+            if (householdRecipe != null) recipeDTO.setIsInHousehold(true);
         }
 
         return recipeDTOPage;
@@ -117,6 +117,9 @@ public class RecipeController {
         RecipeDTO recipeDTO = recipeMapper.toRecipeDTO(recipe);
 
         checkIngredientsInHousehold(household, recipeDTO);
+
+        HouseholdRecipe householdRecipe = householdRecipeService.getRecipe(householdId, recipeDTO.getId());
+        if (householdRecipe != null) recipeDTO.setIsInHousehold(true);
 
         return ResponseEntity.ok(recipeDTO);
     }
