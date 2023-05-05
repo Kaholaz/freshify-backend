@@ -83,8 +83,8 @@ public class ItemService {
         return wastedItems.stream().mapToDouble(Item::getRemaining).average().orElse(0D);
     }
 
-    public List<Item> findByTypeAndHousehold(ItemType type, Household household) {
-        return itemRepository.findByTypeAndHousehold(type, household);
+    public List<Item> findByTypeAndHouseholdAndStatus(ItemType type, Household household, ItemStatus status) {
+        return itemRepository.findByTypeAndHouseholdAndStatus(type, household, status);
     }
 
     public HashSet<ItemType> getUniqueItemTypes(List<Item> items) {

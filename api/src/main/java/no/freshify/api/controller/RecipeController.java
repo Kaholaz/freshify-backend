@@ -4,10 +4,7 @@ package no.freshify.api.controller;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.*;
-import no.freshify.api.model.Household;
-import no.freshify.api.model.Item;
-import no.freshify.api.model.ItemType;
-import no.freshify.api.model.RecipeFilter;
+import no.freshify.api.model.*;
 import no.freshify.api.model.dto.AllergenDTO;
 import no.freshify.api.model.dto.RecipeDTO;
 import no.freshify.api.model.dto.RecipeIngredientDTO;
@@ -133,7 +130,7 @@ public class RecipeController {
         for (RecipeIngredientDTO recipeIngredient : recipeDTO.getRecipeIngredients()) {
             ItemType itemType = recipeIngredient.getItemType();
             if (itemType != null) {
-                List<Item> items = itemService.findByTypeAndHousehold(itemType, household);
+                List<Item> items = itemService.findByTypeAndHouseholdAndStatus(itemType, household, ItemStatus.INVENTORY);
                 if (items == null || items.isEmpty()) {
                     recipeIngredient.setHouseholdHasIngredient(false);
                 } else {

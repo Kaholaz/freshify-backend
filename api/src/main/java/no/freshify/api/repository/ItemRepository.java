@@ -19,6 +19,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     List<Item> findItemsByHouseholdAndStatusAndRemainingGreaterThan(Household household, ItemStatus used, double v);
 
-    List<Item> findByTypeAndHousehold(ItemType type , Household household);
+    List<Item> findByTypeAndHouseholdAndStatus(ItemType type , Household household , ItemStatus status);
     long countByTypeAndHouseholdId(ItemType type , Long householdId);
 }
