@@ -20,15 +20,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
-import java.sql.Date;
-import java.time.Instant;
+import java.util.Date;
 import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/household")
@@ -150,6 +144,7 @@ public class InventoryController {
 
         item.setRemaining(newItem.getRemaining());
         item.setStatus(newItem.getStatus());
+        item.setLastChanged(new Date());
         itemService.updateItem(item);
 
         logger.info("Updated inventory item with id: " + item.getId());
