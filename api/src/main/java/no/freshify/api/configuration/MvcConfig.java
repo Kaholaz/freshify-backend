@@ -41,13 +41,4 @@ public class MvcConfig implements WebMvcConfigurer {
 
         registry.addResourceHandler("/" + dirName + "/**").addResourceLocations("file:" + uploadPath + "/");
     }
-
-    /**
-     * Configures the message converters. All messages are converted to UTF-8.
-     * @param converters initially an empty list of converters
-     */
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter(StandardCharsets.UTF_8);
-        converters.add(stringHttpMessageConverter);
-    }
 }
