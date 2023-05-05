@@ -72,8 +72,11 @@ public class CustomizedRecipeRepositoryImpl implements CustomizedRecipeRepositor
 
         Predicate allergenFilter;
         if (filter.getAllergenIds() != null) {
-            Join<Recipe, Allergen> allergenJoin = recipe.join("allergens");
-            allergenFilter = cb.not(allergenJoin.get("id").in(filter.getAllergenIds()));
+            Subquery<Long> allergenSubquery = cq.subquery(Long.class);
+            Root<Recipe> allergenRoot = allergenSubquery.correlate(recipe);
+            Join<Recipe, Allergen> allergenJoin = allergenRoot.join("allergens");
+            allergenSubquery.select(allergenJoin.get("id")).where(allergenJoin.get("id").in(filter.getAllergenIds()));
+            allergenFilter = cb.not(cb.exists(allergenSubquery));
         } else {
             allergenFilter = cb.conjunction();
         }

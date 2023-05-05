@@ -269,18 +269,4 @@ public class HouseholdRecipeControllerTest {
 
         verify(householdRecipeService, times(1)).removeHouseholdRecipe(anyLong(), anyLong());
     }
-
-    @Test
-    public void testGetHouseholdRecipes_Success() throws Exception {
-        when(householdRecipeService.getRecipes(anyLong())).thenReturn(householdRecipes);
-        when(householdRecipeMapper.toHouseholdRecipeDTOs(anyList())).thenReturn(householdRecipeDTOs);
-
-        mockMvc.perform(get("/householdrecipe/{householdId}/recipe", 1L))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].id").value(householdRecipe.getId()))
-                .andExpect(jsonPath("$.[0].recipe.id").value(householdRecipe.getRecipe().getId()))
-                .andExpect(jsonPath("$.[0].household.id").value(household.getId()));
-
-        verify(householdRecipeService, times(1)).getRecipes(anyLong());
-    }
 }

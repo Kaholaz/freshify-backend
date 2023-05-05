@@ -4,19 +4,13 @@ package no.freshify.api.controller;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import no.freshify.api.exception.*;
-import no.freshify.api.model.Household;
-import no.freshify.api.model.Item;
-import no.freshify.api.model.ItemType;
-import no.freshify.api.model.RecipeFilter;
+import no.freshify.api.model.*;
 import no.freshify.api.model.dto.AllergenDTO;
 import no.freshify.api.model.dto.RecipeDTO;
 import no.freshify.api.model.dto.RecipeIngredientDTO;
 import no.freshify.api.model.dto.RecipeRequest;
 import no.freshify.api.model.mapper.RecipeMapper;
-import no.freshify.api.model.recipe.Allergen;
-import no.freshify.api.model.recipe.Recipe;
-import no.freshify.api.model.recipe.RecipeCategory;
-import no.freshify.api.model.recipe.RecipeIngredient;
+import no.freshify.api.model.recipe.*;
 import no.freshify.api.security.UserDetailsImpl;
 import no.freshify.api.service.*;
 import org.mapstruct.factory.Mappers;
@@ -46,6 +40,7 @@ public class RecipeController {
     private final RecipeCategoryService recipeCategoryService;
     private final ItemService itemService;
     private final HouseholdService householdService;
+    private final HouseholdRecipeService householdRecipeService;
 
     private final RecipeMapper recipeMapper = Mappers.getMapper(RecipeMapper.class);
 
@@ -67,7 +62,7 @@ public class RecipeController {
     @PreAuthorize("hasPermission(#householdId, 'HOUSEHOLD', '')")
     @GetMapping("/{householdId}")
     public Page<RecipeDTO> getRecipesPaginated(@PathVariable("householdId") Long householdId,
-                                               @RequestParam(required = false) boolean sortByIngredientsInFridge,
+                                               @RequestParam(required = false) Boolean sortByIngredientsInFridge,
                                                @RequestParam(required = false) String searchString,
                                                @RequestParam(required = false) List<Long> categoryIds,
                                                @RequestParam(required = false) List<Long> allergenIds,
@@ -75,6 +70,9 @@ public class RecipeController {
                                                @RequestParam(defaultValue = "0") int pageNo,
                                                @RequestParam(defaultValue = "10") int pageSize) throws HouseholdNotFoundException {
         logger.info("Searching for recipes with name: " + searchString + ", category id: " + categoryIds + ", allergen ids: " + allergenIds + ", page number: " + pageNo + ", page size: " + pageSize);
+
+        if (categoryIds != null && categoryIds.isEmpty()) categoryIds = null;
+        if (allergenIds != null && allergenIds.isEmpty()) allergenIds = null;
 
         Household household = householdService.findHouseholdByHouseholdId(householdId);
 
@@ -84,8 +82,10 @@ public class RecipeController {
                 .categoryIds(categoryIds)
                 .allergenIds(allergenIds)
                 .householdId(householdId)
-                .sortByIngredientsInFridge(sortByIngredientsInFridge)
                 .getHouseholdRecipes(getHouseholdRecipes);
+
+        if (sortByIngredientsInFridge != null) filterBuilder.sortByIngredientsInFridge(sortByIngredientsInFridge);
+        if (getHouseholdRecipes != null) filterBuilder.getHouseholdRecipes(getHouseholdRecipes);
 
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
         Page<Recipe> recipes = recipeService.getRecipesByFilter(filterBuilder.build(), pageRequest);
@@ -93,6 +93,8 @@ public class RecipeController {
         Page<RecipeDTO> recipeDTOPage = recipeMapper.toRecipeDTOPage(recipes);
         for (RecipeDTO recipeDTO : recipeDTOPage.getContent()) {
             checkIngredientsInHousehold(household, recipeDTO);
+            HouseholdRecipe householdRecipe = householdRecipeService.getRecipe(householdId, recipeDTO.getId());
+            if (householdRecipe != null) recipeDTO.setIsInHousehold(true);
         }
 
         return recipeDTOPage;
@@ -113,6 +115,9 @@ public class RecipeController {
 
         checkIngredientsInHousehold(household, recipeDTO);
 
+        HouseholdRecipe householdRecipe = householdRecipeService.getRecipe(householdId, recipeDTO.getId());
+        if (householdRecipe != null) recipeDTO.setIsInHousehold(true);
+
         return ResponseEntity.ok(recipeDTO);
     }
 
@@ -125,7 +130,7 @@ public class RecipeController {
         for (RecipeIngredientDTO recipeIngredient : recipeDTO.getRecipeIngredients()) {
             ItemType itemType = recipeIngredient.getItemType();
             if (itemType != null) {
-                List<Item> items = itemService.findByTypeAndHousehold(itemType, household);
+                List<Item> items = itemService.findByTypeAndHouseholdAndStatus(itemType, household, ItemStatus.INVENTORY);
                 if (items == null || items.isEmpty()) {
                     recipeIngredient.setHouseholdHasIngredient(false);
                 } else {
