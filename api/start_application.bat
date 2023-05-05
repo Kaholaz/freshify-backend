@@ -2,7 +2,7 @@
 docker stop freshify_dev_database >nul 2>&1
 docker run --rm -p 56000:7000 --name freshify_dev_database -e MYSQL_ROOT_PASSWORD=freshify -e MYSQL_DATABASE=freshify_dev -d mysql --port 7000 --character-set-server=utf8 --collation-server=utf8_unicode_ci
 echo Waiting for database to start...
-timeout /t 10
+timeout /t 20
 start /B mvn spring-boot:run >spring-boot.log 2>&1
 :wait_for_app
 findstr /C:"Started FreshifyApiApplication" spring-boot.log >nul 2>&1
