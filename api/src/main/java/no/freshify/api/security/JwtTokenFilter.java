@@ -64,7 +64,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                             );
                         });
             }
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException | NullPointerException e) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter().write("Invalid token");
             return;
